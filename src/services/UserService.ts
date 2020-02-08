@@ -1,11 +1,11 @@
 import * as express from 'express';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as utils from '../utils/index';
-import {UserEntity} from '../entities/UserEntity';
-import {getMongoRepository} from 'typeorm';
+import { UserEntity } from '../entities/UserEntity';
+import { getMongoRepository } from 'typeorm';
 
 const debug = Debug('PL:UserService');
 
@@ -42,13 +42,13 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
 };
 
 /**
- * Insert user
+ * Add new user with Google Data
  */
 export const registerUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const userModel = getMongoRepository(UserEntity);
     try {
         const user: UserEntity = new UserEntity();
-        user.email = req.googleProfileStore.emails[0].value;
+        user.email = req.googleProfileStore.emails[ 0 ].value;
         user.google = req.googleStore;
         const document = await userModel.save(user);
         req.userStore = document;
@@ -62,7 +62,7 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
 /**
  * Validate user login parameter
  */
-export const validateUserData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const validateLoginUserData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body);
     return next();
 };
@@ -75,19 +75,6 @@ export const loginUser: express.RequestHandler = async (req: IRequest, res: expr
     const userStore = req.userStore;
     if (_.isEmpty(userStore)) {
         return next(Boom.notFound('You does not exits'));
-    }
-    return next();
-};
-
-/**
- * Validate user search email parameter
- */
-export const validateUserSearchEmailParameter: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body);
-    if (_.isEmpty(params.email)) {
-        return next(Boom.notFound('Please enter email.'));
-    } else if (utils.emailValidation(params.email) === false) {
-        return next(Boom.notFound('Invalid email address'));
     }
     return next();
 };

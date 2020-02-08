@@ -6,7 +6,9 @@ import * as PlaylistController from '../controllers/PlaylistController';
 const playlistRoute: express.Router = express.Router();
 
 /**
- * Add Playlist
+ * Add Audio Playlist or Add Video Playlist
+ * This API can be call to add the YouTube playlist.
+ * Once Playlist added it will download the Media Files into the Google Drive
  */
 playlistRoute.post('/', [
     PlaylistService.validateNewPlaylist,
@@ -17,7 +19,7 @@ playlistRoute.post('/', [
 ]);
 
 /**
- * Remove Playlist
+ * Remove Audio Playlist or Remove Video Playlist
  */
 playlistRoute.delete('/', [
     PlaylistService.validateNewPlaylist,
@@ -29,6 +31,7 @@ playlistRoute.delete('/', [
 
 /**
  * Search All Playlist
+ * This API will return all the Playlist of the User
  */
 playlistRoute.post('/search', [
     UserService.searchOneByEmail,
@@ -36,4 +39,4 @@ playlistRoute.post('/search', [
     PlaylistController.playlistData
 ]);
 
-export {playlistRoute};
+export { playlistRoute };

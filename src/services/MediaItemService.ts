@@ -1,12 +1,12 @@
 import * as express from 'express';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDrive';
-import {getMongoRepository} from 'typeorm';
-import {MediaItemEntity} from '../entities/MediaItemEntity';
+import { getMongoRepository } from 'typeorm';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
-import {YOUTUBE} from '../constants';
+import { YOUTUBE } from '../constants';
 
 const debug = Debug('PL:MediaItemService');
 
@@ -60,7 +60,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
         } catch (error) {
             debug('error ', error);
         }
-    }, {concurrency: 2});
+    }, { concurrency: 2 });
     debug('After remove duplicate from database uniqueItems ', uniqueItems.length);
     debug('duplicate identify From Database ', identifyFromDatabase);
     req.youTubePlaylistStore.items = uniqueItems;
@@ -109,7 +109,7 @@ export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandle
         _id: req.userStore._id,
         email: req.userStore.email
     };
-    debug('userProfile ', userProfile);
+    // debug('userProfile ', userProfile);
     try {
         const whereCondition: any = {
             user: userProfile,
@@ -136,7 +136,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     _.each(req.googleDriveStore, (value) => {
         let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
         youTubeId = _.last(youTubeId);
-        value.urlId = youTubeId.split('.')[0];
+        value.urlId = youTubeId.split('.')[ 0 ];
         googleItems.push(value);
     });
 
@@ -145,18 +145,18 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const mediaItemsRemove: any = [];
     const googleDriveItemsRemove: any = [];
     _.each(req.youTubePlaylistStore.items, (value) => {
-        const item = _.find(req.mediaItemsStore, {urlId: value.id});
+        const item = _.find(req.mediaItemsStore, { urlId: value.id });
         if (_.isEmpty(item)) {
             mediaItemsNew.push(value);
         }
     });
     _.each(req.mediaItemsStore, (value) => {
-        const item = _.find(req.youTubePlaylistStore.items, {id: value.urlId});
+        const item = _.find(req.youTubePlaylistStore.items, { id: value.urlId });
         if (_.isEmpty(item)) {
             mediaItemsRemove.push(value);
         }
 
-        const itemGoogleDrive = _.find(googleItems, {urlId: value.urlId});
+        const itemGoogleDrive = _.find(googleItems, { urlId: value.urlId });
         if (_.isEmpty(itemGoogleDrive) && value.isUploaded === true) {
             value.isUploaded = false;
             mediaItemsUpdate.push(value);
@@ -167,8 +167,8 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         }
     });
     _.each(googleItems, (value) => {
-        const item = _.find(req.youTubePlaylistStore.items, {id: value.urlId});
-        const removePendingItem = _.find(mediaItemsRemove, {urlId: value.urlId});
+        const item = _.find(req.youTubePlaylistStore.items, { id: value.urlId });
+        const removePendingItem = _.find(mediaItemsRemove, { urlId: value.urlId });
         if (_.isEmpty(item) && _.isEmpty(removePendingItem)) {
             googleDriveItemsRemove.push(value);
         }
@@ -220,9 +220,9 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         } catch (error) {
             debug('error ', error);
         }
-    }, {concurrency: CONCURRENCY});
+    }, { concurrency: CONCURRENCY });
 
-    debug('req.data.mediaItemsUpdate ', req.data.mediaItemsUpdate.length);
+    // debug('req.data.mediaItemsUpdate ', req.data.mediaItemsUpdate.length);
     await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -243,11 +243,11 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsUpdate error ', error);
             debug('mediaItemsUpdate error item ', value);
         }
-    }, {concurrency: CONCURRENCY});
+    }, { concurrency: CONCURRENCY });
 
     // req.data.mediaItemsRemove = _.take(req.data.mediaItemsRemove, 1);
 
-    debug('req.data.mediaItemsRemove ', req.data.mediaItemsRemove.length);
+    // debug('req.data.mediaItemsRemove ', req.data.mediaItemsRemove.length);
     await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -257,7 +257,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove error ', error);
             debug('mediaItemsRemove error in  ', value);
         }
-    }, {concurrency: CONCURRENCY});
+    }, { concurrency: CONCURRENCY });
     await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
         try {
             await GoogleDrive.removeFile(value.fileId);
@@ -269,10 +269,10 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             }
             debug('mediaItemsRemove from google drive value ', value);
         }
-    }, {concurrency: CONCURRENCY});
+    }, { concurrency: CONCURRENCY });
 
     // req.data.googleDriveItemsRemove = _.take(req.data.googleDriveItemsRemove, 1);
-    debug('req.data.googleDriveItemsRemove ', req.data.googleDriveItemsRemove.length);
+    //  debug('req.data.googleDriveItemsRemove ', req.data.googleDriveItemsRemove.length);
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
         try {
             await GoogleDrive.removeFile(value.id);
@@ -284,7 +284,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             }
             debug('googleDriveItemsRemove from google drive value ', value);
         }
-    }, {concurrency: CONCURRENCY});
+    }, { concurrency: CONCURRENCY });
     return next();
 };
 
@@ -297,11 +297,11 @@ export const identifySyncItemsForGoogleDrive: express.RequestHandler = async (re
     _.each(req.googleDriveStore, (value) => {
         let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
         youTubeId = _.last(youTubeId);
-        value.urlId = youTubeId.split('.')[0];
+        value.urlId = youTubeId.split('.')[ 0 ];
         googleItems.push(value);
     });
     _.each(req.mediaItemsStore, (value) => {
-        const item = _.find(googleItems, {urlId: value.urlId});
+        const item = _.find(googleItems, { urlId: value.urlId });
         if (_.isEmpty(item) && value.isUploaded === true) {
             value.isUploaded = false;
             mediaItemsUpdate.push(value);
@@ -315,36 +315,5 @@ export const identifySyncItemsForGoogleDrive: express.RequestHandler = async (re
         mediaItemsUpdateCount: mediaItemsUpdate.length,
         mediaItemsUpdate: mediaItemsUpdate
     };
-    return next();
-};
-
-/**
- * Mark the isUploaded for files which are not found in the Google Drive
- */
-export const syncWithGoogleDrive: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.userStore)) {
-        return next();
-    } else if (_.isEmpty(req.data)) {
-        return next();
-    } else if (_.isEmpty(req.data.mediaItemsUpdate)) {
-        return next();
-    }
-    await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
-        try {
-            const mediaItemModel = getMongoRepository(MediaItemEntity);
-            const data = {
-                $set: {
-                    isUploaded: false
-                }
-            };
-            const whereCondition = {
-                _id: value._id
-            };
-
-            await mediaItemModel.updateOne(whereCondition, data);
-        } catch (error) {
-            debug('error ', error);
-        }
-    }, {concurrency: 2});
     return next();
 };

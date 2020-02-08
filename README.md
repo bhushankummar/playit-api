@@ -1,6 +1,6 @@
 ### Version
 ```
-Node 7.x
+Node 10.16.3
 NPM 5.6.x
 ```
 
@@ -68,3 +68,12 @@ https://askubuntu.com/a/807918
 * Google Developer Console Access
 * Create New App and Get The Client Id, Client Secret
 * Set Redirect URL `${APP.API_URL}/api/v1/user/register/oauth/callback`
+
+### Other Important APIs
+* Add User (Login as Google) `{{url}}/api/v1/user/register`
+* Add the Audio Playlist `{{url}}/api/v1/playlist`
+* Add the Video Playlist `{{url}}/api/v1/playlist`
+* Remove Video Playlist `{{url}}/api/v1/playlist`
+
+### Postman Collection to Quick Start Using APIs
+`https://www.getpostman.com/collections/de711239ba8581682a33`

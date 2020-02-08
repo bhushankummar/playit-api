@@ -1,17 +1,17 @@
 import * as express from 'express';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as bluebird from 'bluebird';
 import * as moment from 'moment';
-import {APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE} from '../constants';
+import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
 import * as utils from '../utils';
-import {getMongoRepository} from 'typeorm';
-import {MediaItemEntity} from '../entities/MediaItemEntity';
+import { getMongoRepository } from 'typeorm';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 const debug = Debug('PL:GoogleDriveService');
 
@@ -47,8 +47,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[0]) {
-                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[ 0 ]) {
+                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -77,14 +77,14 @@ export const uploadToDrive: express.RequestHandler = async (req: IRequest, res: 
     const items: any = [];
     await bluebird.map(req.localMediaStore, async (value: any) => {
         try {
-            debug('Start uploading %o ', path.basename(value));
+            // debug('Start uploading %o ', path.basename(value));
             const folderId = path.basename(path.dirname(value));
             const response: any = await GoogleDrive.uploadFile(folderId, value);
             if (response && response.data) {
                 fs.unlinkSync(value);
                 items.push(response.data);
             }
-            debug('Upload complete %o ', path.basename(value));
+            // debug('Upload complete %o ', path.basename(value));
             await utils.wait(0.1);
         } catch (error) {
             debug('uploadToDrive error ', error.errors);
@@ -139,8 +139,8 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
                     driveFolderId: params.driveFolderId
                 };
                 let driveFileId = '';
-                if (response && response.data && response.data.files && response.data.files[0]) {
-                    driveFileId = response.data.files[0].id;
+                if (response && response.data && response.data.files && response.data.files[ 0 ]) {
+                    driveFileId = response.data.files[ 0 ].id;
                 }
                 try {
                     const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -169,7 +169,7 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
             debug('removeDuplicatesFromGoogleDrive error ', errorResponse);
             await utils.wait(1);
         }
-    }, {concurrency: 2});
+    }, { concurrency: 2 });
     debug('%o Items ready For Download ', params.type, uniqueItems.length);
     req.youTubePlaylistStore.items = uniqueItems;
     return next();
@@ -181,7 +181,7 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
 export const cleanTrash: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
         await GoogleDrive.emptyTrash();
-        req.googleDriveStore = {message: true};
+        req.googleDriveStore = { message: true };
         return next();
     } catch (error) {
         debug('cleanTrash error ', error);

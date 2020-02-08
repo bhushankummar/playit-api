@@ -10,6 +10,7 @@ const mediaItemRoute: express.Router = express.Router();
 
 /**
  * Search All Media List
+ * This API will return all the Medias of User
  */
 mediaItemRoute.post('/', [
     UserService.searchOneByEmail,

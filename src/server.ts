@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as cors from 'cors';
 import * as config from './config';
 import * as passportConfig from './config/passport';
-import {router} from './routes';
+import { router } from './routes';
 import * as database from './config/db';
 import * as express from 'express';
 import * as CroneJobs from './job';
@@ -13,11 +13,11 @@ database.init();
 const app = express();
 const debug = Debug('PL:App');
 
-app.use(cors({origin: '*'}));
+app.use(cors({ origin: '*' }));
 
 app.use(bodyParser.json());
 
-app.use(bodyParser.urlencoded({extended: false}));
+app.use(bodyParser.urlencoded({ extended: false }));
 
 app.use(passport.initialize());
 
@@ -34,11 +34,11 @@ passport.deserializeUser((user, callback) => {
 app.use(config.trimParams);
 
 app.get('/', (req, res) => {
-    return res.json({message: 'API is running!'});
+    return res.json({ message: 'API is running!' });
 });
 
 app.get('/favicon.ico', (req, res) => {
-    return res.json({message: 'API is running!'});
+    return res.json({ message: 'API is running!' });
 });
 
 /**
@@ -74,9 +74,10 @@ app.listen(app.get('PORT'), (err: any) => {
     debug(' Server has been started on PORT: %o', app.get('PORT'));
     return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);
 });
+
 process.on('uncaughtException', (err) => {
     console.log('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
     console.log(err);
 });
 
-export {app};
+export { app };
