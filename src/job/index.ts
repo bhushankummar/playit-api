@@ -4,7 +4,7 @@ import * as UploadAudioToGoogleDrive from './UploadAudioToGoogleDrive';
 import * as UploadVideoToGoogleDrive from './UploadVideoToGoogleDrive';
 import * as EmptyTrashGoogleDrive from './EmptyTrashGoogleDrive';
 import * as SyncMediaItemWithYouTube from './SyncMediaItemWithYouTube';
-import {CRONE_JOB} from '../constants';
+import { CRONE_JOB } from '../constants';
 import * as _ from 'lodash';
 import * as Debug from 'debug';
 
@@ -23,7 +23,6 @@ export const initAllJobs: any = () => {
     debug('Start initializing Crone Jobs');
     const downloadAudioToLocalJob = DownloadAudioToLocal.init();
     downloadAudioToLocalJob.start();
-    debug('downloadAudioToLocalJob ', downloadAudioToLocalJob.nextDates(1));
 
     DownloadVideoToLocal.init().start();
     UploadAudioToGoogleDrive.init().start();
@@ -33,8 +32,4 @@ export const initAllJobs: any = () => {
     const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();
     syncMediaItemWithYouTubeJob.start();
     debug('syncMediaItemWithYouTubeJob ', syncMediaItemWithYouTubeJob.nextDates(1));
-
-    // const syncMediaItemWithGoogleDriveJob = SyncMediaItemWithGoogleDrive.init();
-    // syncMediaItemWithGoogleDriveJob.start();
-    // debug('syncMediaItemWithGoogleDriveJob ', syncMediaItemWithGoogleDriveJob.nextDates(1));
 };

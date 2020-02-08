@@ -11,6 +11,9 @@ const youtubeRoute: express.Router = express.Router();
 
 /**
  * Download Audio File
+ * Download Video File
+ * This API Called from Crone Job
+ * type : 0 = Audio ; 1 = Video
  */
 youtubeRoute.post('/crone/download/:type/:playlistId/:driveFolderId', [
     UserService.searchOneByEmail,
@@ -25,23 +28,8 @@ youtubeRoute.post('/crone/download/:type/:playlistId/:driveFolderId', [
 ]);
 
 /**
- * Download Single Audio File
- */
-youtubeRoute.post('/download/audio/:driveFolderId', [
-    YouTubeMediaService.downloadSingleAudioHQ,
-    YouTubeController.youtubeData
-]);
-
-/**
- * Download Video File
- */
-youtubeRoute.get('/download/video', [
-    YouTubeMediaService.downloadSingleVideoHQ,
-    YouTubeController.youtubeData
-]);
-
-/**
  * List Playlist Items
+ * List all the Media Items of Playlist from the YouTube
  */
 youtubeRoute.get('/playlist/:playlistId', [
     YouTubeService.listPlaylistItems,

@@ -1,13 +1,13 @@
 import * as express from 'express';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as Boom from 'boom';
-import {google} from 'googleapis';
-import {GOOGLE_AUTH} from '../constants';
-import {oauth2Client} from '../utils/Google';
+import { google } from 'googleapis';
+import { GOOGLE_AUTH } from '../constants';
+import { oauth2Client } from '../utils/Google';
 
-const plus = google.plus({version: 'v1'});
+const plus = google.plus({ version: 'v1' });
 
 const debug = Debug('PL:GoogleService');
 
@@ -22,7 +22,7 @@ export const generatesAuthUrl: express.RequestHandler = (req: IRequest, res: exp
         access_type: 'offline',
         scope: GOOGLE_AUTH.SCOPES
     });
-    req.googleStore = {url};
+    req.googleStore = { url };
     return next();
 };
 
@@ -32,7 +32,7 @@ export const generatesAuthUrl: express.RequestHandler = (req: IRequest, res: exp
 export const retrieveAuthorizationCode: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.query);
     try {
-        const {tokens} = await oauth2Client.getToken(params.code);
+        const { tokens } = await oauth2Client.getToken(params.code);
         oauth2Client.setCredentials(tokens);
         req.googleStore = tokens;
         return next();
@@ -63,12 +63,12 @@ export const setCredentials: express.RequestHandler = async (req: IRequest, res:
  */
 export const retrieveGoogleProfile: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
-        plus.people.get({userId: 'me', auth: oauth2Client}, (error: any, response: any) => {
+        plus.people.get({ userId: 'me', auth: oauth2Client }, (error: any, response: any) => {
             if (error) {
                 debug('error ', error);
                 return next(error);
             }
-            debug('response ', response.data);
+            // debug('response ', response.data);
             req.googleProfileStore = response.data;
             return next();
         });

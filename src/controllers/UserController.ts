@@ -46,14 +46,6 @@ export const me: express.RequestHandler = (req: IRequest, res: express.Response,
 };
 
 /**
- * Get all users
- */
-export const users: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.userStore;
-    return next();
-};
-
-/**
  * For logout user
  */
 export const logout: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {

@@ -41,7 +41,7 @@ export const passport = new bearerStrategy({
         return callback(error);
     }
     if (_.isEmpty(tokenDocument)) {
-        return callback(new Boom('You are unauthorised User.'), {statusCode: 401});
+        return callback(new Boom('You are unauthorized User.'), {statusCode: 401});
     }
     const expiryTimestamp: any = moment(tokenDocument.timestamp).add(24, 'hours');
     const isAfter: boolean = moment(expiryTimestamp).isAfter(moment().format());

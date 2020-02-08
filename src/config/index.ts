@@ -26,8 +26,6 @@ export const trimParams: express.RequestHandler = (req: IRequest, res: express.R
         }
     });
     debug('req.body : %o ', req.body);
-
-    utils.setBaseUrl(req);
     return next();
 };
 

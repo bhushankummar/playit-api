@@ -41,8 +41,8 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
         return next();
     }
     // debug('params ', params);
-    const uniqueItems: any = [];
     let availableInLocalDirectory = 0;
+    const uniqueItems: any = [];
     let mediaDirectory = MEDIA_DIRECTORY.AUDIO;
     if (params.type !== 'audio') {
         mediaDirectory = MEDIA_DIRECTORY.VIDEO;
@@ -51,8 +51,8 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
     if (params.type !== 'audio') {
         extension = MEDIA_EXTENSION.VIDEO;
     }
-    debug('extension ', extension);
-    debug('mediaDirectory ', mediaDirectory);
+    // debug('extension ', extension);
+    // debug('mediaDirectory ', mediaDirectory);
     const files = find.fileSync(mediaDirectory);
 
     req.youTubePlaylistStore.items.map(async (value: any) => {
@@ -67,7 +67,7 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
             if (index === -1) {
                 uniqueItems.push(value);
             } else {
-                availableInLocalDirectory += 1;
+                availableInLocalDirectory = availableInLocalDirectory + 1;
                 // debug('value ', value);
                 /**
                  * Do not remove ths File, because it may still not uploaded

@@ -59,7 +59,7 @@ userRoute.post('/refresh', [
  * Login
  */
 userRoute.put('/login', [
-    UserService.validateUserData,
+    UserService.validateLoginUserData,
     UserService.searchOneByEmail,
     UserService.loginUser,
     UserController.userLoginDetail

@@ -1,11 +1,11 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import {oauth2Client} from './Google';
+import { oauth2Client } from './Google';
 import * as Debug from 'debug';
-import {google} from 'googleapis';
+import { google } from 'googleapis';
 
-const drive = google.drive({version: 'v3', auth: oauth2Client});
+const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
 const debug = Debug('PL:GoogleDrive');
 
@@ -13,7 +13,7 @@ export const uploadFile = (folderId: string, filePath: string) => {
     return new Promise((resolve: any, reject: any) => {
         const fileMetadata = {
             name: path.basename(filePath),
-            parents: [folderId]
+            parents: [ folderId ]
         };
         const media = {
             mimeType: 'audio/mpeg',
@@ -48,7 +48,7 @@ export const emptyTrash = () => {
 export const removeFile = (fileId: string) => {
     return new Promise((resolve: any, reject: any) => {
         if (_.isEmpty(fileId)) {
-            return reject({message: 'fileId is empty.'});
+            return reject({ message: 'fileId is empty.' });
         }
         const data = {
             'fileId': fileId
@@ -69,7 +69,7 @@ export const searchIntoFolder = (folderId: string, searchFileName: string) => {
         const q = separator.concat(folderId, separator, ' in parents ', ' and'
             , 'name contains ', separator, searchFileName, separator);
         const params = {
-            parents: [folderId],
+            parents: [ folderId ],
             trashed: false,
             fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
             q: q,
@@ -85,12 +85,13 @@ export const searchIntoFolder = (folderId: string, searchFileName: string) => {
         });
     });
 };
+
 export const searchIntoFolderRecursive = (folderId: string, pageToken?: string) => {
     return new Promise((resolve: any, reject: any) => {
         const separator = '"';
         const q = separator.concat(folderId, separator, ' in parents ');
         const params = {
-            parents: [folderId],
+            parents: [ folderId ],
             trashed: false,
             fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
             q: q,
