@@ -13,6 +13,7 @@ export const init = async () => {
         type: 'mongodb',
         url: DB.MONGO_URL,
         useNewUrlParser: true,
+        useUnifiedTopology: true,
         entities: [MediaItemEntity, PlaylistEntity, UserEntity, TokenEntity]
     });
 };

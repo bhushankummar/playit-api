@@ -1,6 +1,6 @@
 import * as express from 'express';
 import * as Debug from 'debug';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 
 Debug('PL:YouTubeController');
 

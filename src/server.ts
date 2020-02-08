@@ -69,7 +69,6 @@ app.listen(app.get('PORT'), (err: any) => {
     if (err) {
         return console.log(err);
     }
-    // database.init();
     CroneJobs.initAllJobs();
     debug(' Server has been started on PORT: %o', app.get('PORT'));
     return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);

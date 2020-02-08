@@ -1,7 +1,7 @@
 ### Version
 ```
 Node 10.16.3
-NPM 5.6.x
+NPM 6.9.0
 ```
 
 ### Installation

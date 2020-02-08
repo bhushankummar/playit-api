@@ -18,19 +18,12 @@
     },
     "engines": {
         "node": "10.16.3",
-        "npm": "5.6.0"
+        "npm": "6.9.0"
     },
     "author": "Bhushankumar L (bhushankumar.lilapara@gmail.com)",
     "license": "ISC",
     "dependencies": {
         "@microlink/youtube-dl": "^2.0.0",
-        "babel-cli": "^6.26.0",
-        "babel-core": "^6.26.3",
-        "babel-loader": "^8.0.6",
-        "babel-polyfill": "^6.26.0",
-        "babel-preset-env": "^1.7.0",
-        "babel-preset-stage-0": "^6.24.1",
-        "bcrypt": "^3.0.8",
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "boom": "^7.3.0",
@@ -39,7 +32,6 @@
         "cron": "^1.8.2",
         "debug": "^4.1.1",
         "express": "^4.17.1",
-        "express-session": "^1.17.0",
         "ffmpeg-binaries": "^4.0.0",
         "find": "^0.3.0",
         "fs-extra": "^8.1.0",
@@ -87,6 +79,12 @@
         "supertest": "^4.0.2",
         "ts-node": "^8.6.2",
         "tslint": "^6.0.0",
-        "typescript": "^3.7.5"
+        "typescript": "^3.7.5",
+        "babel-cli": "^6.26.0",
+        "babel-core": "^6.26.3",
+        "babel-loader": "^8.0.6",
+        "babel-polyfill": "^6.26.0",
+        "babel-preset-env": "^1.7.0",
+        "babel-preset-stage-0": "^6.24.1"
     }
 }
