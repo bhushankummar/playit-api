@@ -1,0 +1,5 @@
+--require test/init.ts
+--recursive
+--timeout 10000
+--exit
+./test/**/*.spec.ts

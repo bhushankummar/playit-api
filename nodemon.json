@@ -1,0 +1,11 @@
+{
+  "ext": "ts,yaml,js,json",
+  "ignore": [
+    "dist/*",
+    "test/*",
+    "src/static/*"
+  ],
+  "execMap": {
+    "ts": "ts-node"
+  }
+}
