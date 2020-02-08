@@ -19,6 +19,9 @@ mediaItemRoute.post('/', [
 
 /**
  * Sync MediaItem with YouTube Playlist & Google Drive
+ * This API called from the Cron Job
+ * playlistId = Id of the YouTube Playlist
+ * driveFolderId = Id of the Google Drive Folder
  */
 mediaItemRoute.post('/sync/crone/youtube/:playlistId/:driveFolderId', [
     UserService.searchOneByEmail,

@@ -28,8 +28,8 @@ export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
 export LC_ALL=en_US.UTF-8
 export ALLOWED_EMAILS=your_email@gmail.com
-export GOOGLE_CLIENT_ID=503261721333-g6i3ure3k7inhgkopg84vlis8jpmaavv.apps.googleusercontent.com
-export GOOGLE_CLIENT_SECRET=2TghLXyQ8pibFOrNTC6kKLY4
+export GOOGLE_CLIENT_ID=YourClientId
+export GOOGLE_CLIENT_SECRET=YourClientSecret
 export MONGO_URL=mongodb://yourmongo/playit-dev
 ```
 
@@ -58,6 +58,11 @@ node dist/src/server.js
 ```
 https://askubuntu.com/a/807918
 ```
+
+### Required Setup
+* MongoDB
+* Google OAuth App
+* Heroku Account to Deploy your App
 
 ### User setup
 * Google Developer Console Access
