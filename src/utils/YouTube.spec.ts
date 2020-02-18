@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as _ from 'lodash';
 import { playlistItems } from '../../test/mock/YouTube';
-import * as YouTube from './YouTube';
+import * as YouTube from './YtplUtils';
 import * as Debug from 'debug';
 
 const debug = Debug('PL:YouTube.spec');

@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as find from 'find';
 import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
-import * as YouTube from '../utils/YouTube';
+import * as YtplUtils from '../utils/YtplUtils';
 import { IYouTubePlaylist } from '../interface/IYouTubePlaylist';
 
 const debug = Debug('PL:YouTubeService');
@@ -15,7 +15,7 @@ const debug = Debug('PL:YouTubeService');
 export const listPlaylistItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.body, req.params);
     try {
-        const documents: IYouTubePlaylist = await YouTube.findPlaylistItems(params.playlistId);
+        const documents: IYouTubePlaylist = await YtplUtils.findPlaylistItems(params.playlistId);
         // debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {

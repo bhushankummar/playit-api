@@ -1,4 +1,4 @@
-import * as YouTube from './YouTube';
+import * as YouTube from './YtplUtils';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';

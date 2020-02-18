@@ -1,10 +1,8 @@
-import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
-import * as fs from 'fs';
+import { YOUTUBE } from '../constants';
 import * as ytpl from 'ytpl';
 import { IYouTubePlaylist } from '../interface/IYouTubePlaylist';
 
 const youtubedl = require('@microlink/youtube-dl');
-const id3Writer = require('browser-id3-writer');
 
 /**
  * Get the File Metadata

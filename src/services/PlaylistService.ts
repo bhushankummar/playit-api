@@ -3,9 +3,8 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import * as YouTube from '../utils/YouTube';
+import * as YtplUtils from '../utils/YtplUtils';
 import { getMongoRepository } from 'typeorm';
-import { MEDIA_TYPE } from '../constants';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 
 const debug = Debug('PL:PlaylistService');
@@ -45,7 +44,7 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         email: req.userStore.email
     };
     try {
-        const playlistMetadata: any = await YouTube.findPlaylistItems(params.playlistId);
+        const playlistMetadata: any = await YtplUtils.findPlaylistItems(params.playlistId);
         const playlist: PlaylistEntity = new PlaylistEntity();
         playlist.user = userProfile;
         playlist.type = params.type;
