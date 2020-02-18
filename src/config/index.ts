@@ -35,19 +35,23 @@ export const handleError = (err: any, req: IRequest, res: express.Response, next
     }
     let errorResponse: any = {};
     if (err.output && err.output.payload) {
+        let stack = '';
+        try {
+            stack = err.stack.split('\n').map((line: any) => {
+                return line.trim();
+            });
+        } catch (error) {
+            stack = err.stack;
+        }
+
         errorResponse = {
-            stack: err.stack,
-            message: err.output.payload.message,
-            error: err.output.payload.error,
+            stack: stack,
+            error: err.output.payload.message,
+            message: err.output.payload.error,
             statusCode: err.output.payload.statusCode || 404
         };
     } else {
-        errorResponse = {
-            stack: err.stack,
-            error: err.error || err.type || err.message,
-            message: err.message,
-            statusCode: err.statusCode || 404
-        };
+        errorResponse = err;
     }
 
     debug('Error :: ');

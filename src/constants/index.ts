@@ -74,8 +74,9 @@ export const GOOGLE_AUTH = {
     REDIRECT_URL: `${APP.API_URL}/api/v1/user/register/oauth/callback`,
     SCOPES: [
         'https://www.googleapis.com/auth/plus.me',
-        'https://www.googleapis.com/auth/plus.profile.emails.read',
-        'https://www.googleapis.com/auth/drive'
+        'https://www.googleapis.com/auth/drive',
+        'https://www.googleapis.com/auth/userinfo.profile',
+        'https://www.googleapis.com/auth/userinfo.email',
     ]
 };
 
@@ -174,15 +175,10 @@ export const SYNC_TO_YOUTUBE_SCHEDULE = {
     DayOfWeek: '*'
 };
 
+
 if (_.isEmpty(DB.MONGO_URL)) {
     debug('----------------------------------------------------------------------------------- ');
-    debug('ERROR :  Please export DatabaseUrl : CONNECTION_STRING ,If exported, Ignore');
-    debug('----------------------------------------------------------------------------------- ');
-    process.exit(0);
-}
-if (_.isEmpty(DB.MONGO_URL)) {
-    debug('----------------------------------------------------------------------------------- ');
-    debug('ERROR :  Please export DatabaseUrl : CONNECTION_STRING ,If exported, Ignore');
+    debug('ERROR :  Please export DatabaseUrl : MONGO_URL ,If exported, Ignore');
     debug('----------------------------------------------------------------------------------- ');
     process.exit(0);
 }

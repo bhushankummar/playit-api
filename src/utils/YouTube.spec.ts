@@ -1,7 +1,7 @@
 import * as chai from 'chai';
 import * as _ from 'lodash';
 import { playlistItems } from '../../test/mock/YouTube';
-import * as YouTube from './YtplUtils';
+import * as YtplUtils from './YtplUtils';
 import * as Debug from 'debug';
 
 const debug = Debug('PL:YouTube.spec');
@@ -14,7 +14,7 @@ describe('YouTube', () => {
         const items = _.sortBy(playlistItems, 'title');
         let cleanFileNames = [];
         items.forEach((value) => {
-            const fileName = YouTube.prepareFileName(value, 'mp3');
+            const fileName = YtplUtils.prepareFileName(value, 'mp3');
             // debug('fileName  ', fileName);
             cleanFileNames.push(fileName);
         });

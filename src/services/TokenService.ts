@@ -26,7 +26,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
     try {
         loginToken = Random.secret();
     } catch (exception) {
-        debug('Exception %o ', exception);
+        debug('createToken Exception %o ', exception);
     }
     const hash = crypt.createHash('sha256');
     hash.update(loginToken);
@@ -41,7 +41,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
         const tokenModel = getMongoRepository(TokenEntity);
         req.tokenStore = await tokenModel.save(token);
     } catch (error) {
-        debug('error ', error);
+        debug('createToken error ', error);
         return next(error);
     }
     return next();

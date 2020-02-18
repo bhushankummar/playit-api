@@ -36,6 +36,7 @@
         "find": "^0.3.0",
         "fs-extra": "^8.1.0",
         "googleapis": "^47.0.0",
+        "googleapis-common": "^3.2.1",
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
         "mongodb": "^3.5.2",

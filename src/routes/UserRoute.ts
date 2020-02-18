@@ -13,7 +13,8 @@ const userRoute: express.Router = express.Router();
  * Register API : It will generate Google oAuth URL
  */
 userRoute.get('/register', [
-    GoogleService.generatesAuthUrl,
+    UserService.searchOneByEmail,
+    GoogleService.generatesAuthUrlForRegister,
     GoogleController.googleDetail
 ]);
 
@@ -24,6 +25,8 @@ userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
     GoogleService.retrieveGoogleProfile,
     UserService.registerUser,
+    UserService.updateGoogleToken,
+    UserService.searchOneByState,
     TokenService.createToken,
     GoogleController.redirectToHome
 ]);
@@ -61,8 +64,9 @@ userRoute.post('/refresh', [
 userRoute.put('/login', [
     UserService.validateLoginUserData,
     UserService.searchOneByEmail,
-    UserService.loginUser,
-    UserController.userLoginDetail
+    GoogleService.generatesAuthUrlForLogin,
+    // UserService.loginUser,
+    GoogleController.googleDetail
 ]);
 
 /**
@@ -74,4 +78,4 @@ userRoute.delete('/logout', passport.authenticate('bearer'), [
     UserController.logout
 ]);
 
-export {userRoute};
+export { userRoute };

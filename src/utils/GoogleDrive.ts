@@ -1,7 +1,7 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import { oauth2Client } from './Google';
+import { oauth2Client } from './GoogleUtils';
 import * as Debug from 'debug';
 import { google } from 'googleapis';
 

@@ -1,13 +1,14 @@
 import * as express from 'express';
 import * as Debug from 'debug';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 
-Debug('PL:GoogleController');
+const debug = Debug('PL:GoogleController');
 
 /**
  * Get token details
  */
 export const googleDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    debug('req.googleStore ', req.googleStore);
     req.data = req.googleStore;
     return next();
 };
