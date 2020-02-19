@@ -123,7 +123,7 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
     debug('** Start removeDuplicatesFromGoogleDrive for ', params.type);
     await bluebird.map(req.youTubePlaylistStore.items, async (value: any) => {
         const searchName = YOUTUBE.ID_SEPARATOR.concat(value.id, extension);
-        debug('searchName ', searchName);
+        // debug('searchName ', searchName);
         try {
             const response: any = await GoogleDrive.searchIntoFolder(folderId, searchName);
             // debug('response.data ', response.data);
@@ -139,6 +139,7 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
                     playlistId: req.youTubePlaylistStore.id,
                     driveFolderId: params.driveFolderId
                 };
+                // debug('whereCondition ', whereCondition);
                 let driveFileId = '';
                 if (response && response.data && response.data.files && response.data.files[ 0 ]) {
                     driveFileId = response.data.files[ 0 ].id;

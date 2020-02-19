@@ -34,7 +34,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: params.driveFolderId
             };
-            debug('whereCondition ', whereCondition);
+            // debug('whereCondition ', whereCondition);
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             const mediaItemStore = await mediaItemModel.findOne(whereCondition);
             if (mediaItemStore && mediaItemStore.isUploaded === false) {
@@ -43,6 +43,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                 identifyFromDatabase += 1;
             }
             if (_.isEmpty(mediaItemStore)) {
+                // debug('Adding new mediaItem');
                 uniqueItems.push(value);
                 const data = {
                     user: {
@@ -56,6 +57,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                     driveFolderId: params.driveFolderId,
                     isUploaded: false
                 };
+                // debug('data ', JSON.stringify(data));
                 await mediaItemModel.insert(data);
             }
         } catch (error) {
