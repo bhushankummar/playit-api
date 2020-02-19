@@ -69,7 +69,6 @@ https://askubuntu.com/a/807918
 * Create New App and Get The Client Id, Client Secret
 * Set Redirect URL `${APP.API_URL}/api/v1/user/register/oauth/callback`
 
-
 ### Enable Below API Services in Your Google Developer Console
 * Google Drive API
 * People API
@@ -77,9 +76,8 @@ https://askubuntu.com/a/807918
 
 ### Other Important APIs
 * Add User (Login as Google) `{{url}}/api/v1/user/register`
-* Add the Audio Playlist `{{url}}/api/v1/playlist`
-* Add the Video Playlist `{{url}}/api/v1/playlist`
-* Remove Video Playlist `{{url}}/api/v1/playlist`
+* Add the Audio/Video Playlist `{{url}}/api/v1/playlist`
+* Remove Audio/Video Playlist `{{url}}/api/v1/playlist`
 
 ### Postman Collection to Quick Start Using APIs
 `https://www.getpostman.com/collections/de711239ba8581682a33`
