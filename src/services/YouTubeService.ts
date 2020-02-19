@@ -65,6 +65,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         } while (nextPageToken !== '');
         youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
         const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
+        ytplPlaylistStore.id = params.playlistId;
         debug('ytplPlaylistStore ', ytplPlaylistStore.items.length);
         req.youTubePlaylistStore = ytplPlaylistStore;
         return next();

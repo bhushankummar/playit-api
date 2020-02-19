@@ -34,6 +34,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: params.driveFolderId
             };
+            debug('whereCondition ', whereCondition);
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             const mediaItemStore = await mediaItemModel.findOne(whereCondition);
             if (mediaItemStore && mediaItemStore.isUploaded === false) {
