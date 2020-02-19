@@ -1,4 +1,4 @@
-import {Column, Entity, ObjectID, ObjectIdColumn} from 'typeorm';
+import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 @Entity('users')
 export class UserEntity {
@@ -6,9 +6,16 @@ export class UserEntity {
     @ObjectIdColumn()
     _id: ObjectID;
 
+    @Index({ unique: true })
     @Column()
     email: string;
 
     @Column()
     google: object;
+
+    @CreateDateColumn()
+    createdDate: Date;
+
+    @UpdateDateColumn()
+    updatedDate: Date;
 }

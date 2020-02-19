@@ -1,4 +1,4 @@
-import {Column, Entity, ObjectID, ObjectIdColumn} from 'typeorm';
+import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 class User {
     @ObjectIdColumn()
@@ -19,4 +19,10 @@ export class TokenEntity {
 
     @Column(type => User)
     user: User;
+
+    @CreateDateColumn()
+    createdDate: Date;
+
+    @UpdateDateColumn()
+    updatedDate: Date;
 }

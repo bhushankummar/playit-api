@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as Debug from 'debug';
 import { IRequest } from '../interface/IRequest';
+import { APP } from '../constants';
 
 const debug = Debug('PL:GoogleController');
 
@@ -18,7 +19,7 @@ export const googleDetail: express.RequestHandler = (req: IRequest, res: express
  */
 export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const token = `token=${req.tokenStore.token}`;
-    const frontEndUrl = 'http://localhost:8100';
+    const frontEndUrl = APP.FRONT_END_URL;
     return res.redirect(`${frontEndUrl}?${token}`);
 };
 

@@ -106,3 +106,7 @@ dist
 # Additional Files
 README.sample.md
 .DS_Store
+
+#Media Files
+*.mp3
+*.mp4

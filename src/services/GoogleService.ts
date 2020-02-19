@@ -8,8 +8,6 @@ import { GOOGLE_AUTH } from '../constants';
 import { oauth2Client } from '../utils/GoogleUtils';
 import * as GoogleUtils from '../utils/GoogleUtils';
 
-const plus = google.plus({ version: 'v1' });
-
 const debug = Debug('PL:GoogleService');
 
 /**
@@ -36,7 +34,7 @@ export const retrieveAuthorizationCode: express.RequestHandler = async (req: IRe
         // debug('params.code ', params.code);
         const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
         const { tokens } = await oauth2Client.getToken(params.code);
-        debug('tokens ', tokens);
+        // debug('tokens ', tokens);
         req.googleStore = tokens;
         return next();
     } catch (error) {

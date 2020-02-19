@@ -8,8 +8,9 @@ const debug = Debug('PL:Constant');
 export const DB = {
     MONGO_URL: process.env.MONGO_URL
 };
-export const APP: any = {
+export const APP = {
     API_URL: process.env.API_URL,
+    FRONT_END_URL: process.env.API_URL,
     FFPROBE_PATH: process.env.FFPROBE_PATH,
     ALLOWED_EMAILS: [],
     IS_SANDBOX: false,
@@ -73,10 +74,10 @@ export const GOOGLE_AUTH = {
     CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     REDIRECT_URL: `${APP.API_URL}/api/v1/user/register/oauth/callback`,
     SCOPES: [
-        'https://www.googleapis.com/auth/plus.me',
         'https://www.googleapis.com/auth/drive',
         'https://www.googleapis.com/auth/userinfo.profile',
         'https://www.googleapis.com/auth/userinfo.email',
+        'https://www.googleapis.com/auth/youtube'
     ]
 };
 

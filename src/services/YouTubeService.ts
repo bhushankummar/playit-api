@@ -7,7 +7,8 @@ import * as Boom from 'boom';
 import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleUtils from '../utils/GoogleUtils';
-import { IYouTubePlaylist } from '../interface/IYouTubePlaylist';
+import * as YouTubeUtils from '../utils/YouTubeUtils';
+import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 import { google } from 'googleapis';
 
 const debug = Debug('PL:YouTubeService');
@@ -23,7 +24,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         return next();
     }
     try {
-        const documents: IYouTubePlaylist = await YtplUtils.findPlaylistItems(params.playlistId);
+        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(params.playlistId);
         // debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {
@@ -43,8 +44,10 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
                 playlistId: params.playlistId
             };
             const response = await youtubeClient.playlistItems.list(playListItemsData);
-            // const response = await YouTubeUtils.searchAllItemsRecursively(params.playlistId);
-            debug('response ', JSON.stringify(response, undefined, 2));
+            debug('response.data ', JSON.stringify(response.data, undefined, 2));
+            const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(response.data);
+            req.youTubePlaylistStore = ytplPlaylistStore;
+            return next();
         } catch (error) {
             debug('listPlaylistItems YouTubeUtils error ', error);
             return next(Boom.notFound(error));

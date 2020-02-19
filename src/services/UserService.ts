@@ -95,16 +95,18 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
         return next();
     }
     // debug('Inside updateGoogleToken ', params.state);
+    const stateObjectId = new mongodb.ObjectID(params.state);
+    // debug('Inside updateGoogleToken stateObjectId', stateObjectId);
+
     try {
         const whereCondition = {
-            _id: params.state
+            _id: stateObjectId
         };
         const userData = {
             google: req.googleStore
         };
         const userModel = getMongoRepository(UserEntity);
         const response = await userModel.update(whereCondition, userData);
-        debug('response ', response);
     } catch (error) {
         debug('updateGoogleToken error ', error);
         return next(error);
@@ -122,9 +124,7 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
         return next();
     }
 
-    debug('params.state ', params.state);
     const stateObjectId = new mongodb.ObjectID(params.state);
-    debug('stateObjectId ', stateObjectId);
     try {
         const whereCondition: any = {
             _id: stateObjectId

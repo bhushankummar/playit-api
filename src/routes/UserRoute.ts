@@ -65,7 +65,6 @@ userRoute.put('/login', [
     UserService.validateLoginUserData,
     UserService.searchOneByEmail,
     GoogleService.generatesAuthUrlForLogin,
-    // UserService.loginUser,
     GoogleController.googleDetail
 ]);
 
@@ -73,7 +72,7 @@ userRoute.put('/login', [
  * User logout
  */
 userRoute.delete('/logout', passport.authenticate('bearer'), [
-    // TokenService.searchOneByToken,
+    TokenService.searchOneByToken,
     TokenService.deleteTokenById,
     UserController.logout
 ]);
