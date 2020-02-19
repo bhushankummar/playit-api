@@ -10,6 +10,7 @@ import * as GoogleUtils from '../utils/GoogleUtils';
 import * as YouTubeUtils from '../utils/YouTubeUtils';
 import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 import { google } from 'googleapis';
+import { IYoutubePlaylist, IYoutubePlaylistItem } from '../interface/IYoutubePlaylist';
 
 const debug = Debug('PL:YouTubeService');
 
@@ -35,23 +36,38 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         return next();
     } catch (error) {
         debug('listPlaylistItems YtplUtils error ', error);
-        try {
-            const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-            oauth2Client.setCredentials(req.userStore.google);
-            const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
-            const playListItemsData = {
-                part: 'snippet',
-                playlistId: params.playlistId
-            };
-            const response = await youtubeClient.playlistItems.list(playListItemsData);
-            debug('response.data ', JSON.stringify(response.data, undefined, 2));
-            const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(response.data);
-            req.youTubePlaylistStore = ytplPlaylistStore;
-            return next();
-        } catch (error) {
-            debug('listPlaylistItems YouTubeUtils error ', error);
-            return next(Boom.notFound(error));
-        }
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(req.userStore.google);
+        const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
+        const playListItemsData = {
+            part: 'snippet',
+            playlistId: params.playlistId,
+            pageToken: ''
+        };
+        let nextPageToken = '';
+        let youtubePlaylistStoreData: Partial<IYoutubePlaylist> = {};
+        let youtubePlaylistStoreItems: IYoutubePlaylistItem[] = [];
+        do {
+            playListItemsData.pageToken = _.clone(nextPageToken);
+            nextPageToken = '';
+            try {
+                const response: any = await youtubeClient.playlistItems.list(playListItemsData);
+                youtubePlaylistStoreData = response.data;
+                debug('youtubePlaylistStore ', JSON.stringify(response.data, undefined, 2));
+                youtubePlaylistStoreItems = youtubePlaylistStoreItems.concat(response.data.items);
+                if (response.data.nextPageToken) {
+                    nextPageToken = _.clone(response.data.nextPageToken);
+                }
+            } catch (error) {
+                debug('listPlaylistItems YouTubeUtils error ', error);
+                return next(Boom.notFound(error));
+            }
+        } while (nextPageToken !== '');
+        youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
+        const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
+        debug('ytplPlaylistStore ', ytplPlaylistStore.items.length);
+        req.youTubePlaylistStore = ytplPlaylistStore;
+        return next();
     }
 };
 
