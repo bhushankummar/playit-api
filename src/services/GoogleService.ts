@@ -5,16 +5,15 @@ import * as _ from 'lodash';
 import * as Boom from 'boom';
 import { google } from 'googleapis';
 import { GOOGLE_AUTH } from '../constants';
-import { oauth2Client } from '../utils/Google';
-
-const plus = google.plus({ version: 'v1' });
+import { oauth2Client } from '../utils/GoogleUtils';
+import * as GoogleUtils from '../utils/GoogleUtils';
 
 const debug = Debug('PL:GoogleService');
 
 /**
  * Generates oAuth URL
  */
-export const generatesAuthUrl: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const generatesAuthUrlForRegister: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (!_.isEmpty(req.userStore)) {
         return next(Boom.conflict('User is already registered with same email'));
     }
@@ -32,13 +31,15 @@ export const generatesAuthUrl: express.RequestHandler = (req: IRequest, res: exp
 export const retrieveAuthorizationCode: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.query);
     try {
+        // debug('params.code ', params.code);
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
         const { tokens } = await oauth2Client.getToken(params.code);
-        oauth2Client.setCredentials(tokens);
+        // debug('tokens ', tokens);
         req.googleStore = tokens;
         return next();
     } catch (error) {
-        debug('error ', error);
-        return next(error);
+        debug('retrieveAuthorizationCode error ', error);
+        return next(Boom.notFound(error));
     }
 };
 
@@ -63,17 +64,21 @@ export const setCredentials: express.RequestHandler = async (req: IRequest, res:
  */
 export const retrieveGoogleProfile: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
-        plus.people.get({ userId: 'me', auth: oauth2Client }, (error: any, response: any) => {
-            if (error) {
-                debug('error ', error);
-                return next(error);
-            }
-            // debug('response ', response.data);
-            req.googleProfileStore = response.data;
-            return next();
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(req.googleStore);
+        const people = google.people({
+            version: 'v1',
+            auth: oauth2Client,
         });
+        const response = await people.people.get({
+            resourceName: 'people/me',
+            personFields: 'emailAddresses,names,photos',
+        });
+        // debug('response ', response.data);
+        req.googleProfileStore = response.data;
+        return next();
     } catch (error) {
-        debug('error ', error);
+        debug('retrieveGoogleProfile error ', error);
         return next(error);
     }
 };
@@ -82,7 +87,6 @@ export const retrieveGoogleProfile: express.RequestHandler = async (req: IReques
  * Retrieve authorizationCode
  */
 export const refreshToken: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.query);
     try {
         debug('req.userStore.google ', req.userStore.google);
         oauth2Client.setCredentials(req.userStore.google);
@@ -102,4 +106,20 @@ export const refreshToken: express.RequestHandler = async (req: IRequest, res: e
         debug('error ', error);
         return next(error);
     }
+};
+
+/**
+ * Generates oAuth URL
+ */
+export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next(Boom.conflict('You are not registered User.'));
+    }
+    const url = oauth2Client.generateAuthUrl({
+        access_type: 'offline',
+        state: req.userStore._id.toString(),
+        scope: GOOGLE_AUTH.SCOPES
+    });
+    req.googleStore = { url };
+    return next();
 };

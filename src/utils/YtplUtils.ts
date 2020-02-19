@@ -1,18 +1,16 @@
-import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
-import * as fs from 'fs';
+import { YOUTUBE } from '../constants';
 import * as ytpl from 'ytpl';
-import { IYouTubePlaylist } from '../interface/IYouTubePlaylist';
+import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 
 const youtubedl = require('@microlink/youtube-dl');
-const id3Writer = require('browser-id3-writer');
 
 /**
  * Get the File Metadata
  */
-export const findPlaylistItems = (playlistId: string): Promise<IYouTubePlaylist> => {
+export const findPlaylistItems = (playlistId: string): Promise<IYtplPlaylist> => {
     return new Promise((resolve: any, reject: any) => {
         const options: any = { limit: 10000 };
-        ytpl(playlistId, options, (error: any, documents: IYouTubePlaylist) => {
+        ytpl(playlistId, options, (error: any, documents: IYtplPlaylist) => {
             if (error) {
                 reject(error);
             }

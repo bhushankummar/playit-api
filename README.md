@@ -69,6 +69,12 @@ https://askubuntu.com/a/807918
 * Create New App and Get The Client Id, Client Secret
 * Set Redirect URL `${APP.API_URL}/api/v1/user/register/oauth/callback`
 
+
+### Enable Below API Services in Your Google Developer Console
+* Google Drive API
+* People API
+* YouTube Data API v3	
+
 ### Other Important APIs
 * Add User (Login as Google) `{{url}}/api/v1/user/register`
 * Add the Audio Playlist `{{url}}/api/v1/playlist`

@@ -31,5 +31,4 @@ export const initAllJobs: any = () => {
 
     const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();
     syncMediaItemWithYouTubeJob.start();
-    debug('syncMediaItemWithYouTubeJob ', syncMediaItemWithYouTubeJob.nextDates(1));
 };

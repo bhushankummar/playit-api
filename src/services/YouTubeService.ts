@@ -3,9 +3,14 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as find from 'find';
+import * as Boom from 'boom';
 import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
-import * as YouTube from '../utils/YouTube';
-import { IYouTubePlaylist } from '../interface/IYouTubePlaylist';
+import * as YtplUtils from '../utils/YtplUtils';
+import * as GoogleUtils from '../utils/GoogleUtils';
+import * as YouTubeUtils from '../utils/YouTubeUtils';
+import { IYtplPlaylist } from '../interface/IYtplPlaylist';
+import { google } from 'googleapis';
+import { IYoutubePlaylist, IYoutubePlaylistItem } from '../interface/IYoutubePlaylist';
 
 const debug = Debug('PL:YouTubeService');
 
@@ -14,8 +19,13 @@ const debug = Debug('PL:YouTubeService');
  */
 export const listPlaylistItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.body, req.params);
+    if (_.isEmpty(params.playlistId)) {
+        return next();
+    } else if (_.isEmpty(req.userStore)) {
+        return next();
+    }
     try {
-        const documents: IYouTubePlaylist = await YouTube.findPlaylistItems(params.playlistId);
+        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(params.playlistId);
         // debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {
@@ -25,8 +35,39 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         debug('req.youTubePlaylistStore.items  ', req.youTubePlaylistStore.items.length);
         return next();
     } catch (error) {
-        debug('error ', error);
-        return next(error);
+        debug('listPlaylistItems YtplUtils error ', error);
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(req.userStore.google);
+        const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
+        const playListItemsData = {
+            part: 'snippet',
+            playlistId: params.playlistId,
+            pageToken: ''
+        };
+        let nextPageToken = '';
+        let youtubePlaylistStoreData: Partial<IYoutubePlaylist> = {};
+        let youtubePlaylistStoreItems: IYoutubePlaylistItem[] = [];
+        do {
+            playListItemsData.pageToken = _.clone(nextPageToken);
+            nextPageToken = '';
+            try {
+                const response: any = await youtubeClient.playlistItems.list(playListItemsData);
+                youtubePlaylistStoreData = response.data;
+                debug('youtubePlaylistStore ', JSON.stringify(response.data, undefined, 2));
+                youtubePlaylistStoreItems = youtubePlaylistStoreItems.concat(response.data.items);
+                if (response.data.nextPageToken) {
+                    nextPageToken = _.clone(response.data.nextPageToken);
+                }
+            } catch (error) {
+                debug('listPlaylistItems YouTubeUtils error ', error);
+                return next(Boom.notFound(error));
+            }
+        } while (nextPageToken !== '');
+        youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
+        const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
+        debug('ytplPlaylistStore ', ytplPlaylistStore.items.length);
+        req.youTubePlaylistStore = ytplPlaylistStore;
+        return next();
     }
 };
 
@@ -74,7 +115,7 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
                  */
             }
         } catch (error) {
-            debug('error ', error);
+            debug('removeDuplicateItemsFromLocal error ', error);
             return next(error);
         }
     });
