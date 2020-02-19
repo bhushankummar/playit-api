@@ -53,7 +53,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
             try {
                 const response: any = await youtubeClient.playlistItems.list(playListItemsData);
                 youtubePlaylistStoreData = response.data;
-                debug('youtubePlaylistStore ', JSON.stringify(response.data, undefined, 2));
+                // debug('youtubePlaylistStore ', JSON.stringify(response.data, undefined, 2));
                 youtubePlaylistStoreItems = youtubePlaylistStoreItems.concat(response.data.items);
                 if (response.data.nextPageToken) {
                     nextPageToken = _.clone(response.data.nextPageToken);
