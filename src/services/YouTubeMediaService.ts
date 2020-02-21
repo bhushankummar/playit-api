@@ -7,7 +7,7 @@ import * as _ from 'lodash';
 import * as bluebird from 'bluebird';
 import * as MediaDownloader from '../utils/MediaDownloader';
 
-import { APP, MEDIA_DIRECTORY } from '../constants';
+import { APP, MEDIA_DIRECTORY, MEDIA_TYPE } from '../constants';
 
 const debug = Debug('PL:YouTubeService');
 
@@ -15,8 +15,9 @@ const debug = Debug('PL:YouTubeService');
  * Download HQ Audio using URL
  */
 export const downloadAudioHQ: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (params.type !== 'audio') {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
         // debug('Return from media type. Current Value ', params.type);
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore)) {
@@ -25,7 +26,7 @@ export const downloadAudioHQ: express.RequestHandler = async (req: IRequest, res
         return next();
     }
 
-    const driveDirectory = path.join(MEDIA_DIRECTORY.AUDIO, params.driveFolderId);
+    const driveDirectory = path.join(MEDIA_DIRECTORY.AUDIO, req.playlistStore.driveFolderId);
     if (!fs.existsSync(driveDirectory)) {
         fs.mkdirSync(driveDirectory);
     }
@@ -46,8 +47,9 @@ export const downloadAudioHQ: express.RequestHandler = async (req: IRequest, res
  * Download HQ Video using URL
  */
 export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (params.type !== 'video') {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (req.playlistStore.type !== MEDIA_TYPE.VIDEO) {
         // debug('Return from media type. Current Value ', params.type);
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore)) {
@@ -56,7 +58,7 @@ export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res
         return next();
     }
 
-    const driveDirectory = path.join(MEDIA_DIRECTORY.VIDEO, params.driveFolderId);
+    const driveDirectory = path.join(MEDIA_DIRECTORY.VIDEO, req.playlistStore.driveFolderId);
     if (!fs.existsSync(driveDirectory)) {
         fs.mkdirSync(driveDirectory);
     }

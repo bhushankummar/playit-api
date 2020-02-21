@@ -6,6 +6,7 @@ import * as UserService from '../services/UserService';
 import * as YouTubeController from '../controllers/YouTubeController';
 import * as GoogleService from '../services/GoogleService';
 import * as MediaItemService from '../services/MediaItemService';
+import * as PlaylistService from '../services/PlaylistService';
 
 const youtubeRoute: express.Router = express.Router();
 
@@ -15,8 +16,10 @@ const youtubeRoute: express.Router = express.Router();
  * This API Called from Crone Job
  * type : 0 = Audio ; 1 = Video
  */
-youtubeRoute.post('/crone/download/:type/:playlistId/:driveFolderId', [
-    UserService.searchOneByEmail,
+youtubeRoute.post('/crone/download', [
+    PlaylistService.searchOneByLastSync,
+    PlaylistService.updateLastSync,
+    UserService.searchOneByPlaylistUser,
     YouTubeService.listPlaylistItems,
     YouTubeService.removeDuplicateItemsFromLocal,
     MediaItemService.removeDuplicateItemsFromDatabaseAndCreate,
@@ -36,4 +39,4 @@ youtubeRoute.get('/playlist/:playlistId', [
     YouTubeController.youtubeData
 ]);
 
-export {youtubeRoute};
+export { youtubeRoute };

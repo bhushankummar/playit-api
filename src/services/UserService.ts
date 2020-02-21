@@ -136,3 +136,27 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
     }
     return next();
 };
+
+/**
+ * Search user by email
+ * @param: email
+ */
+export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore.user)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore.user._id)) {
+        return next();
+    }
+    try {
+        const whereCondition = {
+            _id: req.playlistStore.user._id
+        };
+        const userModel = getMongoRepository(UserEntity);
+        req.userStore = await userModel.findOne(whereCondition);
+    } catch (error) {
+        return next(error);
+    }
+    return next();
+};

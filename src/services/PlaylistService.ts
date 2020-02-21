@@ -4,8 +4,9 @@ import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
-import { getMongoRepository } from 'typeorm';
+import { getMongoRepository, FindOneOptions, OrderByCondition } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
+import moment = require('moment');
 
 const debug = Debug('PL:PlaylistService');
 
@@ -56,8 +57,8 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         await playlistModel.save(playlist);
         req.playlistStore = playlist;
     } catch (error) {
-        debug('error: %o ', error);
-        return next(error);
+        debug('error ', error);
+        return next(Boom.notFound(error));
     }
     return next();
 };
@@ -80,7 +81,8 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
         const playlistModel = getMongoRepository(PlaylistEntity);
         req.playlistItemStore = await playlistModel.find(whereCondition);
     } catch (error) {
-        return next(error);
+        debug('error ', error);
+        return next(Boom.notFound(error));
     }
     return next();
 };
@@ -106,7 +108,8 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
         req.playlistStore = await playlistModel.findOne(whereCondition);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        return next(error);
+        debug('error ', error);
+        return next(Boom.notFound(error));
     }
     return next();
 };
@@ -129,7 +132,57 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
         // debug('response ', response);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        return next(error);
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Search One Playlist Last Sync
+ */
+export const searchOneByLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    try {
+        const playlistModel = getMongoRepository(PlaylistEntity);
+        const whereCondition = {
+            lastSyncTimeStamp: {
+                '$lt': moment().subtract(5, 'minutes').toISOString()
+            }
+        };
+        const options: FindOneOptions<PlaylistEntity> = {
+            where: whereCondition,
+            order: {
+                lastSyncTimeStamp: 'ASC'
+            }
+        };
+        req.playlistStore = await playlistModel.findOne(options);
+        // debug('req.playlistStore ', req.playlistStore);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Search One Playlist Last Sync
+ */
+export const updateLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    }
+    try {
+        const playlistModel = getMongoRepository(PlaylistEntity);
+        const whereCondition = {
+            _id: req.playlistStore._id
+        };
+        const updateData = {
+            lastSyncTimeStamp: moment().toISOString()
+        };
+        await playlistModel.update(whereCondition, updateData);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
     }
     return next();
 };

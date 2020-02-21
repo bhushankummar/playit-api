@@ -14,8 +14,9 @@ const debug = Debug('PL:MediaItemService');
  * Remove Duplicate Items and Create If Not Exits
  */
 export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(req.youTubePlaylistStore)) {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (_.isEmpty(req.youTubePlaylistStore)) {
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
         return next();
@@ -32,7 +33,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                 user: userProfile,
                 urlId: value.id,
                 playlistId: req.youTubePlaylistStore.id,
-                driveFolderId: params.driveFolderId
+                driveFolderId: req.playlistStore.driveFolderId
             };
             // debug('whereCondition ', whereCondition);
             const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -54,7 +55,7 @@ export const removeDuplicateItemsFromDatabaseAndCreate: express.RequestHandler =
                     url: value.url_simple,
                     urlId: value.id,
                     playlistId: req.youTubePlaylistStore.id,
-                    driveFolderId: params.driveFolderId,
+                    driveFolderId: req.playlistStore.driveFolderId,
                     isUploaded: false
                 };
                 // debug('data ', JSON.stringify(data));

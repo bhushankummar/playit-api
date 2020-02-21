@@ -3,7 +3,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as Boom from 'boom';
 import * as utils from '../utils/index';
-import {IRequest} from '../interface/IRequest';
+import { IRequest } from '../interface/IRequest';
 
 const debug = Debug('PL:Config');
 
@@ -11,18 +11,18 @@ export const trimParams: express.RequestHandler = (req: IRequest, res: express.R
     debug('START : %o', utils.url(req) + req.url);
     debug('req.method : %o ', req.method);
     if (req.method === 'OPTIONS') {
-        req.data = {message: true};
+        req.data = { message: true };
     }
     // Trim query and post parameters
     _.each(req.body, (value, key) => {
         if ((_.isString(value) && !_.isEmpty(value))) {
-            req.body[key] = value.trim();
+            req.body[ key ] = value.trim();
         }
     });
 
     _.each(req.query, (value, key) => {
         if ((_.isString(value) && !_.isEmpty(value))) {
-            req.query[key] = value.trim();
+            req.query[ key ] = value.trim();
         }
     });
     debug('req.body : %o ', req.body);
@@ -53,11 +53,10 @@ export const handleError = (err: any, req: IRequest, res: express.Response, next
     } else {
         errorResponse = err;
     }
-
     debug('Error :: ');
     debug(errorResponse);
     debug('END : %o', utils.url(req) + req.url);
-    res.status(errorResponse.statusCode).json(errorResponse);
+    res.status(errorResponse.statusCode || 404).json(errorResponse);
     res.end();
     debug('----------------------------------------------------------------------------------- ');
 };

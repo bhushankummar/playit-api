@@ -48,7 +48,7 @@ export const retrieveAuthorizationCode: express.RequestHandler = async (req: IRe
  */
 export const setCredentials: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
-        return next(Boom.conflict('User is not loggedIn.'));
+        return next();
     }
     try {
         oauth2Client.setCredentials(req.userStore.google);

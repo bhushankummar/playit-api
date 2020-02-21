@@ -1,4 +1,5 @@
-import {Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn} from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Timestamp } from 'typeorm';
+import moment = require('moment');
 
 class User {
     @ObjectIdColumn()
@@ -31,6 +32,11 @@ export class PlaylistEntity {
 
     @Column()
     driveFolderId: string;
+
+    @Column({
+        default: moment().toISOString()
+    })
+    lastSyncTimeStamp: Date;
 
     @CreateDateColumn()
     createdDate: Date;

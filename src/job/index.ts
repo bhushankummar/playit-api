@@ -24,7 +24,7 @@ export const initAllJobs: any = () => {
     const downloadAudioToLocalJob = DownloadAudioToLocal.init();
     downloadAudioToLocalJob.start();
 
-    DownloadVideoToLocal.init().start();
+    // DownloadVideoToLocal.init().start();
     UploadAudioToGoogleDrive.init().start();
     UploadVideoToGoogleDrive.init().start();
     EmptyTrashGoogleDrive.init().start();

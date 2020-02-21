@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as find from 'find';
 import * as Boom from 'boom';
-import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
+import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleUtils from '../utils/GoogleUtils';
 import * as YouTubeUtils from '../utils/YouTubeUtils';
@@ -18,14 +18,15 @@ const debug = Debug('PL:YouTubeService');
  * List all the Playlist Songs
  */
 export const listPlaylistItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(params.playlistId)) {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore._id)) {
         return next();
     } else if (_.isEmpty(req.userStore)) {
         return next();
     }
     try {
-        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(params.playlistId);
+        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(req.playlistStore.urlId);
         // debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {
@@ -41,7 +42,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
         const playListItemsData = {
             part: 'snippet',
-            playlistId: params.playlistId,
+            playlistId: req.playlistStore.urlId,
             pageToken: ''
         };
         let nextPageToken = '';
@@ -65,7 +66,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         } while (nextPageToken !== '');
         youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
         const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
-        ytplPlaylistStore.id = params.playlistId;
+        ytplPlaylistStore.id = req.playlistStore.urlId;
         debug('ytplPlaylistStore ', ytplPlaylistStore.items.length);
         req.youTubePlaylistStore = ytplPlaylistStore;
         return next();
@@ -76,7 +77,6 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
  * List all the Playlist Songs
  */
 export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.youTubePlaylistStore)) {
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
@@ -86,11 +86,9 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
     let availableInLocalDirectory = 0;
     const uniqueItems: any = [];
     let mediaDirectory = MEDIA_DIRECTORY.AUDIO;
-    if (params.type !== 'audio') {
-        mediaDirectory = MEDIA_DIRECTORY.VIDEO;
-    }
     let extension = MEDIA_EXTENSION.AUDIO;
-    if (params.type !== 'audio') {
+    if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
+        mediaDirectory = MEDIA_DIRECTORY.VIDEO;
         extension = MEDIA_EXTENSION.VIDEO;
     }
     // debug('extension ', extension);

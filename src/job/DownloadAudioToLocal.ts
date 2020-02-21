@@ -32,43 +32,16 @@ const start: any = async () => {
     }
     taskRunning = true;
     // debug('.............. Start ........');
-
-    const users = APP.ALLOWED_EMAILS;
-    await Promise.all(users.map(async (email: any) => {
-        if (_.isEmpty(email)) {
-            return;
-        }
-        const data = {
-            email: email
+    try {
+        const options = {
+            method: 'POST',
+            uri: `${ENDPOINT.DOWNLOAD}`,
+            body: {},
+            json: true
         };
-
-        try {
-            const userModel = getMongoRepository(UserEntity);
-            const userStore: UserEntity = await userModel.findOne(data);
-            // debug('userStore ', userStore);
-            const userProfile = {
-                _id: userStore._id,
-                email: userStore.email
-            };
-            const playlistModel = getMongoRepository(PlaylistEntity);
-            const whereConditionAudio = {
-                user: userProfile,
-                type: MEDIA_TYPE.AUDIO
-            };
-            const playlistItemStore: PlaylistEntity[] = await playlistModel.find(whereConditionAudio);
-            // debug('playlistItemStore ', playlistItemStore);
-            await bluebird.map(playlistItemStore, (item: PlaylistEntity) => {
-                const options = {
-                    method: 'POST',
-                    uri: `${ENDPOINT.DOWNLOAD}/audio/${item.urlId}/${item.driveFolderId}`,
-                    body: data,
-                    json: true
-                };
-                return request(options);
-            }, { concurrency: 1 });
-        } catch (error) {
-            // debug('error ', error);
-        }
-    }));
+        return request(options);
+    } catch (error) {
+        // debug('error ', error);
+    }
     taskRunning = false;
 };
