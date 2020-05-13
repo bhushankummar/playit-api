@@ -22,7 +22,6 @@
     "author": "Bhushankumar L (bhushankumar.lilapara@gmail.com)",
     "license": "ISC",
     "dependencies": {
-        "@microlink/youtube-dl": "^2.0.0",
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "boom": "^7.3.0",
@@ -46,6 +45,7 @@
         "request": "^2.88.0",
         "request-promise": "^4.2.5",
         "typeorm": "^0.2.22",
+        "youtube-dl": "^3.0.2",
         "ytpl": "^0.1.19"
     },
     "devDependencies": {
