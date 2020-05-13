@@ -25,7 +25,7 @@ mediaItemRoute.post('/', [
  * Removes the document & google drive file if Media is not in the YouTube Playlist
  * This API called from the Cron Job
  */
-mediaItemRoute.post('/sync/crone/youtube/sample', [
+mediaItemRoute.post('/sync/crone/youtube', [
     PlaylistService.searchOneByLastSync,
     PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,
