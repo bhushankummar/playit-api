@@ -23,7 +23,7 @@ export const init: any = () => {
 let taskRunning = false;
 const start: any = async () => {
     if (taskRunning) {
-        // debug('.............. SKIP ........');
+        debug('.............. SKIP ........');
         return;
     }
     taskRunning = true;

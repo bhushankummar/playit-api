@@ -124,8 +124,8 @@ export const CRONE_JOB = {
 };
 
 export const DOWNLOAD_AUDIO_SCHEDULE = {
-    Seconds: '*',
-    Minutes: '*',
+    Seconds: '0',
+    Minutes: '*/1',
     Hours: '*',
     DayOfMonth: '*',
     Months: '*',

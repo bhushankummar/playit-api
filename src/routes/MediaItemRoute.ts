@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as passport from 'passport';
 import * as UserService from '../services/UserService';
 import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as MediaItemController from '../controllers/MediaItemController';
@@ -12,8 +13,7 @@ const mediaItemRoute: express.Router = express.Router();
  * Search All Media List
  * This API will return all the Medias of User
  */
-mediaItemRoute.post('/', [
-    UserService.searchOneByEmail,
+mediaItemRoute.post('/', passport.authenticate('bearer'), [
     MediaItemService.searchByLoggedInUser,
     MediaItemController.mediaItemData
 ]);

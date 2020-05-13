@@ -21,4 +21,5 @@ export const init = async () => {
             TokenEntity
         ]
     });
+    return connection;
 };

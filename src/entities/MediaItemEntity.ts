@@ -1,12 +1,12 @@
-import {Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn} from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
 
 class User {
 
     @ObjectIdColumn()
     _id: ObjectID;
 
-    @Column()
-    email?: string;
+    @Column({ nullable: false })
+    email: string;
 }
 
 @Entity('mediaItems')
@@ -18,25 +18,27 @@ export class MediaItemEntity {
     @Column(type => User)
     user: User;
 
-    @Column()
+    @Column({ nullable: false })
     url: string;
 
+    @Column({ nullable: false })
     @Column()
     title: string;
 
+    @Column({ nullable: false })
     @Column()
     urlId: string;
 
-    @Column()
+    @Column({ nullable: false })
     playlistId: string;
 
-    @Column()
+    @Column({ nullable: false })
     driveFolderId: string;
 
     @Column()
     fileId: string;
 
-    @Column()
+    @Column({ default: false })
     isUploaded: boolean;
 
     @CreateDateColumn()

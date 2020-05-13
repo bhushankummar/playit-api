@@ -148,6 +148,7 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
     } else if (_.isEmpty(req.playlistStore.user)) {
         return next();
     } else if (_.isEmpty(req.playlistStore.user._id)) {
+        debug('CRITICAL : req.playlistStore.user._id is empty %o ', req.playlistStore);
         return next();
     }
     try {

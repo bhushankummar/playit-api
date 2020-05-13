@@ -3,10 +3,6 @@ import * as cron from 'cron';
 import { APP, CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE, ENDPOINT, MEDIA_TYPE } from '../constants';
 import * as _ from 'lodash';
 import * as request from 'request-promise';
-import { getMongoRepository } from 'typeorm';
-import { UserEntity } from '../entities/UserEntity';
-import { PlaylistEntity } from '../entities/PlaylistEntity';
-import * as bluebird from 'bluebird';
 
 const CronJob = cron.CronJob;
 const debug = Debug('PL:JOB-DownloadAudioToLocal');
@@ -27,7 +23,7 @@ export const init: any = () => {
 let taskRunning = false;
 const start: any = async () => {
     if (taskRunning) {
-        // debug('.............. SKIP ........');
+        debug('.............. SKIP ........');
         return;
     }
     taskRunning = true;
@@ -39,7 +35,7 @@ const start: any = async () => {
             body: {},
             json: true
         };
-        return request(options);
+        await request(options);
     } catch (error) {
         // debug('error ', error);
     }

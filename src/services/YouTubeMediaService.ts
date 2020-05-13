@@ -89,11 +89,15 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
     }
     await bluebird.map(req.mediaItemsStore, async (item: any) => {
         try {
+            if (_.isEmpty(item.playlistId)) {
+                debug('CRITICAL : Skipping Media Item which has not playlistId.');
+                return;
+            }
             const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
             // debug('AUDIO download complete ', response);
         } catch (error) {
-            debug('downloadAudioHQ error ', error);
-            debug('downloadAudioHQ error item', item);
+            debug('downloadAudioHQUsingMediaItem error ', error);
+            debug('downloadAudioHQUsingMediaItem error item', item);
         }
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
     req.youTubeStore = { message: true };

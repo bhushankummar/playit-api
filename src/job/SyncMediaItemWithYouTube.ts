@@ -23,7 +23,7 @@ export const init: any = () => {
 let taskRunning = false;
 const start: any = async () => {
     if (taskRunning === true) {
-        // debug('.............. SKIP ........');
+        debug('.............. SKIP ........');
         return;
     }
     taskRunning = true;
@@ -34,7 +34,7 @@ const start: any = async () => {
             body: {},
             json: true
         };
-        request(options);
+        await request(options);
     } catch (error) {
         // debug('error ', error);
     }
