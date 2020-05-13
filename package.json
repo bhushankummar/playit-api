@@ -13,7 +13,7 @@
         "test": "mocha -r ts-node/register",
         "unit": "mocha -r ts-node/register --opts ./test/mocha.unit.opts",
         "posttest": "npm run tslint",
-        "version": "echo '@microlink/youtube-dl' ; ./node_modules/@microlink/youtube-dl/bin/youtube-dl --version"
+        "version": "echo 'youtube-dl' ; ./node_modules/youtube-dl/bin/youtube-dl --version"
     },
     "engines": {
         "node": "10.16.3",
