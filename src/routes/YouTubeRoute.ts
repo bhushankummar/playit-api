@@ -20,12 +20,27 @@ youtubeRoute.post('/crone/download', [
     PlaylistService.searchOneByLastSync,
     PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,
+    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
+    YouTubeMediaService.downloadAudioHQUsingMediaItem,
+    YouTubeController.youtubeData
+]);
+
+/**
+ * Download Audio File
+ * Download Video File
+ * This API Called from Crone Job
+ * type : 0 = Audio ; 1 = Video
+ */
+youtubeRoute.post('/crone/download/v1', [
+    PlaylistService.searchOneByLastSync,
+    PlaylistService.updateLastSync,
+    UserService.searchOneByPlaylistUser,
     YouTubeService.listPlaylistItems,
     YouTubeService.removeDuplicateItemsFromLocal,
     MediaItemService.removeDuplicateItemsFromDatabaseAndCreate,
     GoogleService.setCredentials,
     GoogleDriveService.removeDuplicatesFromGoogleDrive,
-    YouTubeMediaService.downloadAudioHQ,
+    YouTubeMediaService.downloadAudioHQUsingYouTube,
     YouTubeMediaService.downloadVideoHQ,
     YouTubeController.youtubeData
 ]);

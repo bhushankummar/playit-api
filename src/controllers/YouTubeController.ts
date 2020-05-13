@@ -8,6 +8,6 @@ Debug('PL:YouTubeController');
  * YouTube Details
  */
 export const youtubeData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.youTubePlaylistStore || [];
+    req.data = req.playlistStore || [];
     return next();
 };

@@ -3,7 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDrive';
-import { getMongoRepository } from 'typeorm';
+import { getMongoRepository, FindManyOptions } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -342,5 +342,40 @@ export const identifySyncItemsForGoogleDrive: express.RequestHandler = async (re
         mediaItemsUpdateCount: mediaItemsUpdate.length,
         mediaItemsUpdate: mediaItemsUpdate
     };
+    return next();
+};
+
+
+/**
+ * List all the Playlist Songs
+ */
+export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore)) {
+        return next();
+    }
+    const userProfile = {
+        _id: req.userStore._id,
+        email: req.userStore.email
+    };
+    // debug('userProfile ', userProfile);
+    try {
+        const whereCondition: FindManyOptions = {
+            where: {
+                user: userProfile,
+                playlistId: req.playlistStore.urlId,
+                driveFolderId: req.playlistStore.driveFolderId,
+                isUploaded: false
+            },
+            take: 1
+        };
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
+    } catch (error) {
+        debug('error ', error);
+        return next(error);
+    }
     return next();
 };

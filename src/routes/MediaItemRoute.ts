@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as UserService from '../services/UserService';
 import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as MediaItemController from '../controllers/MediaItemController';
-import * as GoogleService from '../services/GoogleService';
 import * as MediaItemService from '../services/MediaItemService';
 import * as PlaylistService from '../services/PlaylistService';
 import * as YouTubeService from '../services/YouTubeService';
@@ -26,7 +25,7 @@ mediaItemRoute.post('/', [
  * Removes the document & google drive file if Media is not in the YouTube Playlist
  * This API called from the Cron Job
  */
-mediaItemRoute.post('/sync/crone/youtube', [
+mediaItemRoute.post('/sync/crone/youtube/sample', [
     PlaylistService.searchOneByLastSync,
     PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,

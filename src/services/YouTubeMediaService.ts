@@ -14,15 +14,11 @@ const debug = Debug('PL:YouTubeService');
 /**
  * Download HQ Audio using URL
  */
-export const downloadAudioHQ: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const downloadAudioHQUsingYouTube: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
     } else if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
         // debug('Return from media type. Current Value ', params.type);
-        return next();
-    } else if (_.isEmpty(req.youTubePlaylistStore)) {
-        return next();
-    } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
         return next();
     }
 
@@ -71,6 +67,35 @@ export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res
             debug('downloadVideoHQ error item', item);
         }
     }, { concurrency: APP.DOWNLOAD_VIDEO_CONCURRENCY });
+    req.youTubeStore = { message: true };
+    return next();
+};
+
+
+/**
+ * Download HQ Audio using URL
+ */
+export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
+        // debug('Return from media type. Current Value ', params.type);
+        return next();
+    }
+
+    const driveDirectory = path.join(MEDIA_DIRECTORY.AUDIO, req.playlistStore.driveFolderId);
+    if (!fs.existsSync(driveDirectory)) {
+        fs.mkdirSync(driveDirectory);
+    }
+    await bluebird.map(req.mediaItemsStore, async (item: any) => {
+        try {
+            const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
+            // debug('AUDIO download complete ', response);
+        } catch (error) {
+            debug('downloadAudioHQ error ', error);
+            debug('downloadAudioHQ error item', item);
+        }
+    }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
     req.youTubeStore = { message: true };
     return next();
 };

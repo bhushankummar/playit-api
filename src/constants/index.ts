@@ -131,6 +131,7 @@ export const DOWNLOAD_AUDIO_SCHEDULE = {
     Months: '*',
     DayOfWeek: '*'
 };
+
 export const DOWNLOAD_VIDEO_SCHEDULE = {
     Seconds: '0',
     Minutes: '*/5',
@@ -169,8 +170,8 @@ export const EMPTY_TRASH_SCHEDULE = {
 
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
     Seconds: '0',
-    Minutes: '0',
-    Hours: '*/1',
+    Minutes: '*/5',
+    Hours: '*',
     DayOfMonth: '*',
     Months: '*',
     DayOfWeek: '*'
