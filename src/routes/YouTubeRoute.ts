@@ -21,6 +21,7 @@ youtubeRoute.post('/crone/download', [
     PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
+    MediaItemService.updateDownloadTimeStamp,
     YouTubeMediaService.downloadAudioHQUsingMediaItem,
     YouTubeController.youtubeData
 ]);

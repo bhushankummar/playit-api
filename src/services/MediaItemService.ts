@@ -2,11 +2,13 @@ import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
+import * as Boom from 'boom';
 import * as GoogleDrive from '../utils/GoogleDrive';
 import { getMongoRepository, FindManyOptions } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
+import moment = require('moment');
 
 const debug = Debug('PL:MediaItemService');
 
@@ -368,6 +370,9 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: false
             },
+            order: {
+                lastDownloadTimeStamp: 'ASC'
+            },
             take: 5
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -376,6 +381,37 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
     } catch (error) {
         debug('error ', error);
         return next(error);
+    }
+    return next();
+};
+
+/**
+ * Search One MediaItem Last Sync
+ */
+export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.mediaItemsStore)) {
+        return next();
+    }
+    const mediaItemIds = _.map(req.mediaItemsStore, '_id');
+    if (_.isEmpty(mediaItemIds)) {
+        return next();
+    }
+    debug('mediaItemIds ', mediaItemIds);
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        const whereCondition: any = {
+            '_id': {
+                '$in': mediaItemIds
+            }
+        };
+        const updateData = {
+            lastDownloadTimeStamp: moment().toISOString()
+        };
+        const response = await mediaItemModel.update(whereCondition, updateData);
+        debug('response ', response);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
     }
     return next();
 };

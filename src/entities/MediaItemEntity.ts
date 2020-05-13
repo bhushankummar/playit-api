@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
+import moment = require('moment');
 
 class User {
 
@@ -40,6 +41,9 @@ export class MediaItemEntity {
 
     @Column({ default: false })
     isUploaded: boolean;
+
+    @Column()
+    lastDownloadTimeStamp: Date;
 
     @CreateDateColumn()
     createdDate: string;
