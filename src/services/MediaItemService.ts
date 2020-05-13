@@ -105,8 +105,9 @@ export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest
  * List all the Playlist Songs
  */
 export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore)) {
         return next();
     }
     const userProfile = {
@@ -117,12 +118,12 @@ export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandle
     try {
         const whereCondition: any = {
             user: userProfile,
-            playlistId: params.playlistId,
-            driveFolderId: params.driveFolderId
+            playlistId: req.playlistStore.urlId,
+            driveFolderId: req.playlistStore.driveFolderId
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
-        debug('req.mediaItemsStore ', req.mediaItemsStore.length);
+        debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
     } catch (error) {
         debug('error ', error);
         return next(error);
@@ -148,15 +149,27 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const mediaItemsUpdate: any = [];
     const mediaItemsRemove: any = [];
     const googleDriveItemsRemove: any = [];
+
+    /**
+     * Identify the files those are not in the database but available in the YouTube
+     */
     _.each(req.youTubePlaylistStore.items, (value) => {
         const item = _.find(req.mediaItemsStore, { urlId: value.id });
         if (_.isEmpty(item)) {
             mediaItemsNew.push(value);
         }
     });
+
+    // TODO : Handle if the req.mediaItemsStore has the duplicate items.
     _.each(req.mediaItemsStore, (value) => {
+        // debug('value.urlId ', value.urlId);
         const item = _.find(req.youTubePlaylistStore.items, { id: value.urlId });
+        // debug('item %o ', item.length);
+        /**
+         * Identify the files those are in the database but not available in the YouTube
+         */
         if (_.isEmpty(item)) {
+            // debug('Identify for the Remove. %o ', item);
             mediaItemsRemove.push(value);
         }
 
@@ -178,6 +191,8 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         }
     });
     req.data = {
+        playlistStore: req.playlistStore,
+        userStore: req.userStore,
         mediaItemsNewCount: mediaItemsNew.length,
         mediaItemsRemoveCount: mediaItemsRemove.length,
         googleDriveItemsRemoveCount: googleDriveItemsRemove.length,

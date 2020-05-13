@@ -27,13 +27,13 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     }
     try {
         const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(req.playlistStore.urlId);
-        debug('documents ', documents);
+        // debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {
             req.youTubePlaylistStore.items = _.take(documents.items, 1);
         }
         // debug('req.youTubePlaylistStore.items  ', JSON.stringify(req.youTubePlaylistStore.items, undefined, 2));
-        debug('req.youTubePlaylistStore.items  ', req.youTubePlaylistStore.items.length);
+        debug('Total songs in YouTube  ', req.youTubePlaylistStore.items.length);
         return next();
     } catch (error) {
         debug('listPlaylistItems YtplUtils error ', error);
@@ -67,7 +67,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
         const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
         ytplPlaylistStore.id = req.playlistStore.urlId;
-        debug('ytplPlaylistStore ', ytplPlaylistStore.items.length);
+        debug('Total songs in YouTube ', ytplPlaylistStore.items.length);
         req.youTubePlaylistStore = ytplPlaylistStore;
         return next();
     }

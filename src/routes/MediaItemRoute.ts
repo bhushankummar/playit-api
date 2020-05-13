@@ -28,6 +28,7 @@ mediaItemRoute.post('/', [
  */
 mediaItemRoute.post('/sync/crone/youtube', [
     PlaylistService.searchOneByLastSync,
+    PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,
     GoogleDriveService.cleanTrash,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
