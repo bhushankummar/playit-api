@@ -3,7 +3,7 @@ import * as ytpl from 'ytpl';
 import * as _ from 'lodash';
 import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 
-const youtubedl = require('@microlink/youtube-dl');
+const youtubedl = require('youtube-dl');
 
 /**
  * Get the File Metadata

@@ -39,8 +39,8 @@ export class PlaylistEntity {
     lastSyncTimeStamp: Date;
 
     @CreateDateColumn()
-    createdDate: Date;
+    createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: Date;
+    updatedDate: string;
 }

@@ -6,7 +6,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import { APP } from '../constants';
 
-const youtubedl = require('@microlink/youtube-dl');
+const youtubedl = require('youtube-dl');
 const debug = Debug('PL:MediaDownloader');
 
 export const downloadMedia = (options: any[], type: string, item: any, driveDirectory: any) => {

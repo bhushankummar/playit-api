@@ -42,8 +42,8 @@ export class MediaItemEntity {
     isUploaded: boolean;
 
     @CreateDateColumn()
-    createdDate: Date;
+    createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: Date;
+    updatedDate: string;
 }
