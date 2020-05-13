@@ -143,7 +143,7 @@ export const DOWNLOAD_VIDEO_SCHEDULE = {
 
 export const UPLOAD_AUDIO_SCHEDULE = {
     Seconds: '0',
-    Minutes: '*/7',
+    Minutes: '*/3',
     Hours: '*',
     DayOfMonth: '*',
     Months: '*',

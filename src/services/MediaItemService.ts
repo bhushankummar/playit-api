@@ -368,7 +368,7 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: false
             },
-            take: 1
+            take: 5
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
