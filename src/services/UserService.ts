@@ -35,6 +35,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
+        // debug('req.userStore ', req.userStore);
     } catch (error) {
         return next(error);
     }
@@ -51,7 +52,7 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
     }
     try {
         const user: UserEntity = new UserEntity();
-        user.email = req.googleProfileStore.emailAddresses[ 0 ].value;
+        user.email = req.googleProfileStore.emailAddresses[0].value;
         user.google = req.googleStore;
         const userModel = getMongoRepository(UserEntity);
         const document = await userModel.save(user);

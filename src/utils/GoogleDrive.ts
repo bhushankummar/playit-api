@@ -2,6 +2,7 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import { oauth2Client } from './GoogleUtils';
+import * as GoogleUtils from './GoogleUtils';
 import * as Debug from 'debug';
 import { google } from 'googleapis';
 
@@ -13,7 +14,7 @@ export const uploadFile = (folderId: string, filePath: string) => {
     return new Promise((resolve: any, reject: any) => {
         const fileMetadata = {
             name: path.basename(filePath),
-            parents: [ folderId ]
+            parents: [folderId]
         };
         const media = {
             mimeType: 'audio/mpeg',
@@ -33,8 +34,11 @@ export const uploadFile = (folderId: string, filePath: string) => {
     });
 };
 
-export const emptyTrash = () => {
+export const emptyTrash = (googleCredentials: any) => {
     return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
         drive.files.emptyTrash((error: any, response: any) => {
             if (error) {
                 // debug('emptyTrash error ', error);
@@ -45,8 +49,11 @@ export const emptyTrash = () => {
     });
 };
 
-export const removeFile = (fileId: string) => {
+export const removeFile = (googleCredentials: any, fileId: string) => {
     return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
         if (_.isEmpty(fileId)) {
             return reject({ message: 'fileId is empty.' });
         }
@@ -69,7 +76,7 @@ export const searchIntoFolder = (folderId: string, searchFileName: string) => {
         const q = separator.concat(folderId, separator, ' in parents ', ' and'
             , 'name contains ', separator, searchFileName, separator);
         const params = {
-            parents: [ folderId ],
+            parents: [folderId],
             trashed: false,
             fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
             q: q,
@@ -86,19 +93,22 @@ export const searchIntoFolder = (folderId: string, searchFileName: string) => {
     });
 };
 
-export const searchIntoFolderRecursive = (folderId: string, pageToken?: string) => {
+export const searchIntoFolderRecursive = (googleCredentials: any, folderId: string, pageToken: string) => {
     return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
         const separator = '"';
         const q = separator.concat(folderId, separator, ' in parents ');
         const params = {
-            parents: [ folderId ],
+            parents: [folderId],
             trashed: false,
             fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
             q: q,
             pageToken: '',
             pageSize: 100
         };
-        if (pageToken) {
+        if (_.isEmpty(pageToken) === false) {
             params.pageToken = pageToken;
         }
 

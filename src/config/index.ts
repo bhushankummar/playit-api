@@ -8,8 +8,7 @@ import { IRequest } from '../interface/IRequest';
 const debug = Debug('PL:Config');
 
 export const trimParams: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    debug('START : %o', utils.url(req) + req.url);
-    debug('req.method : %o ', req.method);
+    debug(`START : ${req.method} : ${utils.url(req)} ${req.url}`);
     if (req.method === 'OPTIONS') {
         req.data = { message: true };
     }
@@ -55,7 +54,7 @@ export const handleError = (err: any, req: IRequest, res: express.Response, next
     }
     debug('Error :: ');
     debug(errorResponse);
-    debug('END : %o', utils.url(req) + req.url);
+    debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
     res.status(errorResponse.statusCode || 404).json(errorResponse);
     res.end();
     debug('----------------------------------------------------------------------------------- ');
@@ -69,10 +68,10 @@ export const handleSuccess: express.RequestHandler = (req: IRequest, res: expres
 
     const resObject = req.data || [];
     // debug('Success response :: ----------------------------------------------------------------------------------- ');
-    debug('END : %o', utils.url(req) + req.url);
+    debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
     return res.json(resObject);
 };
 
 export const handle404 = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    return next(Boom.notFound('Invalid request ' + utils.url(req) + req.url));
+    return next(Boom.notFound(`Invalid Request : ${req.method} : ${utils.url(req)} ${req.url}`));
 };

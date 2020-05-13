@@ -9,6 +9,7 @@ import * as moment from 'moment';
 import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
+import * as GoogleUtils from '../utils/GoogleUtils';
 import * as utils from '../utils';
 import { getMongoRepository } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
@@ -47,8 +48,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[ 0 ]) {
-                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[0]) {
+                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -142,8 +143,8 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
                 };
                 // debug('whereCondition ', whereCondition);
                 let driveFileId = '';
-                if (response && response.data && response.data.files && response.data.files[ 0 ]) {
-                    driveFileId = response.data.files[ 0 ].id;
+                if (response && response.data && response.data.files && response.data.files[0]) {
+                    driveFileId = response.data.files[0].id;
                 }
                 try {
                     const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -182,8 +183,13 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
  * This function will upload Audio files to the drive
  */
 export const cleanTrash: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    }
     try {
-        await GoogleDrive.emptyTrash();
+        await GoogleDrive.emptyTrash(req.userStore.google);
         req.googleDriveStore = { message: true };
         return next();
     } catch (error) {
@@ -196,13 +202,19 @@ export const cleanTrash: express.RequestHandler = async (req: IRequest, res: exp
  * This function will search Audio files to the drive
  */
 export const searchAllFiles: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore)) {
+        return next();
+    }
     try {
-        const folderId = params.driveFolderId;
+        const folderId = req.playlistStore.driveFolderId;
         let nextPageToken = '';
         let files: any[] = [];
         do {
-            const response: any = await GoogleDrive.searchIntoFolderRecursive(folderId, nextPageToken);
+            const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore.google, folderId, nextPageToken);
             if (response && response.data) {
                 // debug('response.data.nextPageToken ', response.data.nextPageToken);
                 nextPageToken = response.data.nextPageToken || '';

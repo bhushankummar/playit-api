@@ -27,7 +27,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     }
     try {
         const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(req.playlistStore.urlId);
-        // debug('documents ', documents);
+        debug('documents ', documents);
         req.youTubePlaylistStore = documents;
         if (APP.IS_SANDBOX === true) {
             req.youTubePlaylistStore.items = _.take(documents.items, 1);
