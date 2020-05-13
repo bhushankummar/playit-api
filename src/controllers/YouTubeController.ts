@@ -11,6 +11,6 @@ export const youtubeData: express.RequestHandler = (req: IRequest, res: express.
     req.data = {
         mediaItemsStore: req.mediaItemsStore,
         youTubeStore: req.youTubeStore
-    }
+    };
     return next();
 };
