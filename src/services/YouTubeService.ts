@@ -19,8 +19,10 @@ const debug = Debug('PL:YouTubeService');
  */
 export const listPlaylistItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
+        // debug('CRITICAL : Return from empty req.playlistStore');
         return next();
     } else if (_.isEmpty(req.playlistStore._id)) {
+        debug('CRITICAL : Return from req.playlistStore._id');
         return next();
     } else if (_.isEmpty(req.userStore)) {
         return next();

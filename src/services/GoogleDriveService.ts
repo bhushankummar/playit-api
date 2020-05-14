@@ -207,6 +207,7 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
     } else if (_.isEmpty(req.userStore.google)) {
         return next();
     } else if (_.isEmpty(req.playlistStore)) {
+        debug('CRITICAL : Empty req.playlistStore');
         return next();
     }
     try {

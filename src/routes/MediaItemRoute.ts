@@ -29,13 +29,12 @@ mediaItemRoute.post('/sync/crone/youtube', [
     PlaylistService.searchOneByLastSync,
     PlaylistService.updateLastSync,
     UserService.searchOneByPlaylistUser,
-    GoogleDriveService.cleanTrash,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
     GoogleDriveService.searchAllFiles,
     YouTubeService.listPlaylistItems,
     MediaItemService.identifySyncItemsForYouTube,
     MediaItemService.syncWithYouTube,
-    GoogleDriveService.cleanTrash
+    MediaItemController.mediaItemSync
 ]);
 
 export { mediaItemRoute };

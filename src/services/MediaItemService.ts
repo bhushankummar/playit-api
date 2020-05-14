@@ -135,8 +135,10 @@ export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandle
 
 export const identifySyncItemsForYouTube: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.youTubePlaylistStore)) {
+        // debug('Return from empty req.youTubePlaylistStore');
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
+        // debug('Return from Empty req.youTubePlaylistStore.items');
         return next();
     }
     const googleItems: any = [];
@@ -377,7 +379,7 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
-        debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
+        debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
     } catch (error) {
         debug('error ', error);
         return next(error);

@@ -60,7 +60,7 @@ export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res
     }
     await bluebird.map(req.youTubePlaylistStore.items, async (item: any) => {
         try {
-            const response = await MediaDownloader.downloadVideoExec(req.youTubePlaylistStore, item, driveDirectory);
+            const response = await MediaDownloader.downloadVideoExec(item, driveDirectory);
             // debug('response  ', response);
         } catch (error) {
             debug('downloadVideoHQ error ', error);
@@ -70,7 +70,6 @@ export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res
     req.youTubeStore = { message: true };
     return next();
 };
-
 
 /**
  * Download HQ Audio using URL
@@ -90,7 +89,7 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
     await bluebird.map(req.mediaItemsStore, async (item: any) => {
         try {
             if (_.isEmpty(item.playlistId)) {
-                debug('CRITICAL : Skipping Media Item which has not playlistId.');
+                debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
                 return;
             }
             const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
@@ -100,6 +99,38 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
             debug('downloadAudioHQUsingMediaItem error item', item);
         }
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
+    req.youTubeStore = { message: true };
+    return next();
+};
+
+/**
+ * Download HQ Video using URL
+ */
+export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (req.playlistStore.type !== MEDIA_TYPE.VIDEO) {
+        // debug('Return from media type. Current Value ', params.type);
+        return next();
+    }
+
+    const driveDirectory = path.join(MEDIA_DIRECTORY.VIDEO, req.playlistStore.driveFolderId);
+    if (!fs.existsSync(driveDirectory)) {
+        fs.mkdirSync(driveDirectory);
+    }
+    await bluebird.map(req.mediaItemsStore, async (item: any) => {
+        try {
+            if (_.isEmpty(item.playlistId)) {
+                debug('CRITICAL : Skipping Video Media Item which has not playlistId.');
+                return;
+            }
+            const response = await MediaDownloader.downloadVideoExec(item, driveDirectory);
+            // debug('response  ', response);
+        } catch (error) {
+            debug('downloadVideoHQUsingMediaItem error ', error);
+            debug('downloadVideoHQUsingMediaItem error item', item);
+        }
+    }, { concurrency: APP.DOWNLOAD_VIDEO_CONCURRENCY });
     req.youTubeStore = { message: true };
     return next();
 };

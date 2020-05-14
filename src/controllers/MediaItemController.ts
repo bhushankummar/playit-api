@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as Debug from 'debug';
-import {IRequest} from '../interface/IRequest';
+import * as _ from 'lodash';
+import { IRequest } from '../interface/IRequest';
 
 Debug('PL:MediaItemController');
 
@@ -9,5 +10,17 @@ Debug('PL:MediaItemController');
  */
 export const mediaItemData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     req.data = req.mediaItemsStore || [];
+    return next();
+};
+
+/**
+ * Media Item Details
+ */
+export const mediaItemSync: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        req.data = {
+            message : 'Their is no pending playlist for the sync.'
+        };
+    }
     return next();
 };
