@@ -79,10 +79,6 @@
       true,
       "array"
     ],
-    "interface-name": [
-      true,
-      "always-prefix"
-    ],
     "class-name": true,
     "no-internal-module": true,
     "no-trailing-whitespace": true,

@@ -6,9 +6,10 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as bluebird from 'bluebird';
 import * as moment from 'moment';
-import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE } from '../constants';
+import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
+import * as GoogleUtils from '../utils/GoogleUtils';
 import * as utils from '../utils';
 import { getMongoRepository } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
@@ -47,8 +48,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[ 0 ]) {
-                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[0]) {
+                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -100,8 +101,9 @@ export const uploadToDrive: express.RequestHandler = async (req: IRequest, res: 
  * Search InTo Folder
  */
 export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(req.youTubePlaylistStore)) {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (_.isEmpty(req.youTubePlaylistStore)) {
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
         return next();
@@ -111,18 +113,19 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
         email: req.userStore.email
     };
     const uniqueItems: any = [];
-    const folderId = params.driveFolderId;
+    const folderId = req.playlistStore.driveFolderId;
     if (APP.IS_SANDBOX) {
         req.youTubePlaylistStore.items = _.take(req.youTubePlaylistStore.items, 1);
     }
     let extension = MEDIA_EXTENSION.AUDIO;
-    if (params.type !== 'audio') {
+    if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
         extension = MEDIA_EXTENSION.VIDEO;
     }
     // debug('extension ', extension);
-    debug('** Start removeDuplicatesFromGoogleDrive for ', params.type);
+    debug('** Start removeDuplicatesFromGoogleDrive ');
     await bluebird.map(req.youTubePlaylistStore.items, async (value: any) => {
         const searchName = YOUTUBE.ID_SEPARATOR.concat(value.id, extension);
+        // debug('searchName ', searchName);
         try {
             const response: any = await GoogleDrive.searchIntoFolder(folderId, searchName);
             // debug('response.data ', response.data);
@@ -136,11 +139,12 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
                     user: userProfile,
                     urlId: value.id,
                     playlistId: req.youTubePlaylistStore.id,
-                    driveFolderId: params.driveFolderId
+                    driveFolderId: req.playlistStore.driveFolderId
                 };
+                // debug('whereCondition ', whereCondition);
                 let driveFileId = '';
-                if (response && response.data && response.data.files && response.data.files[ 0 ]) {
-                    driveFileId = response.data.files[ 0 ].id;
+                if (response && response.data && response.data.files && response.data.files[0]) {
+                    driveFileId = response.data.files[0].id;
                 }
                 try {
                     const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -170,7 +174,7 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
             await utils.wait(1);
         }
     }, { concurrency: 2 });
-    debug('%o Items ready For Download ', params.type, uniqueItems.length);
+    debug('%o Items ready For Download ', uniqueItems.length);
     req.youTubePlaylistStore.items = uniqueItems;
     return next();
 };
@@ -179,8 +183,13 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
  * This function will upload Audio files to the drive
  */
 export const cleanTrash: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    }
     try {
-        await GoogleDrive.emptyTrash();
+        await GoogleDrive.emptyTrash(req.userStore.google);
         req.googleDriveStore = { message: true };
         return next();
     } catch (error) {
@@ -193,13 +202,20 @@ export const cleanTrash: express.RequestHandler = async (req: IRequest, res: exp
  * This function will search Audio files to the drive
  */
 export const searchAllFiles: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore)) {
+        debug('CRITICAL : Empty req.playlistStore');
+        return next();
+    }
     try {
-        const folderId = params.driveFolderId;
+        const folderId = req.playlistStore.driveFolderId;
         let nextPageToken = '';
         let files: any[] = [];
         do {
-            const response: any = await GoogleDrive.searchIntoFolderRecursive(folderId, nextPageToken);
+            const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore.google, folderId, nextPageToken);
             if (response && response.data) {
                 // debug('response.data.nextPageToken ', response.data.nextPageToken);
                 nextPageToken = response.data.nextPageToken || '';

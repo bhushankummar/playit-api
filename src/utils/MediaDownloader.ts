@@ -3,14 +3,19 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as Debug from 'debug';
+import * as _ from 'lodash';
 import { APP } from '../constants';
 
-const youtubedl = require('@microlink/youtube-dl');
+const youtubedl = require('youtube-dl');
 const debug = Debug('PL:MediaDownloader');
 
-export const downloadMedia = (options: any[], type: string, playlist: any, item: any, driveDirectory: any) => {
+export const downloadMedia = (options: any[], type: string, item: any, driveDirectory: any) => {
     return new Promise((resolve: any, reject: any) => {
-        const audio = youtubedl(item.url_simple, options);
+        let mediaUrl = item.url_simple;
+        if (_.isEmpty(mediaUrl)) {
+            mediaUrl = item.url;
+        }
+        const audio = youtubedl(mediaUrl, options);
         const success = {
             message: true,
             filePath: '',
@@ -46,35 +51,48 @@ export const downloadMedia = (options: any[], type: string, playlist: any, item:
 };
 
 export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => {
-    const options = [ '-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3' ];
-    return downloadMedia(options, 'mp3', playlist, item, driveDirectory);
+    const options = ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'];
+    return downloadMedia(options, 'mp3', item, driveDirectory);
 };
 
-export const downloadVideoExec = (playlist: any, item: any, driveDirectory: any) => {
+export const downloadVideoExec = (item: any, driveDirectory: any) => {
     return new Promise(async (resolve: any, reject: any) => {
         const success = {
             message: true,
             filePath: '',
             fileName: ''
         };
-        const options = [ '-f', 'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio', '--ffmpeg-location', APP.FFPROBE_PATH ];
-
-        const metaData: any = await YouTube.findMetadata(item.url_simple);
+        const options = [
+            '-f',
+            'bestvideo[ext=mp4]+bestaudio[ext=m4a]/bestvideo+bestaudio',
+            '--ffmpeg-location',
+            APP.FFPROBE_PATH
+        ];
+        let mediaUrl = item.url_simple;
+        if (_.isEmpty(mediaUrl)) {
+            mediaUrl = item.url;
+        }
+        const metaData: any = await YouTube.findMetadata(mediaUrl);
         const oldFileName = metaData._filename;
         const newFileName = YouTube.prepareFileName(item, 'mp4');
         success.fileName = newFileName;
 
         // debug('Download started %o ', success.fileName);
-        youtubedl.exec(item.url_simple, options, {}, async (error: any, output: any) => {
+        youtubedl.exec(mediaUrl, options, {}, async (error: any, output: any) => {
             if (error) {
                 debug('error occurs in item ', item);
                 debug('error occurs in ', success);
                 debug('error ', error);
                 return reject(error);
             }
-            debug('** Finished downloading %o ', success.fileName);
+            debug('** Finished downloading video %o ', success.fileName);
             success.filePath = path.join(driveDirectory, newFileName);
-            fse.moveSync(oldFileName, success.filePath);
+            try {
+                fse.moveSync(oldFileName, success.filePath);
+            } catch (error) {
+                debug('error success : %o oldFileName : %o ', success, oldFileName);
+                reject(error);
+            }
             resolve(success);
         });
     });

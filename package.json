@@ -4,7 +4,6 @@
     "description": "Playit API for Web/Mobile/Desktop APP",
     "main": "dist",
     "scripts": {
-        "postinstall": "npm run build",
         "start": "npm run version && export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
         "prebuild": "npm run tslint && rm -rf ./dist/*",
@@ -14,7 +13,7 @@
         "test": "mocha -r ts-node/register",
         "unit": "mocha -r ts-node/register --opts ./test/mocha.unit.opts",
         "posttest": "npm run tslint",
-        "version": "echo '@microlink/youtube-dl' ; ./node_modules/@microlink/youtube-dl/bin/youtube-dl --version"
+        "version": "echo 'youtube-dl' ; ./node_modules/youtube-dl/bin/youtube-dl --version"
     },
     "engines": {
         "node": "10.16.3",
@@ -23,7 +22,6 @@
     "author": "Bhushankumar L (bhushankumar.lilapara@gmail.com)",
     "license": "ISC",
     "dependencies": {
-        "@microlink/youtube-dl": "^2.0.0",
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "boom": "^7.3.0",
@@ -40,6 +38,7 @@
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
         "mongodb": "^3.5.2",
+        "node-pre-gyp": "^0.14.0",
         "nodemon": "^2.0.2",
         "passport": "^0.4.1",
         "passport-http-bearer": "^1.0.1",
@@ -47,6 +46,7 @@
         "request": "^2.88.0",
         "request-promise": "^4.2.5",
         "typeorm": "^0.2.22",
+        "youtube-dl": "^3.0.2",
         "ytpl": "^0.1.19"
     },
     "devDependencies": {

@@ -9,7 +9,6 @@ import * as database from './config/db';
 import * as express from 'express';
 import * as CroneJobs from './job';
 
-database.init();
 const app = express();
 const debug = Debug('PL:App');
 
@@ -65,10 +64,11 @@ app.use(config.handle404);
  *  Server process
  */
 app.set('PORT', process.env.PORT || 3007);
-app.listen(app.get('PORT'), (err: any) => {
+app.listen(app.get('PORT'), async (err: any) => {
     if (err) {
         return console.log(err);
     }
+    await database.init();
     CroneJobs.initAllJobs();
     debug(' Server has been started on PORT: %o', app.get('PORT'));
     return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);

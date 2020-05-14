@@ -35,6 +35,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
+        // debug('req.userStore ', req.userStore);
     } catch (error) {
         return next(error);
     }
@@ -51,7 +52,7 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
     }
     try {
         const user: UserEntity = new UserEntity();
-        user.email = req.googleProfileStore.emailAddresses[ 0 ].value;
+        user.email = req.googleProfileStore.emailAddresses[0].value;
         user.google = req.googleStore;
         const userModel = getMongoRepository(UserEntity);
         const document = await userModel.save(user);
@@ -128,6 +129,31 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
     try {
         const whereCondition: any = {
             _id: stateObjectId
+        };
+        const userModel = getMongoRepository(UserEntity);
+        req.userStore = await userModel.findOne(whereCondition);
+    } catch (error) {
+        return next(error);
+    }
+    return next();
+};
+
+/**
+ * Search user by email
+ * @param: email
+ */
+export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore.user)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore.user._id)) {
+        debug('CRITICAL : req.playlistStore.user._id is empty %o ', req.playlistStore);
+        return next();
+    }
+    try {
+        const whereCondition = {
+            _id: req.playlistStore.user._id
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);

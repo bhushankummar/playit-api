@@ -41,7 +41,7 @@ userRoute.get('/me', passport.authenticate('bearer'), [
 /**
  * Retrieve Google Profile
  */
-userRoute.post('/google/me', [
+userRoute.post('/google/me', passport.authenticate('bearer'), [
     UserService.searchOneByEmail,
     GoogleService.setCredentials,
     GoogleService.retrieveGoogleProfile,

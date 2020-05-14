@@ -1,5 +1,4 @@
 import * as DownloadAudioToLocal from './DownloadAudioToLocal';
-import * as DownloadVideoToLocal from './DownloadVideoToLocal';
 import * as UploadAudioToGoogleDrive from './UploadAudioToGoogleDrive';
 import * as UploadVideoToGoogleDrive from './UploadVideoToGoogleDrive';
 import * as EmptyTrashGoogleDrive from './EmptyTrashGoogleDrive';
@@ -24,7 +23,7 @@ export const initAllJobs: any = () => {
     const downloadAudioToLocalJob = DownloadAudioToLocal.init();
     downloadAudioToLocalJob.start();
 
-    DownloadVideoToLocal.init().start();
+    // DownloadVideoToLocal.init().start();
     UploadAudioToGoogleDrive.init().start();
     UploadVideoToGoogleDrive.init().start();
     EmptyTrashGoogleDrive.init().start();
