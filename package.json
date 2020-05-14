@@ -38,6 +38,7 @@
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
         "mongodb": "^3.5.2",
+        "node-pre-gyp": "^0.14.0",
         "nodemon": "^2.0.2",
         "passport": "^0.4.1",
         "passport-http-bearer": "^1.0.1",
