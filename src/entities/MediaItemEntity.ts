@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Unique, Index } from 'typeorm';
 import moment = require('moment');
 
 class User {
@@ -11,6 +11,7 @@ class User {
 }
 
 @Entity('mediaItems')
+@Index(['user._id', 'playlistId', 'urlId'], { unique: true })
 export class MediaItemEntity {
 
     @ObjectIdColumn()
@@ -45,9 +46,9 @@ export class MediaItemEntity {
     @Column()
     lastDownloadTimeStamp: Date;
 
-    @CreateDateColumn()
+    @CreateDateColumn({ type: 'timestamp' })
     createdDate: string;
 
-    @UpdateDateColumn()
+    @UpdateDateColumn({ type: 'timestamp' })
     updatedDate: string;
 }

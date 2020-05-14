@@ -87,7 +87,12 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
             }
             debug('** Finished downloading video %o ', success.fileName);
             success.filePath = path.join(driveDirectory, newFileName);
-            fse.moveSync(oldFileName, success.filePath);
+            try {
+                fse.moveSync(oldFileName, success.filePath);
+            } catch (error) {
+                debug('error success : %o oldFileName : %o ', success, oldFileName);
+                reject(error);
+            }
             resolve(success);
         });
     });
