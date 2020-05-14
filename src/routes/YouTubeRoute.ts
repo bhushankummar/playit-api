@@ -43,7 +43,7 @@ youtubeRoute.post('/crone/download/v1', [
     GoogleService.setCredentials,
     GoogleDriveService.removeDuplicatesFromGoogleDrive,
     YouTubeMediaService.downloadAudioHQUsingYouTube,
-    YouTubeMediaService.downloadVideoHQ,
+    YouTubeMediaService.downloadVideoHQUsingYouTube,
     YouTubeController.youtubeData
 ]);
 

@@ -42,7 +42,7 @@ export const downloadAudioHQUsingYouTube: express.RequestHandler = async (req: I
 /**
  * Download HQ Video using URL
  */
-export const downloadVideoHQ: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const downloadVideoHQUsingYouTube: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
     } else if (req.playlistStore.type !== MEDIA_TYPE.VIDEO) {

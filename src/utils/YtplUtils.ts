@@ -58,6 +58,8 @@ export const cleanFileName = (fileName: string) => {
         'Lyrical:',
         'Full Song:',
         'Full Audio:',
+        'Lyrical Video:',
+        'Official:',
         'Full Video:'
     ];
     fileName = fileName.split(/'/g).join(' ');
@@ -67,11 +69,5 @@ export const cleanFileName = (fileName: string) => {
         fileName = fileName.split(word.toUpperCase()).join(' ');
         fileName = fileName.trim();
     });
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.trim();
     return fileName;
 };
