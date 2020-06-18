@@ -51,7 +51,7 @@ export const downloadMedia = (options: any[], type: string, item: any, driveDire
 };
 
 export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => {
-    const options = ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'];
+    const options = [ '-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3' ];
     return downloadMedia(options, 'mp3', item, driveDirectory);
 };
 
@@ -76,7 +76,7 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
         const oldFileName = metaData._filename;
         const newFileName = YouTube.prepareFileName(item, 'mp4');
         success.fileName = newFileName;
-
+        debug('oldFileName ', oldFileName);
         // debug('Download started %o ', success.fileName);
         youtubedl.exec(mediaUrl, options, {}, async (error: any, output: any) => {
             if (error) {
@@ -88,7 +88,9 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
             debug('** Finished downloading video %o ', success.fileName);
             success.filePath = path.join(driveDirectory, newFileName);
             try {
-                fse.moveSync(oldFileName, success.filePath);
+                // debug('oldFileName ', oldFileName);
+                // debug('success.filePath ', success.filePath);
+                fse.moveSync(oldFileName, success.filePath, { overwrite: true });
             } catch (error) {
                 debug('error success : %o oldFileName : %o ', success, oldFileName);
                 reject(error);

@@ -38,6 +38,11 @@ export class PlaylistEntity {
     })
     lastSyncTimeStamp: Date;
 
+    @Column({
+        default: moment().toISOString()
+    })
+    lastUploadTimeStamp: Date;
+
     @CreateDateColumn()
     createdDate: string;
 
