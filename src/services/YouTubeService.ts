@@ -102,7 +102,7 @@ export const removeDuplicateItemsFromLocal: express.RequestHandler = async (req:
             const searchName = YOUTUBE.ID_SEPARATOR.concat(value.id, extension);
             // debug('searchName ', searchName);
             const index = _.findIndex(files, (value) => {
-                if (value.lastIndexOf(searchName) > -1) {
+                if (value && value.lastIndexOf(searchName) > -1) {
                     return true;
                 }
             });

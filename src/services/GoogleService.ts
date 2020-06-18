@@ -95,11 +95,15 @@ export const refreshToken: express.RequestHandler = async (req: IRequest, res: e
         const data1 = await oauth2Client.getAccessToken();
         debug('data1 ', data1);
         oauth2Client.on('tokens', (tokens) => {
+            debug('tokens ', tokens);
             if (tokens.refresh_token) {
                 // store the refresh_token in my database!
                 debug('******************* Refresh Token ', tokens.refresh_token);
             }
-            debug('******************* Access Token ', tokens.access_token);
+            if (tokens.access_token) {
+                // store the refresh_token in my database!
+                debug('******************* Access Token ', tokens.access_token);
+            }
         });
         return next();
     } catch (error) {
