@@ -9,7 +9,7 @@ class User {
     email?: string;
 }
 
-@Entity('playlist')
+@Entity('playlists')
 export class PlaylistEntity {
 
     @ObjectIdColumn()

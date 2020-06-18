@@ -16,7 +16,7 @@ export const downloadMedia = (options: any[], type: string, item: any, driveDire
             mediaUrl = item.url;
         }
         const audio = youtubedl(mediaUrl, options);
-        const success = {
+        const mediaResponse = {
             message: true,
             filePath: '',
             fileName: ''
@@ -24,27 +24,27 @@ export const downloadMedia = (options: any[], type: string, item: any, driveDire
         audio.on('info', () => {
             const newFileName = YouTube.prepareFileName(item, type);
             const filePath = path.join(driveDirectory, newFileName);
-            success.filePath = filePath;
-            success.fileName = newFileName;
-            debug('Download started %o ', success.fileName);
+            mediaResponse.filePath = filePath;
+            mediaResponse.fileName = newFileName;
+            debug('Download started %o ', mediaResponse.fileName);
             audio.pipe(fs.createWriteStream(filePath));
         });
 
         // Will be called if download was already completed and there is nothing more to download.
         audio.on('complete', (info: any) => {
-            debug(success.fileName, ' already downloaded.');
-            resolve(success);
+            debug(mediaResponse.fileName, ' already downloaded.');
+            resolve(mediaResponse);
         });
 
         audio.on('end', () => {
-            debug('** Finished downloading %o ', success.fileName);
-            resolve(success);
+            debug('** Finished downloading %o ', mediaResponse.fileName);
+            resolve(mediaResponse);
         });
 
         audio.on('error', (error: any) => {
-            debug('error occurs in ', item);
-            debug('error occurs in ', success);
-            debug('error ', error);
+            debug('error occurs in downloadMedia item %o ', item);
+            debug('error occurs in downloadMedia mediaResponse %0 ', mediaResponse);
+            debug('error in downloadMedia %o ', error);
             reject(error);
         });
     });
@@ -57,7 +57,7 @@ export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => 
 
 export const downloadVideoExec = (item: any, driveDirectory: any) => {
     return new Promise(async (resolve: any, reject: any) => {
-        const success = {
+        const mediaResponse = {
             message: true,
             filePath: '',
             fileName: ''
@@ -75,29 +75,29 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
         const metaData: any = await YouTube.findMetadata(mediaUrl, options);
         const oldFileName = metaData._filename;
         const newFileName = YouTube.prepareFileName(item, 'mp4');
-        success.fileName = newFileName;
+        mediaResponse.fileName = newFileName;
         debug('oldFileName ', oldFileName);
-        // debug('Download started %o ', success.fileName);
+        // debug('Download started %o ', mediaResponse.fileName);
         youtubedl.exec(mediaUrl, options, {}, async (error: any, output: any) => {
             if (error) {
                 debug('error occurs in item ', item);
-                debug('error occurs in ', success);
+                debug('error occurs in ', mediaResponse);
                 debug('error ', error);
                 return reject(error);
             }
-            debug('** Finished downloading video %o ', success.fileName);
-            success.filePath = path.join(driveDirectory, newFileName);
+            debug('** Finished downloading video %o ', mediaResponse.fileName);
+            mediaResponse.filePath = path.join(driveDirectory, newFileName);
             try {
                 // debug('oldFileName ', oldFileName);
-                // debug('success.filePath ', success.filePath);
-                fse.moveSync(oldFileName, success.filePath, { overwrite: true });
+                // debug('mediaResponse.filePath ', mediaResponse.filePath);
+                fse.moveSync(oldFileName, mediaResponse.filePath, { overwrite: true });
             } catch (error) {
-                debug('error youtubedl.exec %o ', success);
+                debug('error youtubedl.exec %o ', mediaResponse);
                 debug('error youtubedl.exec oldFileName : %o ', oldFileName);
                 debug('error youtubedl.exec output : %o ', output);
                 reject(error);
             }
-            resolve(success);
+            resolve(mediaResponse);
         });
     });
 };
