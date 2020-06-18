@@ -23,9 +23,8 @@ export const findPlaylistItems = (playlistId: string): Promise<IYtplPlaylist> =>
 /**
  * Get the File Metadata
  */
-export const findMetadata = (url: string) => {
+export const findMetadata = (url: string, options: any) => {
     return new Promise((resolve: any, reject: any) => {
-        const options: any = [];
         youtubedl.getInfo(url, options, (error: any, info: any) => {
             if (error) {
                 reject(error);
