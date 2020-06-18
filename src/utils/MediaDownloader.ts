@@ -92,7 +92,9 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
                 // debug('success.filePath ', success.filePath);
                 fse.moveSync(oldFileName, success.filePath, { overwrite: true });
             } catch (error) {
-                debug('error success : %o oldFileName : %o ', success, oldFileName);
+                debug('error youtubedl.exec %o ', success);
+                debug('error youtubedl.exec oldFileName : %o ', oldFileName);
+                debug('error youtubedl.exec output : %o ', output);
                 reject(error);
             }
             resolve(success);
