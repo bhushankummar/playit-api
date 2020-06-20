@@ -227,7 +227,7 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
             }
         };
         req.playlistStore = await playlistModel.findOne(options);
-        debug('req.playlistStore ', req.playlistStore);
+        // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));

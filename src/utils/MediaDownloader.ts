@@ -5,16 +5,14 @@ import * as fse from 'fs-extra';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import { APP } from '../constants';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 const youtubedl = require('youtube-dl');
 const debug = Debug('PL:MediaDownloader');
 
-export const downloadMedia = (options: any[], type: string, item: any, driveDirectory: any) => {
+export const downloadMedia = (options: any[], type: string, item: MediaItemEntity, driveDirectory: any) => {
     return new Promise((resolve: any, reject: any) => {
-        let mediaUrl = item.url_simple;
-        if (_.isEmpty(mediaUrl)) {
-            mediaUrl = item.url;
-        }
+        const mediaUrl = item.url;
         const audio = youtubedl(mediaUrl, options);
         const mediaResponse = {
             message: true,
@@ -55,7 +53,7 @@ export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => 
     return downloadMedia(options, 'mp3', item, driveDirectory);
 };
 
-export const downloadVideoExec = (item: any, driveDirectory: any) => {
+export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) => {
     return new Promise(async (resolve: any, reject: any) => {
         const mediaResponse = {
             message: true,
@@ -68,12 +66,10 @@ export const downloadVideoExec = (item: any, driveDirectory: any) => {
             '--ffmpeg-location',
             APP.FFPROBE_PATH
         ];
-        let mediaUrl = item.url_simple;
-        if (_.isEmpty(mediaUrl)) {
-            mediaUrl = item.url;
-        }
-        const metaData: any = await YouTube.findMetadata(mediaUrl, options);
-        const oldFileName = metaData._filename;
+        const mediaUrl = item.url;
+        // const metaData: any = await YouTube.findMetadata(mediaUrl, options);
+        // const oldFileName = metaData._filename;
+        const oldFileName = item.title;
         const newFileName = YouTube.prepareFileName(item, 'mp4');
         mediaResponse.fileName = newFileName;
         debug('oldFileName ', oldFileName);
