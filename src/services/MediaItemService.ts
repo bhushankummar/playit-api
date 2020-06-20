@@ -99,7 +99,17 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      */
     _.each(req.youTubePlaylistStore.items, (value) => {
         const item = _.find(req.mediaItemsStore, { urlId: value.id });
-        if (_.isEmpty(item)) {
+
+        const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
+        if (_.isEmpty(item) === true && _.isEmpty(itemGoogleDrive) === true) {
+            value.isUploaded = false;
+            value.isDownloaded = false;
+            mediaItemsNew.push(value);
+        }
+        if (_.isEmpty(item) === true && _.isEmpty(itemGoogleDrive) === false) {
+            value.isUploaded = true;
+            value.isDownloaded = true;
+            value.fileId = itemGoogleDrive.fileId;
             mediaItemsNew.push(value);
         }
     });
