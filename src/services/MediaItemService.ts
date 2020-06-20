@@ -120,6 +120,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         const itemGoogleDrive = _.find(googleItems, { urlId: value.urlId });
         if (_.isEmpty(itemGoogleDrive) && value.isUploaded === true) {
             value.isUploaded = false;
+            value.isDownloaded = false;
             mediaItemsUpdate.push(value);
         }
         if (!_.isEmpty(itemGoogleDrive) && value.isUploaded === false) {
@@ -288,7 +289,8 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
                 user: userProfile,
                 playlistId: req.playlistStore.urlId,
                 driveFolderId: req.playlistStore.driveFolderId,
-                isUploaded: false
+                isUploaded: false,
+                isDownloaded: false
             },
             order: {
                 lastDownloadTimeStamp: 'ASC'

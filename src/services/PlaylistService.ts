@@ -3,6 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
+import * as mongodb from 'mongodb';
 import * as YtplUtils from '../utils/YtplUtils';
 import { getMongoRepository, FindOneOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
@@ -128,10 +129,11 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
         _id: req.userStore._id,
         email: req.userStore.email
     };
+    const playlistIdObjectId = new mongodb.ObjectID(params.playlistId);
     try {
-        const whereCondition = {
+        const whereCondition: any = {
             user: userProfile,
-            _id: params.playlistId
+            _id: playlistIdObjectId
         };
         // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);
