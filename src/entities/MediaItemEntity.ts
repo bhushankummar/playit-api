@@ -49,9 +49,9 @@ export class MediaItemEntity {
     @Column()
     lastDownloadTimeStamp: Date;
 
-    @CreateDateColumn({ type: 'timestamp' })
+    @CreateDateColumn()
     createdDate: string;
 
-    @UpdateDateColumn({ type: 'timestamp' })
+    @UpdateDateColumn()
     updatedDate: string;
 }
