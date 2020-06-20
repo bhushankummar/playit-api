@@ -49,16 +49,6 @@ userRoute.post('/google/me', passport.authenticate('bearer'), [
 ]);
 
 /**
- * WIP : Refresh Google Token
- */
-userRoute.post('/refresh', [
-    UserService.validateRegisterUser,
-    UserService.searchOneByEmail,
-    GoogleService.refreshToken,
-    GoogleController.googleDetail
-]);
-
-/**
  * Login
  */
 userRoute.put('/login', [

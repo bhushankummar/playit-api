@@ -133,7 +133,7 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
             user: userProfile,
             _id: params.playlistId
         };
-        debug('whereCondition ', whereCondition);
+        // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);
         debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
@@ -170,7 +170,7 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 /**
  * Search One Playlist Last Sync
  */
-export const searchOneByLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
@@ -197,7 +197,7 @@ export const searchOneByLastSync: express.RequestHandler = async (req: IRequest,
 /**
  * Search One Playlist Last Sync
  */
-export const searchOneByLastUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
@@ -224,7 +224,7 @@ export const searchOneByLastUpload: express.RequestHandler = async (req: IReques
 /**
  * Search One Playlist Last Sync
  */
-export const updateLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const updateLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
     }
@@ -247,7 +247,7 @@ export const updateLastSync: express.RequestHandler = async (req: IRequest, res:
 /**
  * Search One Playlist Last Sync
  */
-export const updateLastUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
     }
@@ -260,29 +260,6 @@ export const updateLastUpload: express.RequestHandler = async (req: IRequest, re
             lastUploadTimeStamp: moment().toISOString()
         };
         await playlistModel.update(whereCondition, updateData);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
-    return next();
-};
-
-/**
- * Search Playlist using PlaylistId
- */
-export const searchOneByPlaylistId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(params.playlistId)) {
-        return next();
-    }
-    const playlistModel = getMongoRepository(PlaylistEntity);
-    try {
-        const whereCondition = {
-            _id: params.playlistId
-        };
-        // debug('whereCondition ', whereCondition);
-        req.playlistStore = await playlistModel.findOne(whereCondition);
-        // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));

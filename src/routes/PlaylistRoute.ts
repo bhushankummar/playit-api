@@ -10,21 +10,11 @@ const playlistRoute: express.Router = express.Router();
 /**
  * Add Audio Playlist or Add Video Playlist
  * This API can be call to add the YouTube playlist.
- * Once Playlist added it will download the Media Files into the Google Drive
  */
 playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
     PlaylistService.addPlaylist,
-    PlaylistController.playlist
-]);
-
-/**
- * Remove Audio Playlist or Remove Video Playlist
- */
-playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
-    PlaylistService.searchOneByPlaylistId,
-    PlaylistService.removePlaylist,
     PlaylistController.playlist
 ]);
 
@@ -38,13 +28,12 @@ playlistRoute.post('/search', passport.authenticate('bearer'), [
 ]);
 
 /**
- * Search All Playlist
- * This API will return all the Playlist of the User
+ * Remove Audio Playlist or Remove Video Playlist
  */
-playlistRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
+playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
     PlaylistService.searchOneByPlaylistIdAndUserId,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
-    MediaItemController.mediaItemData
+    PlaylistService.removePlaylist,
+    PlaylistController.playlist
 ]);
 
 export { playlistRoute };

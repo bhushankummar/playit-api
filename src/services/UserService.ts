@@ -10,17 +10,6 @@ import { getMongoRepository } from 'typeorm';
 const debug = Debug('PL:UserService');
 
 /**
- * Validate user register parameter
- */
-export const validateRegisterUser: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body);
-    if (_.isEmpty(params.email)) {
-        return next(Boom.notFound('Please enter email.'));
-    }
-    return next();
-};
-
-/**
  * Search user by email
  * @param: email
  */
@@ -71,18 +60,6 @@ export const validateLoginUserData: express.RequestHandler = (req: IRequest, res
     const params = _.merge(req.params, req.body);
     if (_.isEmpty(params.email)) {
         return next(Boom.notFound('Please enter email.'));
-    }
-    return next();
-};
-
-/**
- * Validate user password
- * @param: password
- */
-export const loginUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const userStore = req.userStore;
-    if (_.isEmpty(userStore)) {
-        return next(Boom.notFound('You does not exits'));
     }
     return next();
 };

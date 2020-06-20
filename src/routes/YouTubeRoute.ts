@@ -1,4 +1,5 @@
 import * as express from 'express';
+import * as passport from 'passport';
 import * as YouTubeMediaService from '../services/YouTubeMediaService';
 import * as YouTubeService from '../services/YouTubeService';
 import * as UserService from '../services/UserService';
@@ -15,24 +16,13 @@ const youtubeRoute: express.Router = express.Router();
  * type : 0 = Audio ; 1 = Video
  */
 youtubeRoute.post('/crone/download', [
-    PlaylistService.searchOneByLastUpload,
-    PlaylistService.updateLastUpload,
+    PlaylistService.searchOneByLastUploadTimeStamp,
+    PlaylistService.updateLastUploadTimeStamp,
     UserService.searchOneByPlaylistUser,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
     YouTubeMediaService.downloadAudioHQUsingMediaItem,
     YouTubeMediaService.downloadVideoHQUsingMediaItem,
     MediaItemService.updateDownloadTimeStamp,
-    YouTubeController.youtubeData
-]);
-
-/**
- * List Playlist Items
- * List all the Media Items of Playlist from the YouTube
- */
-youtubeRoute.get('/playlist/:playlistId', [
-    PlaylistService.searchOneByPlaylistId,
-    UserService.searchOneByPlaylistUser,
-    YouTubeService.listPlaylistItems,
     YouTubeController.youtubeData
 ]);
 
