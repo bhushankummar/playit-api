@@ -41,6 +41,7 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
         } catch (error) {
             debug('downloadAudioHQUsingMediaItem error ', error);
             debug('downloadAudioHQUsingMediaItem error item', item);
+            debug('downloadAudioHQUsingMediaItem error error.stderr ', error.stderr);
         }
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
     req.mediaItemsStore = tempMediaItems;
@@ -77,6 +78,7 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
         } catch (error) {
             debug('downloadVideoHQUsingMediaItem error ', error);
             debug('downloadVideoHQUsingMediaItem error item', item);
+            debug('downloadVideoHQUsingMediaItem error error.stderr ', error.stderr);
         }
     }, { concurrency: APP.DOWNLOAD_VIDEO_CONCURRENCY });
     req.mediaItemsStore = tempMediaItems;

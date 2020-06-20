@@ -3,6 +3,7 @@ import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as GoogleController from '../controllers/GoogleController';
 import * as UserService from '../services/UserService';
 import * as GoogleService from '../services/GoogleService';
+import * as MediaItemService from '../services/MediaItemService';
 
 const googleDriveRoute: express.Router = express.Router();
 

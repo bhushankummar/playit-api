@@ -330,10 +330,29 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
             isDownloaded: true
         };
         const response = await mediaItemModel.update(whereCondition, updateData);
-        debug('response ', response);
+        // debug('response ', response);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * List all the Playlist Songs
+ */
+export const searchByLoggedInUserIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const whereCondition: any = {
+        isDownloaded: true,
+        isUploaded: false
+    };
+    // debug('whereCondition ', whereCondition);
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+    } catch (error) {
+        debug('error ', error);
+        return next(error);
     }
     return next();
 };

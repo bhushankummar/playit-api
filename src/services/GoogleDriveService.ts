@@ -62,7 +62,7 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
             await utils.wait(1);
         }
     });
-    debug('Audio Ready to Upload on Google Drive ', uniqueItems);
+    debug('Audio/Video Ready to Upload on Google Drive ', uniqueItems);
     req.localMediaStore = uniqueItems;
     return next();
 };

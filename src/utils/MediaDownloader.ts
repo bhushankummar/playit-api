@@ -69,7 +69,7 @@ export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) =>
         const mediaUrl = item.url;
         // const metaData: any = await YouTube.findMetadata(mediaUrl, options);
         // const oldFileName = metaData._filename;
-        const oldFileName = item.title;
+        const oldFileName = item.title.concat('.mp4');
         const newFileName = YouTube.prepareFileName(item, 'mp4');
         mediaResponse.fileName = newFileName;
         debug('oldFileName ', oldFileName);
