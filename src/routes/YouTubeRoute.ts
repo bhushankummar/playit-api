@@ -30,6 +30,8 @@ youtubeRoute.post('/crone/download', [
  * List all the Media Items of Playlist from the YouTube
  */
 youtubeRoute.get('/playlist/:playlistId', [
+    PlaylistService.searchOneByPlaylistId,
+    UserService.searchOneByPlaylistUser,
     YouTubeService.listPlaylistItems,
     YouTubeController.youtubeData
 ]);

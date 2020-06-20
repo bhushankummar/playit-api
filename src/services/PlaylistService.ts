@@ -266,3 +266,26 @@ export const updateLastUpload: express.RequestHandler = async (req: IRequest, re
     }
     return next();
 };
+
+/**
+ * Search Playlist using PlaylistId
+ */
+export const searchOneByPlaylistId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(params.playlistId)) {
+        return next();
+    }
+    const playlistModel = getMongoRepository(PlaylistEntity);
+    try {
+        const whereCondition = {
+            _id: params.playlistId
+        };
+        // debug('whereCondition ', whereCondition);
+        req.playlistStore = await playlistModel.findOne(whereCondition);
+        // debug('req.playlistStore ', req.playlistStore);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
