@@ -13,9 +13,8 @@ const playlistRoute: express.Router = express.Router();
  * This API can be call to add the YouTube playlist.
  * Once Playlist added it will download the Media Files into the Google Drive
  */
-playlistRoute.post('/', [
+playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
-    UserService.searchOneByEmail,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
     PlaylistService.addPlaylist,
     PlaylistController.playlist
@@ -24,10 +23,8 @@ playlistRoute.post('/', [
 /**
  * Remove Audio Playlist or Remove Video Playlist
  */
-playlistRoute.delete('/', [
-    PlaylistService.validateNewPlaylist,
-    UserService.searchOneByEmail,
-    PlaylistService.searchOneByPlaylistUrlIdAndUserId,
+playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
+    PlaylistService.searchOneByPlaylistId,
     PlaylistService.removePlaylist,
     PlaylistController.playlist
 ]);
