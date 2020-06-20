@@ -177,8 +177,8 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
             $or: [
                 {
                     lastSyncTimeStamp: {
-                        // '$lt': moment().subtract(5, 'minutes').toISOString()
-                        '$lt': moment().subtract(1, 'seconds').toISOString()
+                        '$lt': moment().subtract(5, 'minutes').toISOString()
+                        // '$lt': moment().subtract(1, 'seconds').toISOString()
                     }
                 },
                 {
