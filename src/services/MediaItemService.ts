@@ -176,7 +176,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         _id: req.userStore._id,
         email: req.userStore.email
     };
-    debug('req.data.mediaItemsNew ', req.data.mediaItemsNew.length);
+    // debug('req.data.mediaItemsNew ', req.data.mediaItemsNew.length);
     const CONCURRENCY = 1;
     await bluebird.map(req.data.mediaItemsNew, async (value: any) => {
         try {
@@ -252,7 +252,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
 
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
         try {
-            if (_.isEmpty(value.fileId)) {
+            if (_.isEmpty(value.id)) {
                 debug('googleDriveItemsRemove File Id is empty.', value);
                 return;
             }
