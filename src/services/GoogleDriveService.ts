@@ -48,8 +48,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[0]) {
-                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[ 0 ]) {
+                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -143,14 +143,15 @@ export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (re
                 };
                 // debug('whereCondition ', whereCondition);
                 let driveFileId = '';
-                if (response && response.data && response.data.files && response.data.files[0]) {
-                    driveFileId = response.data.files[0].id;
+                if (response && response.data && response.data.files && response.data.files[ 0 ]) {
+                    driveFileId = response.data.files[ 0 ].id;
                 }
                 try {
                     const mediaItemModel = getMongoRepository(MediaItemEntity);
                     const data = {
                         $set: {
                             isUploaded: true,
+                            isDownloaded: true,
                             fileId: driveFileId
                         }
                     };

@@ -184,6 +184,8 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         }
         if (!_.isEmpty(itemGoogleDrive) && value.isUploaded === false) {
             value.isUploaded = true;
+            value.isDownloaded = true;
+            value.fileId = itemGoogleDrive.fileId;
             mediaItemsUpdate.push(value);
         }
     });
@@ -257,10 +259,14 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
+            const updateData: any = {
+                isUploaded: value.isUploaded,
+            };
+            if (value.fileId) {
+                updateData.fileId = value.fileId;
+            }
             const data = {
-                $set: {
-                    isUploaded: value.isUploaded
-                }
+                $set: updateData
             };
             // const whereCondition = value;
             const whereCondition = {
@@ -356,7 +362,6 @@ export const identifySyncItemsForGoogleDrive: express.RequestHandler = async (re
     };
     return next();
 };
-
 
 /**
  * List all the Playlist Songs
