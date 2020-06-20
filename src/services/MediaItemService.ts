@@ -191,7 +191,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     const mediaItemsNew = [];
     await bluebird.map(req.data.mediaItemsNew, async (value: any) => {
         try {
-            const data = {
+            const data: Partial<MediaItemEntity> = {
                 user: userProfile,
                 title: value.title,
                 url: value.url_simple,
@@ -199,9 +199,11 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: value.isUploaded,
-                isDownloaded: value.isDownloaded,
-                filId: value.fileId
+                isDownloaded: value.isDownloaded
             };
+            if (_.isEmpty(value.fileId) === false) {
+                data.fileId = value.fileId;
+            }
             mediaItemsNew.push(data);
         } catch (error) {
             debug('error ', error);
