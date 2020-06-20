@@ -63,9 +63,10 @@ export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandle
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        // debug('req.mediaItemsStore : database ', req.mediaItemsStore);
         debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
     } catch (error) {
-        debug('error ', error);
+        debug('searchByLoggedInUserPlaylistAndDriveFolderId error ', error);
         return next(error);
     }
     return next();
@@ -86,7 +87,8 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         value.urlId = youTubeId.split('.')[ 0 ];
         googleItems.push(value);
     });
-
+    // debug('googleItems ', googleItems);
+    // debug('req.mediaItemsStore ', req.mediaItemsStore);
     const mediaItemsNew: any = [];
     const mediaItemsUpdate: any = [];
     const mediaItemsRemove: any = [];
@@ -223,7 +225,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
         try {
             if (_.isEmpty(value.fileId)) {
-                debug('File Id is empty.');
+                debug('mediaItemsRemove : File Id is empty. ', value);
                 return;
             }
             await GoogleDrive.removeFile(req.userStore.google, value.fileId);
@@ -236,10 +238,6 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove from google drive value ', value);
         }
     }, { concurrency: CONCURRENCY });
-
-    // req.data.mediaItemsRemove = _.take(req.data.mediaItemsRemove, 1);
-
-    // debug('req.data.mediaItemsRemove ', req.data.mediaItemsRemove.length);
     await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -250,12 +248,11 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
-    // req.data.googleDriveItemsRemove = _.take(req.data.googleDriveItemsRemove, 1);
-    //  debug('req.data.googleDriveItemsRemove ', req.data.googleDriveItemsRemove.length);
+
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
         try {
             if (_.isEmpty(value.fileId)) {
-                debug('File Id is empty.');
+                debug('googleDriveItemsRemove File Id is empty.', value);
                 return;
             }
             await GoogleDrive.removeFile(req.userStore.google, value.id);

@@ -1,7 +1,5 @@
 import * as express from 'express';
-import * as passport from 'passport';
 import * as YouTubeMediaService from '../services/YouTubeMediaService';
-import * as YouTubeService from '../services/YouTubeService';
 import * as UserService from '../services/UserService';
 import * as YouTubeController from '../controllers/YouTubeController';
 import * as MediaItemService from '../services/MediaItemService';

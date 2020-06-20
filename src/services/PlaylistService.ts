@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
-import { getMongoRepository, FindOneOptions, OrderByCondition } from 'typeorm';
+import { getMongoRepository, FindOneOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
 
@@ -135,7 +135,7 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
         };
         // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);
-        debug('req.playlistStore ', req.playlistStore);
+        // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));
@@ -174,10 +174,17 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
-            lastSyncTimeStamp: {
-                '$lt': moment().subtract(5, 'minutes').toISOString()
-                // '$lt': moment().subtract(1, 'seconds').toISOString()
-            }
+            $or: [
+                {
+                    lastSyncTimeStamp: {
+                        // '$lt': moment().subtract(5, 'minutes').toISOString()
+                        '$lt': moment().subtract(1, 'seconds').toISOString()
+                    }
+                },
+                {
+                    lastSyncTimeStamp: undefined
+                }
+            ]
         };
         const options: FindOneOptions<PlaylistEntity> = {
             where: whereCondition,
@@ -201,10 +208,17 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
-            lastUploadTimeStamp: {
-                '$lt': moment().subtract(5, 'minutes').toISOString()
-                // '$lt': moment().subtract(1, 'seconds').toISOString()
-            }
+            $or: [
+                {
+                    lastUploadTimeStamp: {
+                        '$lt': moment().subtract(5, 'minutes').toISOString()
+                        // '$lt': moment().subtract(1, 'seconds').toISOString()
+                    }
+                },
+                {
+                    lastUploadTimeStamp: undefined
+                }
+            ]
         };
         const options: FindOneOptions<PlaylistEntity> = {
             where: whereCondition,
@@ -213,7 +227,7 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
             }
         };
         req.playlistStore = await playlistModel.findOne(options);
-        // debug('req.playlistStore ', req.playlistStore);
+        debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));

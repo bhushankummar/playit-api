@@ -1,6 +1,5 @@
 import * as express from 'express';
 import * as passport from 'passport';
-
 import * as UserService from '../services/UserService';
 import * as GoogleService from '../services/GoogleService';
 import * as TokenService from '../services/TokenService';
