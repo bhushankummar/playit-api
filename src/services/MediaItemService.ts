@@ -109,7 +109,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         if (_.isEmpty(item) === true && _.isEmpty(itemGoogleDrive) === false) {
             value.isUploaded = true;
             value.isDownloaded = true;
-            value.fileId = itemGoogleDrive.fileId;
+            value.fileId = itemGoogleDrive.id;
             mediaItemsNew.push(value);
         }
     });
@@ -136,7 +136,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         if (!_.isEmpty(itemGoogleDrive) && value.isUploaded === false) {
             value.isUploaded = true;
             value.isDownloaded = true;
-            value.fileId = itemGoogleDrive.fileId;
+            value.fileId = itemGoogleDrive.id;
             mediaItemsUpdate.push(value);
         }
     });
