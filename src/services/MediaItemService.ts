@@ -276,6 +276,23 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         }
     }, { concurrency: CONCURRENCY });
 
+    await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
+        try {
+            if (_.isEmpty(value.fileId)) {
+                debug('File Id is empty.');
+                return;
+            }
+            await GoogleDrive.removeFile(req.userStore.google, value.fileId);
+        } catch (error) {
+            if (error && error.errors) {
+                debug('mediaItemsRemove from google drive error ', error.errors);
+            } else {
+                debug('mediaItemsRemove from google drive error ', error);
+            }
+            debug('mediaItemsRemove from google drive value ', value);
+        }
+    }, { concurrency: CONCURRENCY });
+
     // req.data.mediaItemsRemove = _.take(req.data.mediaItemsRemove, 1);
 
     // debug('req.data.mediaItemsRemove ', req.data.mediaItemsRemove.length);
@@ -289,23 +306,14 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
-    await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
-        try {
-            await GoogleDrive.removeFile(req.userStore.google, value.fileId);
-        } catch (error) {
-            if (error && error.errors) {
-                debug('mediaItemsRemove from google drive error ', error.errors);
-            } else {
-                debug('mediaItemsRemove from google drive error ', error);
-            }
-            debug('mediaItemsRemove from google drive value ', value);
-        }
-    }, { concurrency: CONCURRENCY });
-
     // req.data.googleDriveItemsRemove = _.take(req.data.googleDriveItemsRemove, 1);
     //  debug('req.data.googleDriveItemsRemove ', req.data.googleDriveItemsRemove.length);
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
         try {
+            if (_.isEmpty(value.fileId)) {
+                debug('File Id is empty.');
+                return;
+            }
             await GoogleDrive.removeFile(req.userStore.google, value.id);
         } catch (error) {
             if (error && error.errors) {
