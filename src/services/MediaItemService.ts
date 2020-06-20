@@ -188,9 +188,9 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     };
     // debug('req.data.mediaItemsNew ', req.data.mediaItemsNew.length);
     const CONCURRENCY = 1;
+    const mediaItemsNew = [];
     await bluebird.map(req.data.mediaItemsNew, async (value: any) => {
         try {
-            const mediaItemModel = getMongoRepository(MediaItemEntity);
             const data = {
                 user: userProfile,
                 title: value.title,
@@ -198,13 +198,21 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 urlId: value.id,
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: req.playlistStore.driveFolderId,
-                isUploaded: false
+                isUploaded: value.isUploaded,
+                isDownloaded: value.isDownloaded,
+                filId: value.fileId
             };
-            await mediaItemModel.insert(data);
+            mediaItemsNew.push(data);
         } catch (error) {
             debug('error ', error);
         }
     }, { concurrency: CONCURRENCY });
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        await mediaItemModel.insertMany(mediaItemsNew);
+    } catch (error) {
+        debug('error ', error);
+    }
 
     // debug('req.data.mediaItemsUpdate ', req.data.mediaItemsUpdate.length);
     await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
@@ -212,6 +220,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             const updateData: any = {
                 isUploaded: value.isUploaded,
+                isDownloaded: value.isDownloaded
             };
             if (value.fileId) {
                 updateData.fileId = value.fileId;
@@ -249,16 +258,24 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove from google drive value ', value);
         }
     }, { concurrency: CONCURRENCY });
+
+    const mediaItemsRemove = [];
     await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
         try {
-            const mediaItemModel = getMongoRepository(MediaItemEntity);
-            // debug('mediaRemoveItem ', value);
-            await mediaItemModel.remove(value);
+            mediaItemsRemove.push(value);
         } catch (error) {
             debug('mediaItemsRemove error ', error);
             debug('mediaItemsRemove error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        // debug('mediaRemoveItem ', value);
+        await mediaItemModel.remove(mediaItemsRemove);
+    } catch (error) {
+        debug('mediaItemsRemove error ', error);
+        debug('mediaItemsRemove error in  ', mediaItemsRemove);
+    }
 
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
         try {
