@@ -145,7 +145,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     _.each(req.googleDriveStore, (value) => {
         let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
         youTubeId = _.last(youTubeId);
-        value.urlId = youTubeId.split('.')[0];
+        value.urlId = youTubeId.split('.')[ 0 ];
         googleItems.push(value);
     });
 
@@ -328,7 +328,7 @@ export const identifySyncItemsForGoogleDrive: express.RequestHandler = async (re
     _.each(req.googleDriveStore, (value) => {
         let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
         youTubeId = _.last(youTubeId);
-        value.urlId = youTubeId.split('.')[0];
+        value.urlId = youTubeId.split('.')[ 0 ];
         googleItems.push(value);
     });
     _.each(req.mediaItemsStore, (value) => {
@@ -394,7 +394,8 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
     if (_.isEmpty(req.mediaItemsStore)) {
         return next();
     }
-    const mediaItemIds = _.map(req.mediaItemsStore, '_id');
+    const mediaItemsStore = _.filter(req.mediaItemsStore, { isDownloaded: true })
+    const mediaItemIds = _.map(mediaItemsStore, '_id');
     if (_.isEmpty(mediaItemIds)) {
         return next();
     }
@@ -407,7 +408,8 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
             }
         };
         const updateData = {
-            lastDownloadTimeStamp: moment().toISOString()
+            lastDownloadTimeStamp: moment().toISOString(),
+            isDownloaded: true
         };
         const response = await mediaItemModel.update(whereCondition, updateData);
         debug('response ', response);

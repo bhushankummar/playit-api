@@ -8,6 +8,7 @@ import * as bluebird from 'bluebird';
 import * as MediaDownloader from '../utils/MediaDownloader';
 
 import { APP, MEDIA_DIRECTORY, MEDIA_TYPE } from '../constants';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 const debug = Debug('PL:YouTubeService');
 
@@ -86,19 +87,23 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
     if (!fs.existsSync(driveDirectory)) {
         fs.mkdirSync(driveDirectory);
     }
-    await bluebird.map(req.mediaItemsStore, async (item: any) => {
+    const tempMediaItems = [];
+    await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
         try {
             if (_.isEmpty(item.playlistId)) {
                 debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
                 return;
             }
             const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
+            item.isDownloaded = true;
+            tempMediaItems.push(item);
             // debug('AUDIO download complete ', response);
         } catch (error) {
             debug('downloadAudioHQUsingMediaItem error ', error);
             debug('downloadAudioHQUsingMediaItem error item', item);
         }
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
+    req.mediaItemsStore = tempMediaItems;
     req.youTubeStore = { message: true };
     return next();
 };
@@ -118,6 +123,7 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
     if (!fs.existsSync(driveDirectory)) {
         fs.mkdirSync(driveDirectory);
     }
+    const tempMediaItems = [];
     await bluebird.map(req.mediaItemsStore, async (item: any) => {
         try {
             if (_.isEmpty(item.playlistId)) {
@@ -125,12 +131,15 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
                 return;
             }
             const response = await MediaDownloader.downloadVideoExec(item, driveDirectory);
+            item.isDownloaded = true;
+            tempMediaItems.push(item);
             // debug('response  ', response);
         } catch (error) {
             debug('downloadVideoHQUsingMediaItem error ', error);
             debug('downloadVideoHQUsingMediaItem error item', item);
         }
     }, { concurrency: APP.DOWNLOAD_VIDEO_CONCURRENCY });
+    req.mediaItemsStore = tempMediaItems;
     req.youTubeStore = { message: true };
     return next();
 };

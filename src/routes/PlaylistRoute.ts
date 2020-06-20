@@ -1,6 +1,5 @@
 import * as express from 'express';
 import * as passport from 'passport';
-import * as UserService from '../services/UserService';
 import * as PlaylistService from '../services/PlaylistService';
 import * as MediaItemService from '../services/MediaItemService';
 import * as PlaylistController from '../controllers/PlaylistController';

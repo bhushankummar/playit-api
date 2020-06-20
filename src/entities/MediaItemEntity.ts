@@ -11,7 +11,7 @@ class User {
 }
 
 @Entity('mediaItems')
-@Index(['user._id', 'playlistId', 'urlId'], { unique: true })
+@Index([ 'user._id', 'playlistId', 'urlId' ], { unique: true })
 export class MediaItemEntity {
 
     @ObjectIdColumn()
@@ -42,6 +42,9 @@ export class MediaItemEntity {
 
     @Column({ default: false })
     isUploaded: boolean;
+
+    @Column({ default: false })
+    isDownloaded: boolean;
 
     @Column()
     lastDownloadTimeStamp: Date;
