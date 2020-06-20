@@ -71,7 +71,7 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
                 debug('CRITICAL : Skipping Video Media Item which has not playlistId.');
                 return;
             }
-            const response = await MediaDownloader.downloadVideoExec(item, driveDirectory);
+            const response = await MediaDownloader.downloadVideo(item, driveDirectory);
             item.isDownloaded = true;
             tempMediaItems.push(item);
             // debug('response  ', response);

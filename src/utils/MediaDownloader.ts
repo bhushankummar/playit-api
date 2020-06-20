@@ -13,33 +13,33 @@ const debug = Debug('PL:MediaDownloader');
 export const downloadMedia = (options: any[], type: string, item: MediaItemEntity, driveDirectory: any) => {
     return new Promise((resolve: any, reject: any) => {
         const mediaUrl = item.url;
-        const audio = youtubedl(mediaUrl, options);
+        const media = youtubedl(mediaUrl, options);
         const mediaResponse = {
             message: true,
             filePath: '',
             fileName: ''
         };
-        audio.on('info', () => {
+        media.on('info', () => {
             const newFileName = YouTube.prepareFileName(item, type);
             const filePath = path.join(driveDirectory, newFileName);
             mediaResponse.filePath = filePath;
             mediaResponse.fileName = newFileName;
             debug('Download started %o ', mediaResponse.fileName);
-            audio.pipe(fs.createWriteStream(filePath));
+            media.pipe(fs.createWriteStream(filePath));
         });
 
         // Will be called if download was already completed and there is nothing more to download.
-        audio.on('complete', (info: any) => {
+        media.on('complete', (info: any) => {
             debug(mediaResponse.fileName, ' already downloaded.');
             resolve(mediaResponse);
         });
 
-        audio.on('end', () => {
+        media.on('end', () => {
             debug('** Finished downloading %o ', mediaResponse.fileName);
             resolve(mediaResponse);
         });
 
-        audio.on('error', (error: any) => {
+        media.on('error', (error: any) => {
             debug('error occurs in downloadMedia item %o ', item);
             debug('error occurs in downloadMedia mediaResponse %0 ', mediaResponse);
             debug('error in downloadMedia %o ', error);
@@ -51,6 +51,13 @@ export const downloadMedia = (options: any[], type: string, item: MediaItemEntit
 export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => {
     const options = [ '-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3' ];
     return downloadMedia(options, 'mp3', item, driveDirectory);
+};
+
+export const downloadVideo = (item: MediaItemEntity, localDirectory: any) => {
+    const options = [
+        `--format=136`
+    ];
+    return downloadMedia(options, 'mp4', item, localDirectory);
 };
 
 export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) => {
