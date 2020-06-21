@@ -6,13 +6,10 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as bluebird from 'bluebird';
 import * as moment from 'moment';
-import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
+import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
 import * as utils from '../utils';
-import { getMongoRepository } from 'typeorm';
-import { MediaItemEntity } from '../entities/MediaItemEntity';
-
 const debug = Debug('PL:GoogleDriveService');
 
 /**

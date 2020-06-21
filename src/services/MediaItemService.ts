@@ -95,7 +95,10 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const googleDriveItemsRemove: any = [];
 
     /**
-     * Identify the files those are not in the database but available in the YouTube
+     * Identify the files those :
+     * Not available in database :
+     * A - Available in google drive
+     * B - Not Available in google drive
      */
     _.each(req.youTubePlaylistStore.items, (value) => {
         const item = _.find(req.mediaItemsStore, { urlId: value.id });
@@ -122,18 +125,18 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
         /**
          * Identify the files those are in the database but not available in the YouTube
          */
-        if (_.isEmpty(item)) {
-            // debug('Identify for the Remove. %o ', item);
+        if (_.isEmpty(item) === true) {
+            debug('Identify for the Remove. %o ', item);
             mediaItemsRemove.push(value);
         }
 
         const itemGoogleDrive = _.find(googleItems, { urlId: value.urlId });
-        if (_.isEmpty(itemGoogleDrive) && value.isUploaded === true) {
+        if (_.isEmpty(itemGoogleDrive) === true && value.isUploaded === true) {
             value.isUploaded = false;
             value.isDownloaded = false;
             mediaItemsUpdate.push(value);
         }
-        if (!_.isEmpty(itemGoogleDrive) && value.isUploaded === false) {
+        if (_.isEmpty(itemGoogleDrive) === false && value.isUploaded === false) {
             value.isUploaded = true;
             value.isDownloaded = true;
             value.fileId = itemGoogleDrive.id;
@@ -143,7 +146,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     _.each(googleItems, (value) => {
         const item = _.find(req.youTubePlaylistStore.items, { id: value.urlId });
         const removePendingItem = _.find(mediaItemsRemove, { urlId: value.urlId });
-        if (_.isEmpty(item) && _.isEmpty(removePendingItem)) {
+        if (_.isEmpty(item) === true && _.isEmpty(removePendingItem) === true) {
             googleDriveItemsRemove.push(value);
         }
     });
@@ -170,7 +173,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         return next();
     } else if (_.isEmpty(req.userStore.google)) {
         return next();
-    } if (_.isEmpty(req.playlistStore)) {
+    } else if (_.isEmpty(req.playlistStore)) {
         return next();
     } else if (_.isEmpty(req.data)) {
         return next();
@@ -209,11 +212,13 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('error ', error);
         }
     }, { concurrency: CONCURRENCY });
-    try {
-        const mediaItemModel = getMongoRepository(MediaItemEntity);
-        await mediaItemModel.insertMany(mediaItemsNew);
-    } catch (error) {
-        debug('error ', error);
+    if (_.isEmpty(mediaItemsNew) === false) {
+        try {
+            const mediaItemModel = getMongoRepository(MediaItemEntity);
+            await mediaItemModel.insertMany(mediaItemsNew);
+        } catch (error) {
+            debug('error ', error);
+        }
     }
 
     // debug('req.data.mediaItemsUpdate ', req.data.mediaItemsUpdate.length);
@@ -270,13 +275,16 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             debug('mediaItemsRemove error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
-    try {
-        const mediaItemModel = getMongoRepository(MediaItemEntity);
-        // debug('mediaRemoveItem ', value);
-        await mediaItemModel.remove(mediaItemsRemove);
-    } catch (error) {
-        debug('mediaItemsRemove error ', error);
-        debug('mediaItemsRemove error in  ', mediaItemsRemove);
+
+    if (_.isEmpty(mediaItemsRemove) === false) {
+        try {
+            const mediaItemModel = getMongoRepository(MediaItemEntity);
+            // debug('mediaRemoveItem ', value);
+            await mediaItemModel.remove(mediaItemsRemove);
+        } catch (error) {
+            debug('mediaItemsRemove error ', error);
+            debug('mediaItemsRemove error in  ', mediaItemsRemove);
+        }
     }
 
     await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
