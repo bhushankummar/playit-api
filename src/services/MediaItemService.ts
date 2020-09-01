@@ -42,6 +42,9 @@ export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest
     if (params.urlId !== undefined) {
         whereCondition.urlId = params.urlId;
     }
+    if (params.fileId !== undefined) {
+        whereCondition.fileId = params.fileId;
+    }
     // debug('whereCondition ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
