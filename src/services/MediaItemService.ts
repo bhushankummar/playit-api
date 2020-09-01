@@ -356,7 +356,7 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
     if (_.isEmpty(mediaItemIds)) {
         return next();
     }
-    debug('mediaItemIds ', mediaItemIds);
+    // debug('mediaItemIds ', mediaItemIds);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         const whereCondition: any = {

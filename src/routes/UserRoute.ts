@@ -22,7 +22,7 @@ userRoute.get('/register', [
  */
 userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
-    GoogleService.retrieveGoogleProfile,
+    GoogleService.retrieveGoogleProfileFromOAuth2,
     UserService.registerUser,
     UserService.updateGoogleToken,
     UserService.searchOneByState,
@@ -41,8 +41,6 @@ userRoute.get('/me', passport.authenticate('bearer'), [
  * Retrieve Google Profile
  */
 userRoute.post('/google/me', passport.authenticate('bearer'), [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
     GoogleService.retrieveGoogleProfile,
     GoogleController.googleProfileDetail
 ]);
