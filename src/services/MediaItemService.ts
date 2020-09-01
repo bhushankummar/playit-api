@@ -30,6 +30,18 @@ export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest
     if (params.isUploaded !== undefined) {
         whereCondition.isUploaded = params.isUploaded;
     }
+    if (params.isDownloaded !== undefined) {
+        whereCondition.isDownloaded = params.isDownloaded;
+    }
+    if (params.playlistId !== undefined) {
+        whereCondition.playlistId = params.playlistId;
+    }
+    if (params.driveFolderId !== undefined) {
+        whereCondition.driveFolderId = params.driveFolderId;
+    }
+    if (params.urlId !== undefined) {
+        whereCondition.urlId = params.urlId;
+    }
     // debug('whereCondition ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -307,7 +319,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
 };
 
 /**
- * List all the Playlist Songs
+ * Search Media which has been not uploaded and also not downloaded yet
  */
 export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
@@ -345,7 +357,7 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
 };
 
 /**
- * Search One MediaItem Last Sync
+ * Update Download Timestamp
  */
 export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.mediaItemsStore)) {
@@ -367,6 +379,41 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
         const updateData = {
             lastDownloadTimeStamp: moment().toISOString(),
             isDownloaded: true
+        };
+        const response = await mediaItemModel.update(whereCondition, updateData);
+        // debug('response ', response);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Update Download Attempt Count
+ */
+export const updateDownloadAttempt: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.mediaItemsStore)) {
+        return next();
+    }
+    const mediaItemsStore = _.filter(req.mediaItemsStore, { isDownloaded: false });
+    const mediaItemIds = _.map(mediaItemsStore, '_id');
+    if (_.isEmpty(mediaItemIds)) {
+        return next();
+    }
+    // debug('mediaItemIds ', mediaItemIds);
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        const whereCondition: any = {
+            '_id': {
+                '$in': mediaItemIds
+            }
+        };
+        const updateData: any = {
+            $inc:
+            {
+                downloadAttemptCount: 1
+            }
         };
         const response = await mediaItemModel.update(whereCondition, updateData);
         // debug('response ', response);

@@ -46,6 +46,9 @@ export class MediaItemEntity {
     @Column({ default: false })
     isDownloaded: boolean;
 
+    @Column({ default: 0 })
+    downloadAttemptCount: number;
+
     @Column()
     lastDownloadTimeStamp: Date;
 

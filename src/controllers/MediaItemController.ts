@@ -9,7 +9,10 @@ Debug('PL:MediaItemController');
  * Media Item Details
  */
 export const mediaItemData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.mediaItemsStore || [];
+    req.data = {
+        data: req.mediaItemsStore || [],
+        length: req.mediaItemsStore.length
+    };
     return next();
 };
 
@@ -19,7 +22,7 @@ export const mediaItemData: express.RequestHandler = (req: IRequest, res: expres
 export const mediaItemSync: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         req.data = {
-            message : 'Their is no pending playlist for the sync.'
+            message: 'Their is no pending playlist for the sync.'
         };
     }
     return next();

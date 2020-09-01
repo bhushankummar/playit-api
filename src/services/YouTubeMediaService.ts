@@ -36,13 +36,14 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
             }
             const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
             item.isDownloaded = true;
-            tempMediaItems.push(item);
             // debug('AUDIO download complete ', response);
         } catch (error) {
+            item.isDownloaded = false;
             debug('downloadAudioHQUsingMediaItem error ', error);
             debug('downloadAudioHQUsingMediaItem error item', item);
             debug('downloadAudioHQUsingMediaItem error error.stderr ', error.stderr);
         }
+        tempMediaItems.push(item);
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
     req.mediaItemsStore = tempMediaItems;
     req.youTubeStore = { message: true };
@@ -73,13 +74,14 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
             }
             const response = await MediaDownloader.downloadVideo(item, driveDirectory);
             item.isDownloaded = true;
-            tempMediaItems.push(item);
             // debug('response  ', response);
         } catch (error) {
+            item.isDownloaded = false;
             debug('downloadVideoHQUsingMediaItem error ', error);
             debug('downloadVideoHQUsingMediaItem error item', item);
             debug('downloadVideoHQUsingMediaItem error error.stderr ', error.stderr);
         }
+        tempMediaItems.push(item);
     }, { concurrency: APP.DOWNLOAD_VIDEO_CONCURRENCY });
     req.mediaItemsStore = tempMediaItems;
     req.youTubeStore = { message: true };
