@@ -6,14 +6,10 @@ import * as _ from 'lodash';
 import * as path from 'path';
 import * as bluebird from 'bluebird';
 import * as moment from 'moment';
-import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
+import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
-import * as GoogleUtils from '../utils/GoogleUtils';
 import * as utils from '../utils';
-import { getMongoRepository } from 'typeorm';
-import { MediaItemEntity } from '../entities/MediaItemEntity';
-
 const debug = Debug('PL:GoogleDriveService');
 
 /**
@@ -48,8 +44,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[0]) {
-                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[ 0 ]) {
+                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -63,7 +59,7 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
             await utils.wait(1);
         }
     });
-    debug('Audio Ready to Upload on Google Drive ', uniqueItems);
+    debug('Audio/Video Ready to Upload on Google Drive ', uniqueItems);
     req.localMediaStore = uniqueItems;
     return next();
 };
@@ -94,88 +90,6 @@ export const uploadToDrive: express.RequestHandler = async (req: IRequest, res: 
     });
     debug('Files has been uploaded ', items);
     req.googleDriveStore = items;
-    return next();
-};
-
-/**
- * Search InTo Folder
- */
-export const removeDuplicatesFromGoogleDrive: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.playlistStore)) {
-        return next();
-    } else if (_.isEmpty(req.youTubePlaylistStore)) {
-        return next();
-    } else if (_.isEmpty(req.youTubePlaylistStore.items)) {
-        return next();
-    }
-    const userProfile = {
-        _id: req.userStore._id,
-        email: req.userStore.email
-    };
-    const uniqueItems: any = [];
-    const folderId = req.playlistStore.driveFolderId;
-    if (APP.IS_SANDBOX) {
-        req.youTubePlaylistStore.items = _.take(req.youTubePlaylistStore.items, 1);
-    }
-    let extension = MEDIA_EXTENSION.AUDIO;
-    if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
-        extension = MEDIA_EXTENSION.VIDEO;
-    }
-    // debug('extension ', extension);
-    debug('** Start removeDuplicatesFromGoogleDrive ');
-    await bluebird.map(req.youTubePlaylistStore.items, async (value: any) => {
-        const searchName = YOUTUBE.ID_SEPARATOR.concat(value.id, extension);
-        // debug('searchName ', searchName);
-        try {
-            const response: any = await GoogleDrive.searchIntoFolder(folderId, searchName);
-            // debug('response.data ', response.data);
-            if (response.data && response.data.files && response.data.files.length === 0) {
-                uniqueItems.push(value);
-            } else {
-                /**
-                 * Mark the Item as Uploaded True if already found from the Google Drive
-                 */
-                const whereCondition: any = {
-                    user: userProfile,
-                    urlId: value.id,
-                    playlistId: req.youTubePlaylistStore.id,
-                    driveFolderId: req.playlistStore.driveFolderId
-                };
-                // debug('whereCondition ', whereCondition);
-                let driveFileId = '';
-                if (response && response.data && response.data.files && response.data.files[0]) {
-                    driveFileId = response.data.files[0].id;
-                }
-                try {
-                    const mediaItemModel = getMongoRepository(MediaItemEntity);
-                    const data = {
-                        $set: {
-                            isUploaded: true,
-                            fileId: driveFileId
-                        }
-                    };
-                    await mediaItemModel.updateOne(whereCondition, data);
-                } catch (error) {
-                    debug('mongo removeDuplicatesFromGoogleDrive item ', value);
-                    debug('mongo removeDuplicatesFromGoogleDrive error ', error);
-                    await utils.wait(1);
-                }
-            }
-            await utils.wait(0.1);
-        } catch (error) {
-            debug('removeDuplicatesFromGoogleDrive error item ', value);
-            let errorResponse = error;
-            if (errorResponse.Error) {
-                errorResponse = errorResponse.Error;
-            } else if (errorResponse.errors) {
-                errorResponse = errorResponse.errors;
-            }
-            debug('removeDuplicatesFromGoogleDrive error ', errorResponse);
-            await utils.wait(1);
-        }
-    }, { concurrency: 2 });
-    debug('%o Items ready For Download ', uniqueItems.length);
-    req.youTubePlaylistStore.items = uniqueItems;
     return next();
 };
 

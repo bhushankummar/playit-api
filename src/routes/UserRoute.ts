@@ -1,6 +1,5 @@
 import * as express from 'express';
 import * as passport from 'passport';
-
 import * as UserService from '../services/UserService';
 import * as GoogleService from '../services/GoogleService';
 import * as TokenService from '../services/TokenService';
@@ -23,7 +22,7 @@ userRoute.get('/register', [
  */
 userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
-    GoogleService.retrieveGoogleProfile,
+    GoogleService.retrieveGoogleProfileFromOAuth2,
     UserService.registerUser,
     UserService.updateGoogleToken,
     UserService.searchOneByState,
@@ -42,20 +41,8 @@ userRoute.get('/me', passport.authenticate('bearer'), [
  * Retrieve Google Profile
  */
 userRoute.post('/google/me', passport.authenticate('bearer'), [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
     GoogleService.retrieveGoogleProfile,
     GoogleController.googleProfileDetail
-]);
-
-/**
- * WIP : Refresh Google Token
- */
-userRoute.post('/refresh', [
-    UserService.validateRegisterUser,
-    UserService.searchOneByEmail,
-    GoogleService.refreshToken,
-    GoogleController.googleDetail
 ]);
 
 /**

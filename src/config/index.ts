@@ -8,7 +8,7 @@ import { IRequest } from '../interface/IRequest';
 const debug = Debug('PL:Config');
 
 export const trimParams: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    debug(`START : ${req.method} : ${utils.url(req)} ${req.url}`);
+    debug(`START : ${req.method} : ${utils.url(req)}${req.url}`);
     if (req.method === 'OPTIONS') {
         req.data = { message: true };
     }
@@ -24,6 +24,7 @@ export const trimParams: express.RequestHandler = (req: IRequest, res: express.R
             req.query[ key ] = value.trim();
         }
     });
+    // debug('Authorization : %o ', req.get('Authorization'));
     debug('req.body : %o ', req.body);
     return next();
 };

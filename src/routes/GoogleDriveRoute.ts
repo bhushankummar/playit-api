@@ -3,13 +3,13 @@ import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as GoogleController from '../controllers/GoogleController';
 import * as UserService from '../services/UserService';
 import * as GoogleService from '../services/GoogleService';
+import * as MediaItemService from '../services/MediaItemService';
 
 const googleDriveRoute: express.Router = express.Router();
 
 /**
  * Upload Media File to Google Drive
  * This API is call from the Cron Job
- * type : 0 = Audio ; 1 = Video
  */
 googleDriveRoute.post('/crone/upload/:type', [
     UserService.searchOneByEmail,

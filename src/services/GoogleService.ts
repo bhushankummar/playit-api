@@ -62,7 +62,7 @@ export const setCredentials: express.RequestHandler = async (req: IRequest, res:
 /**
  * Retrieve authorizationCode
  */
-export const retrieveGoogleProfile: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const retrieveGoogleProfileFromOAuth2: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
         const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
         oauth2Client.setCredentials(req.googleStore);
@@ -78,32 +78,7 @@ export const retrieveGoogleProfile: express.RequestHandler = async (req: IReques
         req.googleProfileStore = response.data;
         return next();
     } catch (error) {
-        debug('retrieveGoogleProfile error ', error);
-        return next(error);
-    }
-};
-
-/**
- * Retrieve authorizationCode
- */
-export const refreshToken: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    try {
-        debug('req.userStore.google ', req.userStore.google);
-        oauth2Client.setCredentials(req.userStore.google);
-        const data = await oauth2Client.getRequestMetadata();
-        debug('data ', data);
-        const data1 = await oauth2Client.getAccessToken();
-        debug('data1 ', data1);
-        oauth2Client.on('tokens', (tokens) => {
-            if (tokens.refresh_token) {
-                // store the refresh_token in my database!
-                debug('******************* Refresh Token ', tokens.refresh_token);
-            }
-            debug('******************* Access Token ', tokens.access_token);
-        });
-        return next();
-    } catch (error) {
-        debug('error ', error);
+        debug('retrieveGoogleProfileFromOAuth2 error ', error);
         return next(error);
     }
 };
@@ -122,4 +97,32 @@ export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, 
     });
     req.googleStore = { url };
     return next();
+};
+
+/**
+ * Retrieve Google Profile
+ */
+export const retrieveGoogleProfile: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    }
+    try {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(req.userStore.google);
+        const people = google.people({
+            version: 'v1',
+            auth: oauth2Client,
+        });
+        const response = await people.people.get({
+            resourceName: 'people/me',
+            personFields: 'emailAddresses,names,photos',
+        });
+        req.googleProfileStore = response.data;
+        return next();
+    } catch (error) {
+        debug('retrieveGoogleProfile error ', error);
+        return next(error);
+    }
 };

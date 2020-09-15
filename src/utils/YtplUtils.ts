@@ -23,9 +23,8 @@ export const findPlaylistItems = (playlistId: string): Promise<IYtplPlaylist> =>
 /**
  * Get the File Metadata
  */
-export const findMetadata = (url: string) => {
+export const findMetadata = (url: string, options: any) => {
     return new Promise((resolve: any, reject: any) => {
-        const options: any = [];
         youtubedl.getInfo(url, options, (error: any, info: any) => {
             if (error) {
                 reject(error);
@@ -58,6 +57,8 @@ export const cleanFileName = (fileName: string) => {
         'Lyrical:',
         'Full Song:',
         'Full Audio:',
+        'Lyrical Video:',
+        'Official:',
         'Full Video:'
     ];
     fileName = fileName.split(/'/g).join(' ');
@@ -67,11 +68,5 @@ export const cleanFileName = (fileName: string) => {
         fileName = fileName.split(word.toUpperCase()).join(' ');
         fileName = fileName.trim();
     });
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.replace(/  +/g, ' ');
-    fileName = fileName.trim();
     return fileName;
 };

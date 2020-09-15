@@ -14,8 +14,8 @@ export class UserEntity {
     google: object;
 
     @CreateDateColumn()
-    createdDate: Date;
+    createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: Date;
+    updatedDate: string;
 }

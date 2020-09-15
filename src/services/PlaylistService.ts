@@ -3,8 +3,9 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
+import * as mongodb from 'mongodb';
 import * as YtplUtils from '../utils/YtplUtils';
-import { getMongoRepository, FindOneOptions, OrderByCondition } from 'typeorm';
+import { getMongoRepository, FindOneOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
 
@@ -88,9 +89,9 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
 };
 
 /**
- * Search Playlist using UserId & PlaylistId
+ * Search Playlist using UserId & Playlist UrlId
  */
-export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
         return next(Boom.notFound('Invalid User'));
@@ -105,6 +106,36 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
             user: userProfile,
             urlId: params.playlistId
         };
+        // debug('whereCondition ', whereCondition);
+        req.playlistStore = await playlistModel.findOne(whereCondition);
+        // debug('req.playlistStore ', req.playlistStore);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Search Playlist using UserId & PlaylistId
+ */
+export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(req.userStore)) {
+        return next(Boom.notFound('Invalid User'));
+    }
+    const playlistModel = getMongoRepository(PlaylistEntity);
+    const userProfile = {
+        _id: req.userStore._id,
+        email: req.userStore.email
+    };
+    const playlistIdObjectId = new mongodb.ObjectID(params.playlistId);
+    try {
+        const whereCondition: any = {
+            user: userProfile,
+            _id: playlistIdObjectId
+        };
+        // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
@@ -141,13 +172,21 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 /**
  * Search One Playlist Last Sync
  */
-export const searchOneByLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
-            lastSyncTimeStamp: {
-                '$lt': moment().subtract(5, 'minutes').toISOString()
-            }
+            $or: [
+                {
+                    lastSyncTimeStamp: {
+                        '$lt': moment().subtract(5, 'minutes').toISOString()
+                        // '$lt': moment().subtract(1, 'seconds').toISOString()
+                    }
+                },
+                {
+                    lastSyncTimeStamp: undefined
+                }
+            ]
         };
         const options: FindOneOptions<PlaylistEntity> = {
             where: whereCondition,
@@ -167,7 +206,41 @@ export const searchOneByLastSync: express.RequestHandler = async (req: IRequest,
 /**
  * Search One Playlist Last Sync
  */
-export const updateLastSync: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    try {
+        const playlistModel = getMongoRepository(PlaylistEntity);
+        const whereCondition = {
+            $or: [
+                {
+                    lastUploadTimeStamp: {
+                        '$lt': moment().subtract(5, 'minutes').toISOString()
+                        // '$lt': moment().subtract(1, 'seconds').toISOString()
+                    }
+                },
+                {
+                    lastUploadTimeStamp: undefined
+                }
+            ]
+        };
+        const options: FindOneOptions<PlaylistEntity> = {
+            where: whereCondition,
+            order: {
+                lastUploadTimeStamp: 'ASC'
+            }
+        };
+        req.playlistStore = await playlistModel.findOne(options);
+        // debug('req.playlistStore ', req.playlistStore);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Search One Playlist Last Sync
+ */
+export const updateLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
     }
@@ -178,6 +251,29 @@ export const updateLastSync: express.RequestHandler = async (req: IRequest, res:
         };
         const updateData = {
             lastSyncTimeStamp: moment().toISOString()
+        };
+        await playlistModel.update(whereCondition, updateData);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};
+
+/**
+ * Search One Playlist Last Sync
+ */
+export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        return next();
+    }
+    try {
+        const playlistModel = getMongoRepository(PlaylistEntity);
+        const whereCondition = {
+            _id: req.playlistStore._id
+        };
+        const updateData = {
+            lastUploadTimeStamp: moment().toISOString()
         };
         await playlistModel.update(whereCondition, updateData);
     } catch (error) {

@@ -19,6 +19,16 @@ mediaItemRoute.post('/', passport.authenticate('bearer'), [
 ]);
 
 /**
+ * Search All Playlist's Media
+ * This API will return all the Playlist of the User
+ */
+mediaItemRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
+    PlaylistService.searchOneByPlaylistIdAndUserId,
+    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
+    MediaItemController.mediaItemData
+]);
+
+/**
  * Sync MediaItem with YouTube Playlist & Google Drive
  * Adds New File if new found
  * Updates the Update Status if file is already uploaded
@@ -26,8 +36,8 @@ mediaItemRoute.post('/', passport.authenticate('bearer'), [
  * This API called from the Cron Job
  */
 mediaItemRoute.post('/sync/crone/youtube', [
-    PlaylistService.searchOneByLastSync,
-    PlaylistService.updateLastSync,
+    PlaylistService.searchOneByLastSyncTimeStamp,
+    PlaylistService.updateLastSyncTimeStamp,
     UserService.searchOneByPlaylistUser,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
     GoogleDriveService.searchAllFiles,

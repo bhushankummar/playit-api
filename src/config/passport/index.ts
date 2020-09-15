@@ -20,6 +20,7 @@ export const passport = new bearerStrategy({
     let userDocument: UserEntity;
 
     try {
+        // debug('token ', token);
         const whereCondition = {
             token: token
         };
@@ -40,6 +41,7 @@ export const passport = new bearerStrategy({
         };
         const userModel = getMongoRepository(UserEntity);
         userDocument = await userModel.findOne(searchCondition);
+        // debug('userDocument ', userDocument);
     } catch (error) {
         debug('Error %o ', error);
         return callback(error);

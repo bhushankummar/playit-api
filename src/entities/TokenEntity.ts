@@ -21,8 +21,8 @@ export class TokenEntity {
     user: User;
 
     @CreateDateColumn()
-    createdDate: Date;
+    createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: Date;
+    updatedDate: string;
 }

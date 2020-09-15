@@ -9,7 +9,7 @@ class User {
     email?: string;
 }
 
-@Entity('playlist')
+@Entity('playlists')
 export class PlaylistEntity {
 
     @ObjectIdColumn()
@@ -37,6 +37,11 @@ export class PlaylistEntity {
         default: moment().toISOString()
     })
     lastSyncTimeStamp: Date;
+
+    @Column({
+        default: moment().toISOString()
+    })
+    lastUploadTimeStamp: Date;
 
     @CreateDateColumn()
     createdDate: string;
