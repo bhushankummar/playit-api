@@ -16,6 +16,7 @@ export const passport = new bearerStrategy({
     realm: '',
     passReqToCallback: true
 }, async (req: IRequest, token: string, callback: any) => {
+    // debug('Inside bearerStrategy');
     let tokenDocument: TokenEntity;
     let userDocument: UserEntity;
 
@@ -53,5 +54,6 @@ export const passport = new bearerStrategy({
         return callback(new Boom('Your session has been expired.'), { statusCode: 401 });
     }
     req.userStore = userDocument;
+    // debug('req.userStore ', req.userStore);
     return callback(undefined, userDocument);
 });

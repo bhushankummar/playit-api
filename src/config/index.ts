@@ -69,7 +69,7 @@ export const handleSuccess: express.RequestHandler = (req: IRequest, res: expres
 
     const resObject = req.data || [];
     // debug('Success response :: ----------------------------------------------------------------------------------- ');
-    debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
+    debug(`END : ${req.method} : ${utils.url(req)}${req.url}`);
     return res.json(resObject);
 };
 

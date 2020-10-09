@@ -48,9 +48,8 @@ export const downloadMedia = (options: any[], type: string, item: MediaItemEntit
     });
 };
 
-export const downloadAudio = (playlist: any, item: any, driveDirectory: any) => {
-    const options = [ '-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3' ];
-    return downloadMedia(options, 'mp3', item, driveDirectory);
+export const downloadAudio = (playlist: any, item: any, driveDirectory: any, downloadOption) => {
+    return downloadMedia(downloadOption, 'mp3', item, driveDirectory);
 };
 
 export const downloadVideo = (item: MediaItemEntity, localDirectory: any) => {

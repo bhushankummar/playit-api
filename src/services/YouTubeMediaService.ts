@@ -8,7 +8,7 @@ import * as bluebird from 'bluebird';
 import * as MediaDownloader from '../utils/MediaDownloader';
 
 import { APP, MEDIA_DIRECTORY, MEDIA_TYPE } from '../constants';
-import { MediaItemEntity } from '../entities/MediaItemEntity';
+import { MediaItemEntity, MediaError } from '../entities/MediaItemEntity';
 
 const debug = Debug('PL:YouTubeService');
 
@@ -28,13 +28,14 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
         fs.mkdirSync(driveDirectory);
     }
     const tempMediaItems = [];
+    const downloadOption = ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'];
     await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
         try {
             if (_.isEmpty(item.playlistId)) {
                 debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
                 return;
             }
-            const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory);
+            const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory, downloadOption);
             item.isDownloaded = true;
             // debug('AUDIO download complete ', response);
         } catch (error) {
@@ -42,6 +43,16 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
             debug('downloadAudioHQUsingMediaItem error ', error);
             debug('downloadAudioHQUsingMediaItem error item', item);
             debug('downloadAudioHQUsingMediaItem error error.stderr ', error.stderr);
+            const mediaError: MediaError = {
+                message: error.stderr,
+                downloadOptions: downloadOption
+            };
+            // debug('item ', item);
+            if (_.isEmpty(item.errors)) {
+                item.errors = [];
+            }
+            item.errors.push(mediaError);
+            debug('item %o ', item);
         }
         tempMediaItems.push(item);
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });

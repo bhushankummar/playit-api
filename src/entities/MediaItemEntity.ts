@@ -10,8 +10,13 @@ class User {
     email: string;
 }
 
+export class MediaError {
+    downloadOptions: any;
+    message: string;
+}
+
 @Entity('mediaItems')
-@Index([ 'user._id', 'playlistId', 'urlId' ], { unique: true })
+@Index(['user._id', 'playlistId', 'urlId'], { unique: true })
 export class MediaItemEntity {
 
     @ObjectIdColumn()
@@ -57,4 +62,7 @@ export class MediaItemEntity {
 
     @UpdateDateColumn({ type: 'timestamp' })
     updatedDate: Date;
+
+    @Column((type => MediaError))
+    errors: MediaError[];
 }

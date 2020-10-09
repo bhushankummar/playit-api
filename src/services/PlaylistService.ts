@@ -22,7 +22,7 @@ export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: 
         return next(Boom.notFound('Please enter Drive FolderId.'));
     } else if (_.isEmpty(params.type)) {
         return next(Boom.notFound('Please enter type of the media playlist.'));
-    } else if ([ '0', '1' ].indexOf(params.type) === -1) {
+    } else if (['0', '1'].indexOf(params.type) === -1) {
         return next(Boom.notFound('Please enter valid type of the media playlist.'));
     }
     return next();
@@ -219,7 +219,13 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
                 },
                 {
                     lastUploadTimeStamp: undefined
-                }
+                },
+                // {
+                //     // THis is for the development purpose only.
+                //     // It should be playlistId
+                //     // _id: '5f1a56e42db2680026581e3b'
+                //     urlId: 'RDCLAK5uy_nbla9IlAw2OQmPRxOiBYdAl_jtWLDPH9Y'
+                // }
             ]
         };
         const options: FindOneOptions<PlaylistEntity> = {
@@ -229,7 +235,7 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
             }
         };
         req.playlistStore = await playlistModel.findOne(options);
-        // debug('req.playlistStore ', req.playlistStore);
+        debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));

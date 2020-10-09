@@ -18,12 +18,14 @@ const debug = Debug('PL:MediaItemService');
 export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
+        debug('CRITICAL: req.userStore is empty.');
         return next();
     }
     const userProfile = {
         _id: req.userStore._id,
         email: req.userStore.email
     };
+    // debug('userProfile %o ', userProfile);
     const whereCondition: any = {
         user: userProfile
     };
@@ -45,7 +47,7 @@ export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest
     if (params.fileId !== undefined) {
         whereCondition.fileId = params.fileId;
     }
-    // debug('whereCondition ', whereCondition);
+    // debug('whereCondition %o ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
@@ -99,7 +101,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     _.each(req.googleDriveStore, (value) => {
         let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
         youTubeId = _.last(youTubeId);
-        value.urlId = youTubeId.split('.')[ 0 ];
+        value.urlId = youTubeId.split('.')[0];
         googleItems.push(value);
     });
     // debug('googleItems ', googleItems);
@@ -396,34 +398,37 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
  * Update Download Attempt Count
  */
 export const updateDownloadAttempt: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    // debug('Inside updateDownloadAttempt');
     if (_.isEmpty(req.mediaItemsStore)) {
         return next();
     }
-    const mediaItemsStore = _.filter(req.mediaItemsStore, { isDownloaded: false });
-    const mediaItemIds = _.map(mediaItemsStore, '_id');
-    if (_.isEmpty(mediaItemIds)) {
+    const mediaItemsStore = _.filter(req.mediaItemsStore, {
+        isDownloaded: false
+    });
+    if (_.isEmpty(mediaItemsStore)) {
         return next();
     }
-    // debug('mediaItemIds ', mediaItemIds);
-    try {
-        const mediaItemModel = getMongoRepository(MediaItemEntity);
-        const whereCondition: any = {
-            '_id': {
-                '$in': mediaItemIds
-            }
-        };
-        const updateData: any = {
-            $inc:
-            {
-                downloadAttemptCount: 1
-            }
-        };
-        const response = await mediaItemModel.update(whereCondition, updateData);
-        // debug('response ', response);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+    const CONCURRENCY = 1;
+    await bluebird.map(mediaItemsStore, async (value: MediaItemEntity) => {
+        try {
+            const mediaItemModel = getMongoRepository(MediaItemEntity);
+            const whereCondition: any = {
+                '_id': value._id
+            };
+            // debug('value %o ', value);
+            // debug('value.errors %o ', value.errors);
+            const count = (value.downloadAttemptCount || 0) + 1;
+            const updateData: any = {
+                downloadAttemptCount: count,
+                isDownloaded: false,
+                errors: value.errors
+            };
+            const response = await mediaItemModel.update(whereCondition, updateData);
+        } catch (error) {
+            debug('updateDownloadAttempt error ', error);
+            debug('updateDownloadAttempt error in  ', value);
+        }
+    }, { concurrency: CONCURRENCY });
     return next();
 };
 

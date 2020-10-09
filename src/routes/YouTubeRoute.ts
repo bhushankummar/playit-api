@@ -21,6 +21,7 @@ youtubeRoute.post('/crone/download', [
     YouTubeMediaService.downloadAudioHQUsingMediaItem,
     YouTubeMediaService.downloadVideoHQUsingMediaItem,
     MediaItemService.updateDownloadTimeStamp,
+    MediaItemService.updateDownloadAttempt,
     YouTubeController.youtubeData
 ]);
 

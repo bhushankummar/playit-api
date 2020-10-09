@@ -68,5 +68,6 @@ export const cleanFileName = (fileName: string) => {
         fileName = fileName.split(word.toUpperCase()).join(' ');
         fileName = fileName.trim();
     });
+    fileName = fileName.replace(/ +(?= )/g, '');
     return fileName;
 };
