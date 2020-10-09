@@ -65,4 +65,7 @@ export class MediaItemEntity {
 
     @Column((type => MediaError))
     errors: MediaError[];
+
+    @Column()
+    localFilePath: string;
 }

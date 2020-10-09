@@ -371,6 +371,7 @@ export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequ
     const mediaItemsStore = _.filter(req.mediaItemsStore, { isDownloaded: true });
     const mediaItemIds = _.map(mediaItemsStore, '_id');
     if (_.isEmpty(mediaItemIds)) {
+        debug('This is no isDownloaded : true files');
         return next();
     }
     // debug('mediaItemIds ', mediaItemIds);
@@ -427,6 +428,41 @@ export const updateDownloadAttempt: express.RequestHandler = async (req: IReques
         } catch (error) {
             debug('updateDownloadAttempt error ', error);
             debug('updateDownloadAttempt error in  ', value);
+        }
+    }, { concurrency: CONCURRENCY });
+    return next();
+};
+
+/**
+ * Update Download Attempt Count
+ */
+export const updateDownloadMedia: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    // debug('Inside updateDownloadAttempt');
+    if (_.isEmpty(req.mediaItemsStore)) {
+        return next();
+    }
+    const CONCURRENCY = 1;
+    await bluebird.map(req.mediaItemsStore, async (value: MediaItemEntity) => {
+        try {
+            const mediaItemModel = getMongoRepository(MediaItemEntity);
+            const whereCondition: any = {
+                '_id': value._id
+            };
+            // debug('value %o ', value);
+            // debug('value.errors %o ', value.errors);
+            const count = (value.downloadAttemptCount || 0) + 1;
+            const updateData: any = {
+                lastDownloadTimeStamp: moment().toISOString(),
+                downloadAttemptCount: count,
+                isDownloaded: value.isDownloaded,
+                localFilePath: value.localFilePath,
+                errors: value.errors
+            };
+            const response = await mediaItemModel.update(whereCondition, updateData);
+            debug('updateDownloadMedia update ', response);
+        } catch (error) {
+            debug('updateDownloadMedia error ', error);
+            debug('updateDownloadMedia error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
     return next();

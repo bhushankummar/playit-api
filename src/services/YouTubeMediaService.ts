@@ -38,7 +38,7 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
             }
             const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory, downloadOption);
             item.isDownloaded = true;
-            // debug('AUDIO download complete ', response);
+            debug('AUDIO download complete ', response);
         } catch (error) {
             item.isDownloaded = false;
             debug('downloadAudioHQUsingMediaItem error ', error);
@@ -81,8 +81,8 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
     let downloadOptionKey = 1;
     let downloadOption = VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey];
     const tempMediaItems = [];
-    await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
-        const updatedItem: MediaItemEntity = JSON.parse(JSON.stringify(item));
+    await bluebird.map(req.mediaItemsStore, async (item: any) => {
+        const updatedItem: any = JSON.parse(JSON.stringify(item));
         try {
             if (_.isEmpty(item.playlistId)) {
                 debug('CRITICAL : Skipping Video Media Item which has not playlistId.');
@@ -97,9 +97,10 @@ export const downloadVideoHQUsingMediaItem: express.RequestHandler = async (req:
                     downloadOptionKey = 1;
                 }
             }
-            const response = await MediaDownloader.downloadVideo(item, driveDirectory, downloadOption);
+            const response: any = await MediaDownloader.downloadVideo(item, driveDirectory, downloadOption);
+            updatedItem.localFilePath = response.filePath;
             updatedItem.isDownloaded = true;
-            // debug('response  ', response);
+            debug('video response  ', response);
         } catch (error) {
             updatedItem.isDownloaded = false;
             debug('downloadVideoHQUsingMediaItem error ', error);
