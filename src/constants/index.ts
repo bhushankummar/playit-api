@@ -177,6 +177,15 @@ export const SYNC_TO_YOUTUBE_SCHEDULE = {
     DayOfWeek: '*'
 };
 
+export const AUDIO_DOWNLOAD_OPTIONS = {
+    1: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'],
+    2: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3']
+};
+
+export const VIDEO_DOWNLOAD_OPTIONS = {
+    1: ['--format=136'],
+    2: ['--format=136']
+};
 
 if (_.isEmpty(DB.MONGO_URL)) {
     debug('----------------------------------------------------------------------------------- ');

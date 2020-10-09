@@ -11,7 +11,7 @@ class User {
 }
 
 export class MediaError {
-    downloadOptions: any;
+    downloadOptions: number;
     message: string;
 }
 

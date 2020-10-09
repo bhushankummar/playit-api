@@ -52,11 +52,8 @@ export const downloadAudio = (playlist: any, item: any, driveDirectory: any, dow
     return downloadMedia(downloadOption, 'mp3', item, driveDirectory);
 };
 
-export const downloadVideo = (item: MediaItemEntity, localDirectory: any) => {
-    const options = [
-        `--format=136`
-    ];
-    return downloadMedia(options, 'mp4', item, localDirectory);
+export const downloadVideo = (item: MediaItemEntity, localDirectory: any, downloadOption: any) => {
+    return downloadMedia(downloadOption, 'mp4', item, localDirectory);
 };
 
 export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) => {
