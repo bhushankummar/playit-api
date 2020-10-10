@@ -217,7 +217,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 title: value.title,
                 url: value.url_simple,
                 urlId: value.id,
-                type: req.youTubePlaylistStore.type,
+                type: req.playlistStore.type,
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: value.isUploaded,
@@ -422,7 +422,7 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
             // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
 
-            const res = await mediaItemModel.update(whereCondition, updateData);
+            // const res = await mediaItemModel.update(whereCondition, updateData);
             // debug('updateDownloadMedia update ', res);
             // debug('updateDownloadMedia update ', response);
         } catch (error) {
