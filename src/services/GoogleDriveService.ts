@@ -15,15 +15,33 @@ export const createFolder: express.RequestHandler = async (req: IRequest, res: e
         return next();
     }
     try {
-        const response: any = await GoogleDrive.createFolder('DriveSyncFiles', req.userStore.google);
+        // const query = 'name = "Data"';
+        const query = 'name = "DriveSyncFiles"';
+        // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
+        const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
+        if (folderResponse && folderResponse.data) {
+            // debug('folderResponse.data ', folderResponse);
+            // debug('folderResponse.data ', folderResponse.data);
+            const folder = _.find(folderResponse.data.files, (value) => {
+                if (value.trashed === false) {
+                    return value;
+                }
+            });
+            // debug('folder ', folder);
+            req.googleDriveFileStore = folder;
+            if (_.isEmpty(folder) === false) {
+                return next();
+            }
+        }
+        const response: any = await GoogleDrive.createFolder('', 'DriveSyncFiles', req.userStore.google);
         if (response && response.data) {
             req.googleDriveFileStore = response.data;
         }
-        debug('Files has been uploaded ', req.googleDriveFileStore);
+        // debug('Folder has been created ', req.googleDriveFileStore);
     } catch (error) {
         debug('uploadToDrive error ', error);
     }
-    // return next();
+    return next();
 };
 
 /**

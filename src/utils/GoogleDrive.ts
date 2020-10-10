@@ -7,15 +7,18 @@ import { google } from 'googleapis';
 
 const debug = Debug('PL:GoogleDrive');
 
-export const createFolder = (folderName: string, googleCredentials: any) => {
+export const createFolder = (parentFolderId: string, folderName: string, googleCredentials: any) => {
     return new Promise((resolve: any, reject: any) => {
         const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
         oauth2Client.setCredentials(googleCredentials);
         const drive = google.drive({ version: 'v3', auth: oauth2Client });
-        const fileMetadata = {
+        const fileMetadata: any = {
             name: folderName,
             mimeType: 'application/vnd.google-apps.folder',
         };
+        if (parentFolderId) {
+            fileMetadata.parents = [parentFolderId];
+        }
         const params = {
             resource: fileMetadata,
             fields: 'id, name, parents, mimeType, modifiedTime'
@@ -110,6 +113,37 @@ export const searchIntoFolderRecursive = (googleCredentials: any, folderId: stri
         if (_.isEmpty(pageToken) === false) {
             params.pageToken = pageToken;
         }
+
+        drive.files.list(params, (error: any, response: any) => {
+            if (error) {
+                // debug('searchIntoFolder error ', error);
+                return reject(error);
+            } else if (error && error.errors) {
+                // debug('searchIntoFolder error ', error);
+                return reject(error.errors);
+            }
+            return resolve(response);
+        });
+    });
+};
+
+export const searchFolderByName = (googleCredentials: any, query: string) => {
+    return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
+        const params = {
+            // parents: [folderId],
+            includeRemoved: false,
+            spaces: 'drive',
+            trashed: false,
+            fields: 'nextPageToken, files(id, name, parents, mimeType, description, trashed)',
+            q: query,
+            // q: `'name = "${folderName}"'`,
+            // q: 'name = "DriveSyncFiles"',
+            pageToken: '',
+            pageSize: 100
+        };
 
         drive.files.list(params, (error: any, response: any) => {
             if (error) {

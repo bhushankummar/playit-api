@@ -72,8 +72,8 @@ export class MediaItemEntity {
     @UpdateDateColumn({ type: 'timestamp' })
     updatedDate: Date;
 
-    @Column((type => MediaError))
-    errors: MediaError[];
+    @Column()
+    errors: object;
 
     @Column()
     localFilePath: string;

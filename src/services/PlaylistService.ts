@@ -5,6 +5,7 @@ import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as mongodb from 'mongodb';
 import * as YtplUtils from '../utils/YtplUtils';
+import * as GoogleDrive from '../utils/GoogleDrive';
 import { getMongoRepository, FindOneOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
@@ -35,10 +36,12 @@ export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: 
  * @param: url
  */
 export const addPlaylist: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    debug('Inside addPlaylist');
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
         return next(Boom.notFound('Invalid User'));
-    } else if (!_.isEmpty(req.playlistStore)) {
+    }
+    else if (!_.isEmpty(req.playlistStore)) {
         return next(Boom.notFound('This playlist has been already added.'));
     }
     const userProfile = {
@@ -51,6 +54,12 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         if (_.isEmpty(playlistMetadata)) {
             return next(Boom.notFound('This is not a valid playlist, Please try again.'));
         }
+
+        const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, playlistMetadata.title, req.userStore.google);
+        if (response && response.data) {
+            req.googleDriveFileStore = response.data;
+        }
+
         const playlist: PlaylistEntity = new PlaylistEntity();
         playlist.user = userProfile;
         playlist.type = params.type;

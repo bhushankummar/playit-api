@@ -13,6 +13,9 @@ export class UserEntity {
     @Column()
     google: object;
 
+    @Column()
+    googleDriveParentId: string;
+
     @CreateDateColumn()
     createdDate: string;
 

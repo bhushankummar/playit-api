@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as passport from 'passport';
 import * as PlaylistService from '../services/PlaylistService';
+import * as UserService from '../services/UserService';
 import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as PlaylistController from '../controllers/PlaylistController';
 
@@ -14,6 +15,7 @@ playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
     GoogleDriveService.createFolder,
+    UserService.updateRootDirectory,
     PlaylistService.addPlaylist,
     PlaylistController.playlist
 ]);

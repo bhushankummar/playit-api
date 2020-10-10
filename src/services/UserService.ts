@@ -164,3 +164,28 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
     }
     return next();
 };
+
+/**
+ * Update Google Root Directory
+ */
+export const updateRootDirectory: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.params, req.body, req.query);
+    if (_.isEmpty(req.userStore) === true) {
+        return next();
+    }
+    try {
+        const whereCondition = {
+            _id: req.userStore._id
+        };
+        const userData = {
+            googleDriveParentId: req.googleDriveFileStore.id
+        };
+        const userModel = getMongoRepository(UserEntity);
+        const response = await userModel.update(whereCondition, userData);
+        req.userStore.googleDriveParentId = req.googleDriveFileStore.id;
+    } catch (error) {
+        debug('updateRootDirectory error ', error);
+        return next(error);
+    }
+    return next();
+};
