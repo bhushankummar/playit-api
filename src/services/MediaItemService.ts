@@ -217,6 +217,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 title: value.title,
                 url: value.url_simple,
                 urlId: value.id,
+                type: req.youTubePlaylistStore.type,
                 playlistId: req.youTubePlaylistStore.id,
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: value.isUploaded,
@@ -359,6 +360,33 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
         debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
     } catch (error) {
         debug('searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload error ', error);
+        return next(error);
+    }
+    return next();
+};
+
+/**
+ * Search Media which has been not uploaded and also not downloaded yet
+ */
+export const searchAllNotDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    try {
+        const whereCondition: FindManyOptions = {
+            where: {
+                isUploaded: false,
+                isDownloaded: false
+                // This is for development purpose only
+                // _id: new ObjectId('5f807c255786e50026a0482e')
+            },
+            order: {
+                lastDownloadTimeStamp: 'ASC'
+            },
+            take: 5
+        };
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
+    } catch (error) {
+        debug('searchAllNotDownloaded error ', error);
         return next(error);
     }
     return next();

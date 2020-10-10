@@ -43,6 +43,9 @@ export class MediaItemEntity {
     playlistId: string;
 
     @Column({ nullable: false })
+    type: string;
+
+    @Column({ nullable: false })
     driveFolderId: string;
 
     @Column()
