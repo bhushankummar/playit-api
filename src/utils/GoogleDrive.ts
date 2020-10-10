@@ -10,15 +10,18 @@ const drive = google.drive({ version: 'v3', auth: oauth2Client });
 
 const debug = Debug('PL:GoogleDrive');
 
-export const uploadFile = (folderId: string, filePath: string) => {
+export const uploadFile = (driveParentFolderId: string, localFilePath: string, googleCredentials: any) => {
     return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
         const fileMetadata = {
-            name: path.basename(filePath),
-            parents: [folderId]
+            name: path.basename(localFilePath),
+            parents: [driveParentFolderId]
         };
         const media = {
             mimeType: 'audio/mpeg',
-            body: fs.createReadStream(filePath)
+            body: fs.createReadStream(localFilePath)
         };
         const params = {
             resource: fileMetadata,

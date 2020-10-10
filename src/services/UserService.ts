@@ -139,3 +139,28 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
     }
     return next();
 };
+
+/**
+ * Search user by Media Item
+ * @param: email
+ */
+export const searchOneByMediaItemUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.mediaItemStore)) {
+        return next();
+    } else if (_.isEmpty(req.mediaItemStore.user)) {
+        return next();
+    } else if (_.isEmpty(req.mediaItemStore.user._id)) {
+        debug('CRITICAL : req.mediaItemStore.user._id is empty %o ', req.mediaItemStore);
+        return next();
+    }
+    try {
+        const whereCondition = {
+            _id: req.mediaItemStore.user._id
+        };
+        const userModel = getMongoRepository(UserEntity);
+        req.userStore = await userModel.findOne(whereCondition);
+    } catch (error) {
+        return next(error);
+    }
+    return next();
+};

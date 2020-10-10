@@ -10,6 +10,7 @@ import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
 import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
 import * as utils from '../utils';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 const debug = Debug('PL:GoogleDriveService');
 
 /**
@@ -44,8 +45,8 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
                 if (response && response.data && response.data.files && response.data.files.length === 0) {
                     uniqueItems.push(value);
                 } else {
-                    if (response.data && response.data.files && response.data.files[ 0 ]) {
-                        const modifiedTimeObject = moment(response.data.files[ 0 ].modifiedTime);
+                    if (response.data && response.data.files && response.data.files[0]) {
+                        const modifiedTimeObject = moment(response.data.files[0].modifiedTime);
                         const currentTimeObject = moment().subtract(5, 'minutes');
                         if (currentTimeObject.isAfter(modifiedTimeObject) === true) {
                             fs.unlinkSync(value);
@@ -67,27 +68,31 @@ export const prepareAudioFilesForTheUpload: express.RequestHandler = async (req:
 /**
  * This function will upload Audio files to the drive
  */
-export const uploadToDrive: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.localMediaStore)) {
+export const uploadToDriveUsingPath: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.mediaItemStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore)) {
         return next();
     }
     const items: any = [];
-    await bluebird.map(req.localMediaStore, async (value: any) => {
-        try {
-            // debug('Start uploading %o ', path.basename(value));
-            const folderId = path.basename(path.dirname(value));
-            const response: any = await GoogleDrive.uploadFile(folderId, value);
-            if (response && response.data) {
-                fs.unlinkSync(value);
-                items.push(response.data);
-            }
-            // debug('Upload complete %o ', path.basename(value));
-            await utils.wait(0.1);
-        } catch (error) {
-            debug('uploadToDrive error ', error.errors);
-            await utils.wait(1);
+    try {
+        debug('Start uploading %o ', req.mediaItemStore);
+        if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {
+            debug('CRITICAL: This file does not exits. %o ', req.mediaItemStore);
+            return next();
         }
-    });
+        // const folderId = path.basename(path.dirname(value.localFilePath));
+        const response: any = await GoogleDrive.uploadFile(req.mediaItemStore.driveFolderId, req.mediaItemStore.localFilePath, req.userStore.google);
+        if (response && response.data) {
+            fs.unlinkSync(req.mediaItemStore.localFilePath);
+            items.push(response.data);
+        }
+        debug('Upload complete %o ', req.mediaItemStore.title);
+        await utils.wait(0.1);
+    } catch (error) {
+        debug('uploadToDrive error ', error);
+        await utils.wait(1);
+    }
     debug('Files has been uploaded ', items);
     req.googleDriveStore = items;
     return next();

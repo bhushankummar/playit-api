@@ -475,19 +475,66 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
 /**
  * Search Downloaded but yet to Upload
  */
-export const searchByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const whereCondition: any = {
         isDownloaded: true,
-        isUploaded: false
+        isUploaded: false,
+        $or: [
+            {
+                lastUploadTimeStamp: {
+                    '$lt': moment().subtract(5, 'minutes').toISOString()
+                    // '$lt': moment().subtract(1, 'seconds').toISOString()
+                }
+            },
+            {
+                lastUploadTimeStamp: undefined
+            }
+        ]
     };
     // debug('whereCondition ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
-        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
-        debug('req.mediaItemsStore ', req.mediaItemsStore);
+        req.mediaItemStore = await mediaItemModel.findOne(whereCondition);
+        // debug('req.mediaItemsStore ', req.mediaItemsStore);
     } catch (error) {
         debug('error ', error);
         return next(error);
     }
-    // return next();
+    return next();
+};
+
+
+/**
+ * Update Upload Media
+ */
+export const updateUploadMedia: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    // debug('Inside updateDownloadAttempt');
+    if (_.isEmpty(req.mediaItemStore)) {
+        return next();
+    }
+    try {
+        const mediaItemModel = getMongoRepository(MediaItemEntity);
+        const whereCondition: any = {
+            '_id': new ObjectId(req.mediaItemStore._id)
+        };
+        const updateData: any = {
+            lastUploadTimeStamp: moment().toISOString(),
+            // isUploaded: true,
+        };
+        debug('req.googleDriveStore ', req.googleDriveStore);
+        if (req.googleDriveStore) {
+            updateData.fileId = req.googleDriveStore.fileId;
+        }
+        if (_.isEmpty(req.mediaItemStore.localFilePath)) {
+            updateData.isUploaded = false;
+            updateData.isDownloaded = false;
+        }
+        // debug('updateData ', updateData);
+        const response = await mediaItemModel.update(whereCondition, updateData);
+        // debug('updateDownloadMedia update ', response);
+    } catch (error) {
+        debug('updateUploadMedia error ', error);
+        debug('updateUploadMedia error in  ', req.mediaItemStore);
+    }
+    return next();
 };

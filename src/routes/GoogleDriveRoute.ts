@@ -12,10 +12,12 @@ const googleDriveRoute: express.Router = express.Router();
  * This API is call from the Cron Job
  */
 googleDriveRoute.post('/crone/upload/:type', [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
-    GoogleDriveService.prepareAudioFilesForTheUpload,
-    GoogleDriveService.uploadToDrive,
+    MediaItemService.searchOneByIsDownloaded,
+    UserService.searchOneByMediaItemUser,
+    // GoogleService.setCredentials,
+    // GoogleDriveService.prepareAudioFilesForTheUpload,
+    GoogleDriveService.uploadToDriveUsingPath,
+    MediaItemService.updateUploadMedia,
     GoogleController.googleDriveDetail
 ]);
 
@@ -30,4 +32,4 @@ googleDriveRoute.post('/crone/empty/trash', [
     GoogleController.googleDriveDetail
 ]);
 
-export {googleDriveRoute};
+export { googleDriveRoute };
