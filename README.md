@@ -27,7 +27,6 @@ export FFPROBE_PATH=./node_modules/ffmpeg-binaries/bin/ffmpeg
 export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
 export LC_ALL=en_US.UTF-8
-export ALLOWED_EMAILS=your_email@gmail.com
 export GOOGLE_CLIENT_ID=YourClientId
 export GOOGLE_CLIENT_SECRET=YourClientSecret
 export MONGO_URL=mongodb://yourmongo/playit-dev
@@ -72,7 +71,7 @@ https://askubuntu.com/a/807918
 ### Enable Below API Services in Your Google Developer Console
 * Google Drive API
 * People API
-* YouTube Data API v3	
+* YouTube Data API v3
 
 ### Other Important APIs
 * Add User (Login as Google) `{{url}}/api/v1/user/register`

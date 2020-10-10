@@ -12,7 +12,6 @@ export const APP = {
     API_URL: process.env.API_URL,
     FRONT_END_URL: process.env.API_URL,
     FFPROBE_PATH: process.env.FFPROBE_PATH,
-    ALLOWED_EMAILS: [],
     IS_SANDBOX: false,
     DOWNLOAD_AUDIO_CONCURRENCY: 3,
     DOWNLOAD_VIDEO_CONCURRENCY: 3
@@ -29,14 +28,6 @@ if (!_.isEmpty(process.env.DOWNLOAD_AUDIO_CONCURRENCY)) {
 if (!_.isEmpty(process.env.DOWNLOAD_VIDEO_CONCURRENCY)) {
     try {
         APP.DOWNLOAD_VIDEO_CONCURRENCY = parseInt(process.env.DOWNLOAD_VIDEO_CONCURRENCY, 10);
-    } catch (exception) {
-        debug('exception ', exception);
-    }
-}
-
-if (!_.isEmpty(process.env.ALLOWED_EMAILS)) {
-    try {
-        APP.ALLOWED_EMAILS = process.env.ALLOWED_EMAILS.split(',');
     } catch (exception) {
         debug('exception ', exception);
     }
@@ -196,12 +187,6 @@ if (_.isEmpty(DB.MONGO_URL)) {
 if (_.isEmpty(APP.API_URL)) {
     debug('----------------------------------------------------------------------------------- ');
     debug('ERROR :  Please export API_URL');
-    debug('----------------------------------------------------------------------------------- ');
-    process.exit(0);
-}
-if (_.isEmpty(APP.ALLOWED_EMAILS)) {
-    debug('----------------------------------------------------------------------------------- ');
-    debug('ERROR :  Please export ALLOWED_EMAILS');
     debug('----------------------------------------------------------------------------------- ');
     process.exit(0);
 }
