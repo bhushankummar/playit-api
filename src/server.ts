@@ -2,7 +2,7 @@ import * as bodyParser from 'body-parser';
 import * as passport from 'passport';
 import * as Debug from 'debug';
 import * as cors from 'cors';
-import * as config from './config';
+import * as config from './config/AppConfig';
 import * as passportConfig from './config/passport';
 import { router } from './routes';
 import * as database from './config/db';
