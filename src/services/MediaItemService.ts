@@ -378,7 +378,9 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             const whereCondition: any = {
                 '_id': new ObjectId(value._id)
+                // '_id': value._id
             };
+            // debug('whereCondition %o ', whereCondition);
             // debug('value %o ', value);
             // debug('value.errors %o ', value.errors);
             const count = (value.downloadAttemptCount || 0) + 1;
@@ -387,10 +389,13 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
                 downloadAttemptCount: count,
                 isDownloaded: value.isDownloaded,
                 localFilePath: value.localFilePath,
-                errors: value.errors
+                // errors: value.errors
             };
             // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
+
+            const res = await mediaItemModel.update(whereCondition, updateData);
+            // debug('updateDownloadMedia update ', res);
             // debug('updateDownloadMedia update ', response);
         } catch (error) {
             debug('updateDownloadMedia error ', error);
@@ -410,7 +415,7 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
         $or: [
             {
                 lastUploadTimeStamp: {
-                    '$lt': moment().subtract(5, 'minutes').toISOString()
+                    '$lt': moment().subtract(1, 'minutes').toISOString()
                     // '$lt': moment().subtract(1, 'seconds').toISOString()
                 }
             },
@@ -446,11 +451,10 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         };
         const updateData: any = {
             lastUploadTimeStamp: moment().toISOString(),
-            isUploaded: true,
         };
-        debug('req.googleDriveStore ', req.googleDriveStore);
-        if (req.googleDriveStore) {
-            updateData.fileId = req.googleDriveStore.fileId;
+        if (req.googleDriveFileStore && req.googleDriveFileStore.id) {
+            updateData.fileId = req.googleDriveFileStore.id;
+            updateData.isUploaded = true;
         }
         if (_.isEmpty(req.mediaItemStore.localFilePath)) {
             updateData.isUploaded = false;

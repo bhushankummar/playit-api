@@ -21,7 +21,6 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
     } else if (_.isEmpty(req.userStore)) {
         return next();
     }
-    const items: any = [];
     try {
         debug('Start uploading %o ', req.mediaItemStore);
         if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {
@@ -32,16 +31,15 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
         const response: any = await GoogleDrive.uploadFile(req.mediaItemStore.driveFolderId, req.mediaItemStore.localFilePath, req.userStore.google);
         if (response && response.data) {
             fs.unlinkSync(req.mediaItemStore.localFilePath);
-            items.push(response.data);
+            req.googleDriveFileStore = response.data;
         }
+        debug('Files has been uploaded ', req.googleDriveFileStore);
         debug('Upload complete %o ', req.mediaItemStore.title);
         await utils.wait(0.1);
     } catch (error) {
         debug('uploadToDrive error ', error);
         await utils.wait(1);
     }
-    debug('Files has been uploaded ', items);
-    req.googleDriveStore = items;
     return next();
 };
 

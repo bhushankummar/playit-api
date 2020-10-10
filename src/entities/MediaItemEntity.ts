@@ -11,7 +11,10 @@ class User {
 }
 
 export class MediaError {
+    @Column({ nullable: false })
     downloadOptions: number;
+
+    @Column({ nullable: false })
     message: string;
 }
 

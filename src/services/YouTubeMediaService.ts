@@ -34,17 +34,21 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
     }
     const tempMediaItems = [];
     await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
+        // debug('item %o ', item);
         const updatedItem: any = JSON.parse(JSON.stringify(item));
-        if (_.isEmpty(updatedItem.errors) || _.isNull(updatedItem.errors)) {
+        if (
+            _.isEmpty(updatedItem.errors) === true || _.isNull(updatedItem.errors) === true
+        ) {
+            // debug('Inside if %o ', updatedItem.errors);
             updatedItem.errors = [];
         }
         try {
-            if (_.isEmpty(item.playlistId)) {
+            if (_.isEmpty(updatedItem.playlistId)) {
                 debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
                 return;
             }
             if (_.isEmpty(updatedItem.errors) === false) {
-                const lastError: MediaError = _.last(item.errors);
+                const lastError: MediaError = _.last(updatedItem.errors);
                 downloadOptionKey = lastError.downloadOptions + 1;
 
 
@@ -63,15 +67,14 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
                 }
 
             }
-            const response: any = await MediaDownloader.downloadMedia(downloadOption, mediaType, item, driveDirectory);
+            const response: any = await MediaDownloader.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
             updatedItem.localFilePath = response.filePath;
             updatedItem.isDownloaded = true;
-            // const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory, downloadOption);
             debug('AUDIO download complete ', response);
         } catch (error) {
-            item.isDownloaded = false;
+            updatedItem.isDownloaded = false;
             debug('downloadMediaHQUsingMediaItem error ', error);
-            debug('downloadMediaHQUsingMediaItem error item', item);
+            debug('downloadMediaHQUsingMediaItem error updatedItem', updatedItem);
             debug('downloadMediaHQUsingMediaItem error error.stderr ', error.stderr);
             const mediaError: MediaError = {
                 message: error.stderr,
