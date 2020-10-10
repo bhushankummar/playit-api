@@ -1,7 +1,6 @@
 import * as DownloadAudioToLocal from './DownloadAudioToLocal';
 import * as UploadAudioToGoogleDrive from './UploadAudioToGoogleDrive';
 import * as UploadVideoToGoogleDrive from './UploadVideoToGoogleDrive';
-import * as EmptyTrashGoogleDrive from './EmptyTrashGoogleDrive';
 import * as SyncMediaItemWithYouTube from './SyncMediaItemWithYouTube';
 import { CRONE_JOB } from '../constants';
 import * as _ from 'lodash';
