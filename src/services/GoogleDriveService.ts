@@ -3,11 +3,6 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as path from 'path';
-import * as bluebird from 'bluebird';
-import * as moment from 'moment';
-import { MEDIA_DIRECTORY, YOUTUBE } from '../constants';
-import * as find from 'find';
 import * as GoogleDrive from '../utils/GoogleDrive';
 import * as utils from '../utils';
 const debug = Debug('PL:GoogleDriveService');
@@ -22,18 +17,18 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
         return next();
     }
     try {
-        debug('Start uploading %o ', req.mediaItemStore);
         if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {
             debug('CRITICAL: This file does not exits. %o ', req.mediaItemStore);
+            req.mediaItemStore.localFilePath = '';
             return next();
         }
-        // const folderId = path.basename(path.dirname(value.localFilePath));
+        debug('Start uploading %o ', req.mediaItemStore.title);
         const response: any = await GoogleDrive.uploadFile(req.mediaItemStore.driveFolderId, req.mediaItemStore.localFilePath, req.userStore.google);
         if (response && response.data) {
             fs.unlinkSync(req.mediaItemStore.localFilePath);
             req.googleDriveFileStore = response.data;
         }
-        debug('Files has been uploaded ', req.googleDriveFileStore);
+        // debug('Files has been uploaded ', req.googleDriveFileStore);
         debug('Upload complete %o ', req.mediaItemStore.title);
         await utils.wait(0.1);
     } catch (error) {
