@@ -14,7 +14,7 @@ const mediaItemRoute: express.Router = express.Router();
  * This API will return all the Medias of User
  */
 mediaItemRoute.post('/', passport.authenticate('bearer'), [
-    MediaItemService.searchByLoggedInUser,
+    MediaItemService.searchAllByLoggedInUser,
     MediaItemController.mediaItemData
 ]);
 
@@ -24,7 +24,7 @@ mediaItemRoute.post('/', passport.authenticate('bearer'), [
  */
 mediaItemRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
     PlaylistService.searchOneByPlaylistIdAndUserId,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
+    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
     MediaItemController.mediaItemData
 ]);
 
@@ -39,7 +39,7 @@ mediaItemRoute.post('/sync/crone/youtube', [
     PlaylistService.searchOneByLastSyncTimeStamp,
     PlaylistService.updateLastSyncTimeStamp,
     UserService.searchOneByPlaylistUser,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
+    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
     GoogleDriveService.searchAllFiles,
     YouTubeService.listPlaylistItems,
     MediaItemService.identifySyncItemsForYouTube,

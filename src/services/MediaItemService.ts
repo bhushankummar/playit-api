@@ -14,9 +14,9 @@ import { ObjectId } from 'mongodb';
 const debug = Debug('PL:MediaItemService');
 
 /**
- * List all the Playlist Songs
+ * List all the Media Items using different Filters
  */
-export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
         debug('CRITICAL: req.userStore is empty.');
@@ -60,9 +60,9 @@ export const searchByLoggedInUser: express.RequestHandler = async (req: IRequest
 };
 
 /**
- * List all the Playlist Songs
+ * List all the Media Items using PlaylistId and Google Drive Folder Id
  */
-export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
         return next();
     } else if (_.isEmpty(req.playlistStore)) {
@@ -84,7 +84,7 @@ export const searchByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandle
         // debug('req.mediaItemsStore : database ', req.mediaItemsStore);
         debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
     } catch (error) {
-        debug('searchByLoggedInUserPlaylistAndDriveFolderId error ', error);
+        debug('searchAllByLoggedInUserPlaylistAndDriveFolderId error ', error);
         return next(error);
     }
     return next();
@@ -327,7 +327,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
 /**
  * Search Media which has been not uploaded and also not downloaded yet
  */
-export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
         return next();
     } else if (_.isEmpty(req.playlistStore)) {
@@ -358,86 +358,14 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
         debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
     } catch (error) {
-        debug('error ', error);
+        debug('searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload error ', error);
         return next(error);
     }
     return next();
 };
 
 /**
- * Update Download Timestamp
- */
-export const updateDownloadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.mediaItemsStore)) {
-        return next();
-    }
-    const mediaItemsStore = _.filter(req.mediaItemsStore, { isDownloaded: true });
-    const mediaItemIds = _.map(mediaItemsStore, '_id');
-    if (_.isEmpty(mediaItemIds)) {
-        debug('This is no isDownloaded : true files');
-        return next();
-    }
-    // debug('mediaItemIds ', mediaItemIds);
-    try {
-        const mediaItemModel = getMongoRepository(MediaItemEntity);
-        const whereCondition: any = {
-            '_id': {
-                '$in': mediaItemIds
-            }
-        };
-        const updateData = {
-            lastDownloadTimeStamp: moment().toISOString(),
-            isDownloaded: true
-        };
-        const response = await mediaItemModel.update(whereCondition, updateData);
-        // debug('response ', response);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
-    return next();
-};
-
-/**
- * Update Download Attempt Count
- */
-export const updateDownloadAttempt: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    // debug('Inside updateDownloadAttempt');
-    if (_.isEmpty(req.mediaItemsStore)) {
-        return next();
-    }
-    const mediaItemsStore = _.filter(req.mediaItemsStore, {
-        isDownloaded: false
-    });
-    if (_.isEmpty(mediaItemsStore)) {
-        return next();
-    }
-    const CONCURRENCY = 1;
-    await bluebird.map(mediaItemsStore, async (value: MediaItemEntity) => {
-        try {
-            const mediaItemModel = getMongoRepository(MediaItemEntity);
-            const whereCondition: any = {
-                '_id': value._id
-            };
-            // debug('value %o ', value);
-            // debug('value.errors %o ', value.errors);
-            const count = (value.downloadAttemptCount || 0) + 1;
-            const updateData: any = {
-                downloadAttemptCount: count,
-                isDownloaded: false,
-                errors: value.errors
-            };
-            const response = await mediaItemModel.update(whereCondition, updateData);
-        } catch (error) {
-            debug('updateDownloadAttempt error ', error);
-            debug('updateDownloadAttempt error in  ', value);
-        }
-    }, { concurrency: CONCURRENCY });
-    return next();
-};
-
-/**
- * Update Download Attempt Count
+ * Update lastDownloadTimeStamp, downloadAttemptCount, isDownloaded....
  */
 export const updateDownloadMedia: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     // debug('Inside updateDownloadAttempt');
@@ -503,7 +431,6 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     return next();
 };
 
-
 /**
  * Update Upload Media
  */
@@ -519,7 +446,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         };
         const updateData: any = {
             lastUploadTimeStamp: moment().toISOString(),
-            // isUploaded: true,
+            isUploaded: true,
         };
         debug('req.googleDriveStore ', req.googleDriveStore);
         if (req.googleDriveStore) {

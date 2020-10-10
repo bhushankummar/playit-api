@@ -44,22 +44,6 @@ export const retrieveAuthorizationCode: express.RequestHandler = async (req: IRe
 };
 
 /**
- * set Credentials For LoggedIn Google User
- */
-export const setCredentials: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.userStore)) {
-        return next();
-    }
-    try {
-        oauth2Client.setCredentials(req.userStore.google);
-        return next();
-    } catch (error) {
-        debug('error ', error);
-        return next(error);
-    }
-};
-
-/**
  * Retrieve authorizationCode
  */
 export const retrieveGoogleProfileFromOAuth2: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {

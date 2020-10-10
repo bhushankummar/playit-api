@@ -14,21 +14,8 @@ const googleDriveRoute: express.Router = express.Router();
 googleDriveRoute.post('/crone/upload/:type', [
     MediaItemService.searchOneByIsDownloaded,
     UserService.searchOneByMediaItemUser,
-    // GoogleService.setCredentials,
-    // GoogleDriveService.prepareAudioFilesForTheUpload,
     GoogleDriveService.uploadToDriveUsingPath,
     MediaItemService.updateUploadMedia,
-    GoogleController.googleDriveDetail
-]);
-
-/**
- * Clear Trash Google Drive
- * This API is call from the Cron Job
- */
-googleDriveRoute.post('/crone/empty/trash', [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
-    GoogleDriveService.cleanTrash,
     GoogleController.googleDriveDetail
 ]);
 
