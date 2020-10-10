@@ -123,15 +123,6 @@ export const DOWNLOAD_AUDIO_SCHEDULE = {
     DayOfWeek: '*'
 };
 
-export const DOWNLOAD_VIDEO_SCHEDULE = {
-    Seconds: '0',
-    Minutes: '*/1',
-    Hours: '*',
-    DayOfMonth: '*',
-    Months: '*',
-    DayOfWeek: '*'
-};
-
 export const UPLOAD_AUDIO_SCHEDULE = {
     Seconds: '0',
     Minutes: '*/1',
@@ -145,15 +136,6 @@ export const UPLOAD_VIDEO_SCHEDULE = {
     Seconds: '0',
     Minutes: '*/1',
     Hours: '*',
-    DayOfMonth: '*',
-    Months: '*',
-    DayOfWeek: '*'
-};
-
-export const EMPTY_TRASH_SCHEDULE = {
-    Seconds: '0',
-    Minutes: '0',
-    Hours: '*/24',
     DayOfMonth: '*',
     Months: '*',
     DayOfWeek: '*'
