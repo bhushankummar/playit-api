@@ -27,7 +27,7 @@ export const init = async () => {
 
 export const initMongo = async () => {
     return mongoose.connect(DB.MONGO_URL, {
-        useNewUrlParser: true,
-        useUnifiedTopology: true
+        // useNewUrlParser: true,
+        // useUnifiedTopology: true
     });
 };

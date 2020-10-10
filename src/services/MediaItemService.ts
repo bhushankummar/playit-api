@@ -473,9 +473,9 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
 };
 
 /**
- * List all the Playlist Songs
+ * Search Downloaded but yet to Upload
  */
-export const searchByLoggedInUserIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const whereCondition: any = {
         isDownloaded: true,
         isUploaded: false
@@ -484,9 +484,10 @@ export const searchByLoggedInUserIsDownloaded: express.RequestHandler = async (r
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        debug('req.mediaItemsStore ', req.mediaItemsStore);
     } catch (error) {
         debug('error ', error);
         return next(error);
     }
-    return next();
+    // return next();
 };
