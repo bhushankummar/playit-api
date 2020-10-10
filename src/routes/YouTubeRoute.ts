@@ -14,10 +14,10 @@ const youtubeRoute: express.Router = express.Router();
  * type : 0 = Audio ; 1 = Video
  */
 youtubeRoute.post('/crone/download', [
-    PlaylistService.searchOneByLastUploadTimeStamp,
-    PlaylistService.updateLastUploadTimeStamp,
-    UserService.searchOneByPlaylistUser,
-    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
+    // PlaylistService.searchOneByLastUploadTimeStamp,
+    // PlaylistService.updateLastUploadTimeStamp,
+    // UserService.searchOneByPlaylistUser,
+    MediaItemService.searchAllNotDownloaded,
     YouTubeMediaService.downloadMediaHQUsingMediaItem,
     MediaItemService.updateDownloadMedia,
     YouTubeController.youtubeData

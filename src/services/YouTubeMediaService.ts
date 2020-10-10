@@ -16,26 +16,27 @@ const debug = Debug('PL:YouTubeService');
  * Download HQ Audio/Video using URL
  */
 export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.playlistStore)) {
+    if (_.isEmpty(req.mediaItemsStore)) {
         return next();
-    }
-    let rootDirector = MEDIA_DIRECTORY.VIDEO;
-    let mediaType = 'mp4';
-    let downloadOptionKey = 1;
-    let downloadOption = VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey];
-    if (req.playlistStore.type === MEDIA_TYPE.AUDIO) {
-        rootDirector = MEDIA_DIRECTORY.AUDIO;
-        downloadOption = AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey];
-        mediaType = 'mp3';
-    }
-    const driveDirectory = path.join(rootDirector, req.playlistStore.driveFolderId);
-    if (!fs.existsSync(driveDirectory)) {
-        fs.mkdirSync(driveDirectory);
     }
     const tempMediaItems = [];
     await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
         // debug('item %o ', item);
         const updatedItem: any = JSON.parse(JSON.stringify(item));
+        let rootDirector = MEDIA_DIRECTORY.VIDEO;
+        let mediaType = 'mp4';
+        let downloadOptionKey = 1;
+        let downloadOption = VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey];
+        if (updatedItem.type === MEDIA_TYPE.AUDIO) {
+            rootDirector = MEDIA_DIRECTORY.AUDIO;
+            downloadOption = AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey];
+            mediaType = 'mp3';
+        }
+        const driveDirectory = path.join(rootDirector, updatedItem.driveFolderId);
+        if (!fs.existsSync(driveDirectory)) {
+            fs.mkdirSync(driveDirectory);
+        }
+
         if (
             _.isEmpty(updatedItem.errors) === true || _.isNull(updatedItem.errors) === true
         ) {
@@ -52,13 +53,13 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
                 downloadOptionKey = lastError.downloadOptions + 1;
 
 
-                if (req.playlistStore.type === MEDIA_TYPE.AUDIO) {
+                if (updatedItem.type === MEDIA_TYPE.AUDIO) {
                     if (_.isEmpty(AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey]) === false) {
                         downloadOption = AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey];
                     } else {
                         downloadOptionKey = 1;
                     }
-                } else if (req.playlistStore.type === MEDIA_TYPE.VIDEO) {
+                } else if (updatedItem.type === MEDIA_TYPE.VIDEO) {
                     if (_.isEmpty(VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey]) === false) {
                         downloadOption = VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey];
                     } else {

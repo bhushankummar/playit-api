@@ -1,14 +1,33 @@
 import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import { oauth2Client } from './GoogleUtils';
 import * as GoogleUtils from './GoogleUtils';
 import * as Debug from 'debug';
 import { google } from 'googleapis';
 
-const drive = google.drive({ version: 'v3', auth: oauth2Client });
-
 const debug = Debug('PL:GoogleDrive');
+
+export const createFolder = (folderName: string, googleCredentials: any) => {
+    return new Promise((resolve: any, reject: any) => {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(googleCredentials);
+        const drive = google.drive({ version: 'v3', auth: oauth2Client });
+        const fileMetadata = {
+            name: folderName,
+            mimeType: 'application/vnd.google-apps.folder',
+        };
+        const params = {
+            resource: fileMetadata,
+            fields: 'id, name, parents, mimeType, modifiedTime'
+        };
+        drive.files.create(params, (error: any, response: any) => {
+            if (error) {
+                return reject(error);
+            }
+            return resolve(response);
+        });
+    });
+};
 
 export const uploadFile = (driveParentFolderId: string, localFilePath: string, googleCredentials: any) => {
     return new Promise((resolve: any, reject: any) => {
@@ -66,29 +85,6 @@ export const removeFile = (googleCredentials: any, fileId: string) => {
         drive.files.delete(data, (error: any, response: any) => {
             if (error) {
                 // debug('emptyTrash error ', error);
-                return reject(error);
-            }
-            return resolve(response);
-        });
-    });
-};
-
-export const searchIntoFolder = (folderId: string, searchFileName: string) => {
-    return new Promise((resolve: any, reject: any) => {
-        const separator = '"';
-        const q = separator.concat(folderId, separator, ' in parents ', ' and'
-            , 'name contains ', separator, searchFileName, separator);
-        const params = {
-            parents: [folderId],
-            trashed: false,
-            fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
-            q: q,
-            pageSize: 1
-        };
-
-        drive.files.list(params, (error: any, response: any) => {
-            if (error) {
-                // debug('searchIntoFolder error ', error);
                 return reject(error);
             }
             return resolve(response);

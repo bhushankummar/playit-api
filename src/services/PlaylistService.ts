@@ -47,6 +47,10 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
     };
     try {
         const playlistMetadata: any = await YtplUtils.findPlaylistItems(params.playlistId);
+        req.youTubePlaylistStore = playlistMetadata;
+        if (_.isEmpty(playlistMetadata)) {
+            return next(Boom.notFound('This is not a valid playlist, Please try again.'));
+        }
         const playlist: PlaylistEntity = new PlaylistEntity();
         playlist.user = userProfile;
         playlist.type = params.type;
@@ -179,7 +183,7 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
             $or: [
                 {
                     lastSyncTimeStamp: {
-                        '$lt': moment().subtract(5, 'minutes').toISOString()
+                        '$lt': moment().subtract(2, 'minutes').toISOString()
                         // '$lt': moment().subtract(1, 'seconds').toISOString()
                     }
                 },

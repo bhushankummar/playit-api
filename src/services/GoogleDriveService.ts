@@ -10,6 +10,25 @@ const debug = Debug('PL:GoogleDriveService');
 /**
  * This function will upload Audio files to the drive
  */
+export const createFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    }
+    try {
+        const response: any = await GoogleDrive.createFolder('DriveSyncFiles', req.userStore.google);
+        if (response && response.data) {
+            req.googleDriveFileStore = response.data;
+        }
+        debug('Files has been uploaded ', req.googleDriveFileStore);
+    } catch (error) {
+        debug('uploadToDrive error ', error);
+    }
+    // return next();
+};
+
+/**
+ * This function will upload Audio files to the drive
+ */
 export const uploadToDriveUsingPath: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.mediaItemStore)) {
         return next();

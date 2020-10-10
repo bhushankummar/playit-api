@@ -1,6 +1,7 @@
 import * as express from 'express';
 import * as passport from 'passport';
 import * as PlaylistService from '../services/PlaylistService';
+import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as PlaylistController from '../controllers/PlaylistController';
 
 const playlistRoute: express.Router = express.Router();
@@ -12,6 +13,7 @@ const playlistRoute: express.Router = express.Router();
 playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
+    GoogleDriveService.createFolder,
     PlaylistService.addPlaylist,
     PlaylistController.playlist
 ]);

@@ -143,7 +143,7 @@ export const UPLOAD_VIDEO_SCHEDULE = {
 
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
     Seconds: '0',
-    Minutes: '*/5',
+    Minutes: '*/1',
     Hours: '*',
     DayOfMonth: '*',
     Months: '*',

@@ -9,8 +9,7 @@ Debug('PL:YouTubeController');
  */
 export const youtubeData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     req.data = {
-        mediaItemsStore: req.mediaItemsStore,
-        youTubeStore: req.youTubeStore
+        mediaItemsStore: req.mediaItemsStore
     };
     return next();
 };
