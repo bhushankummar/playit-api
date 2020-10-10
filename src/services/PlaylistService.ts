@@ -224,7 +224,8 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
                 //     // THis is for the development purpose only.
                 //     // It should be playlist url
                 //     // urlId: 'RDCLAK5uy_nbla9IlAw2OQmPRxOiBYdAl_jtWLDPH9Y' // Audio
-                //     urlId: 'PLV4x9RCRiG1DGb_hwKXmsr3MIDEAl21ov' // Video
+                //     // urlId: 'PLV4x9RCRiG1DGb_hwKXmsr3MIDEAl21ov' // Video
+                //     urlId: 'PLV4x9RCRiG1Bsrpcm4Y5ezVzMIkuSRi0e' // Audio
                 // }
             ]
         };
@@ -235,7 +236,7 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
             }
         };
         req.playlistStore = await playlistModel.findOne(options);
-        // debug('req.playlistStore ', req.playlistStore);
+        debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));

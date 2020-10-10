@@ -22,6 +22,7 @@
     "author": "Bhushankumar L (bhushankumar.lilapara@gmail.com)",
     "license": "ISC",
     "dependencies": {
+        "@types/mongoose": "^5.7.36",
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "boom": "^7.3.0",
@@ -38,6 +39,7 @@
         "lodash": "^4.17.15",
         "moment": "^2.24.0",
         "mongodb": "^3.5.2",
+        "mongoose": "^5.10.9",
         "node-pre-gyp": "^0.14.0",
         "nodemon": "^2.0.2",
         "passport": "^0.4.1",

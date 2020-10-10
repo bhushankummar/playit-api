@@ -18,26 +18,35 @@ const debug = Debug('PL:YouTubeService');
 export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
         return next();
-    } else if (req.playlistStore.type !== MEDIA_TYPE.AUDIO) {
-        // debug('Return from media type. Current Value ', params.type);
-        return next();
     }
-
-    const driveDirectory = path.join(MEDIA_DIRECTORY.AUDIO, req.playlistStore.driveFolderId);
+    let rootDirector = MEDIA_DIRECTORY.VIDEO;
+    let mediaType = 'mp4';
+    const downloadOptionKey = 1;
+    let downloadOption = VIDEO_DOWNLOAD_OPTIONS[downloadOptionKey];
+    if (req.playlistStore.type === MEDIA_TYPE.AUDIO) {
+        rootDirector = MEDIA_DIRECTORY.AUDIO;
+        downloadOption = AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey];
+        mediaType = 'mp3';
+    }
+    const driveDirectory = path.join(rootDirector, req.playlistStore.driveFolderId);
     if (!fs.existsSync(driveDirectory)) {
         fs.mkdirSync(driveDirectory);
     }
     const tempMediaItems = [];
-    const downloadOptionKey = 1;
-    const downloadOption = AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey];
     await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
+        const updatedItem: any = JSON.parse(JSON.stringify(item));
+        if (_.isEmpty(updatedItem.errors) || _.isNull(updatedItem.errors)) {
+            updatedItem.errors = [];
+        }
         try {
             if (_.isEmpty(item.playlistId)) {
                 debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
                 return;
             }
-            const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory, downloadOption);
-            item.isDownloaded = true;
+            const response: any = await MediaDownloader.downloadMedia(downloadOption, mediaType, item, driveDirectory);
+            updatedItem.localFilePath = response.filePath;
+            updatedItem.isDownloaded = true;
+            // const response = await MediaDownloader.downloadAudio(req.playlistStore, item, driveDirectory, downloadOption);
             debug('AUDIO download complete ', response);
         } catch (error) {
             item.isDownloaded = false;
@@ -49,13 +58,10 @@ export const downloadAudioHQUsingMediaItem: express.RequestHandler = async (req:
                 downloadOptions: downloadOptionKey
             };
             // debug('item ', item);
-            if (_.isEmpty(item.errors)) {
-                item.errors = [];
-            }
-            item.errors.push(mediaError);
+            updatedItem.errors.push(mediaError);
             // debug('item %o ', item);
         }
-        tempMediaItems.push(item);
+        tempMediaItems.push(updatedItem);
     }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
     req.mediaItemsStore = tempMediaItems;
     req.youTubeStore = { message: true };

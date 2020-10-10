@@ -69,6 +69,7 @@ app.listen(app.get('PORT'), async (err: any) => {
         return console.log(err);
     }
     await database.init();
+    await database.initMongo();
     CroneJobs.initAllJobs();
     debug(' Server has been started on PORT: %o', app.get('PORT'));
     return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);

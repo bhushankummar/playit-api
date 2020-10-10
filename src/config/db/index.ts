@@ -1,4 +1,5 @@
 import * as Debug from 'debug';
+import * as mongoose from 'mongoose';
 import { Connection, createConnection } from 'typeorm';
 import { UserEntity } from '../../entities/UserEntity';
 import { TokenEntity } from '../../entities/TokenEntity';
@@ -22,4 +23,11 @@ export const init = async () => {
         ]
     });
     return connection;
+};
+
+export const initMongo = async () => {
+    return mongoose.connect(DB.MONGO_URL, {
+        useNewUrlParser: true,
+        useUnifiedTopology: true
+    });
 };

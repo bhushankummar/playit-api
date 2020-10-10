@@ -9,6 +9,7 @@ import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
 import moment = require('moment');
+import { ObjectId } from 'mongodb';
 
 const debug = Debug('PL:MediaItemService');
 
@@ -345,6 +346,8 @@ export const searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.R
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: false,
                 isDownloaded: false
+                // This is for development purpose only
+                // _id: new ObjectId('5f807c255786e50026a0482e')
             },
             order: {
                 lastDownloadTimeStamp: 'ASC'
@@ -446,7 +449,7 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             const whereCondition: any = {
-                '_id': value._id
+                '_id': new ObjectId(value._id)
             };
             // debug('value %o ', value);
             // debug('value.errors %o ', value.errors);
@@ -458,8 +461,9 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
                 localFilePath: value.localFilePath,
                 errors: value.errors
             };
+            // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
-            debug('updateDownloadMedia update ', response);
+            // debug('updateDownloadMedia update ', response);
         } catch (error) {
             debug('updateDownloadMedia error ', error);
             debug('updateDownloadMedia error in  ', value);

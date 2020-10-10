@@ -19,7 +19,7 @@ youtubeRoute.post('/crone/download', [
     UserService.searchOneByPlaylistUser,
     MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
     YouTubeMediaService.downloadAudioHQUsingMediaItem,
-    YouTubeMediaService.downloadVideoHQUsingMediaItem,
+    // YouTubeMediaService.downloadVideoHQUsingMediaItem,
     MediaItemService.updateDownloadMedia,
     // MediaItemService.updateDownloadAttempt,
     YouTubeController.youtubeData
