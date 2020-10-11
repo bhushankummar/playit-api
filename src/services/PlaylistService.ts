@@ -40,8 +40,7 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
         return next(Boom.notFound('Invalid User'));
-    }
-    else if (!_.isEmpty(req.playlistStore)) {
+    } else if (_.isEmpty(req.playlistStore) === false) {
         return next(Boom.notFound('This playlist has been already added.'));
     }
     const userProfile = {
@@ -53,11 +52,6 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
             return next(Boom.notFound('This is not a valid playlist, Please try again.'));
         }
 
-        const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
-        if (response && response.data) {
-            req.googleDriveFileStore = response.data;
-        }
-
         const playlist: PlaylistEntity = new PlaylistEntity();
         playlist.url = req.youTubePlaylistStore.url;
         playlist.title = req.youTubePlaylistStore.title;
@@ -66,6 +60,13 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         playlist.user = userProfile;
         playlist.type = params.type;
         playlist.driveFolderId = params.driveFolderId;
+        if (_.isEmpty(params.driveFolderId)) {
+            const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
+            if (response && response.data) {
+                req.googleDriveFileStore = response.data;
+            }
+            playlist.driveFolderId = req.googleDriveFileStore.id;
+        }
         const playlistModel = getMongoRepository(PlaylistEntity);
         await playlistModel.save(playlist);
         req.playlistStore = playlist;
