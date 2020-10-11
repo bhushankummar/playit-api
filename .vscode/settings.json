@@ -47,7 +47,9 @@
     "files.trimTrailingWhitespace": true,
     "workbench.list.openMode": "doubleClick",
     "cSpell.words": [
-        "nestjs"
+        "nestjs",
+        "youtube",
+        "ytpl"
     ],
     "editor.rulers": [
         120

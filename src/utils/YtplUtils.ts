@@ -35,7 +35,7 @@ export const findMetadata = (url: string, options: any) => {
 };
 
 export const prepareFileName = (item: any, extension: string) => {
-    let fileName = this.cleanFileName(item.title);
+    let fileName = cleanFileName(item.title);
     let youtubeId = item.urlId;
     if (_.isEmpty(youtubeId)) {
         youtubeId = item.id;

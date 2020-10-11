@@ -6,6 +6,7 @@ import * as MediaItemController from '../controllers/MediaItemController';
 import * as MediaItemService from '../services/MediaItemService';
 import * as PlaylistService from '../services/PlaylistService';
 import * as YouTubeService from '../services/YouTubeService';
+import * as YtplService from '../services/YtplService';
 
 const mediaItemRoute: express.Router = express.Router();
 
@@ -41,6 +42,7 @@ mediaItemRoute.post('/sync/crone/youtube', [
     UserService.searchOneByPlaylistUser,
     MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
     GoogleDriveService.searchAllFiles,
+    YtplService.fetchPlaylistItems,
     YouTubeService.listPlaylistItems,
     MediaItemService.identifySyncItemsForYouTube,
     MediaItemService.syncWithYouTube,

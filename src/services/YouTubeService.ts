@@ -26,19 +26,10 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         return next();
     } else if (_.isEmpty(req.userStore)) {
         return next();
+    } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
+        return next();
     }
     try {
-        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(req.playlistStore.urlId);
-        // debug('documents ', documents);
-        req.youTubePlaylistStore = documents;
-        if (APP.IS_SANDBOX === true) {
-            req.youTubePlaylistStore.items = _.take(documents.items, 1);
-        }
-        // debug('req.youTubePlaylistStore.items  ', JSON.stringify(req.youTubePlaylistStore.items, undefined, 2));
-        debug('Total songs in YouTube  ', req.youTubePlaylistStore.items.length);
-        return next();
-    } catch (error) {
-        debug('listPlaylistItems YtplUtils error ', error);
         const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
         oauth2Client.setCredentials(req.userStore.google);
         const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
@@ -72,5 +63,8 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         debug('Total songs in YouTube ', ytplPlaylistStore.items.length);
         req.youTubePlaylistStore = ytplPlaylistStore;
         return next();
+    } catch (error) {
+        debug('listPlaylistItems YtplUtils error ', error);
+        return next(error);
     }
 };

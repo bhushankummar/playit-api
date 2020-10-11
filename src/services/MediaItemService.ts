@@ -420,7 +420,7 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
                 downloadAttemptCount: count,
                 isDownloaded: value.isDownloaded,
                 localFilePath: value.localFilePath,
-                // errors: value.errors
+                errors: value.errors
             };
             // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
