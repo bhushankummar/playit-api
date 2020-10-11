@@ -8,9 +8,9 @@ import * as utils from '../utils';
 const debug = Debug('PL:GoogleDriveService');
 
 /**
- * This function will upload Audio files to the drive
+ * This function will Create Root Folder If Not Exits
  */
-export const createFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const createRootFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
         return next();
     }
@@ -39,7 +39,8 @@ export const createFolder: express.RequestHandler = async (req: IRequest, res: e
         }
         // debug('Folder has been created ', req.googleDriveFileStore);
     } catch (error) {
-        debug('uploadToDrive error ', error);
+        debug('createRootFolder error ', error);
+        return next(error);
     }
     return next();
 };
@@ -107,4 +108,53 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
         debug('searchAllFiles error ', error);
         return next(error);
     }
+};
+
+
+/**
+ * This function will Create a playlist folder into Google Drive
+ */
+export const createPlaylistFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(params.driveFolderId) === false) {
+        return next();
+    }
+    try {
+        debug('driveFolderId : This will not create new folder.');
+        // const query = 'name = "Data"';
+        const query = `"name = '${req.youTubePlaylistStore.title}'"`;
+        // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
+        const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
+        if (folderResponse && folderResponse.data) {
+            // debug('folderResponse.data ', folderResponse);
+            // debug('folderResponse.data ', folderResponse.data);
+            const folder = _.find(folderResponse.data.files, (value) => {
+                if (value.trashed === false) {
+                    return value;
+                }
+            });
+            // debug('folder ', folder);
+            req.googleDriveFileStore = folder;
+            if (_.isEmpty(folder) === false) {
+                debug('Google Drive Folder with same name found.');
+                return next();
+            }
+        }
+
+        const responseNewGoogleFolder: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
+        if (responseNewGoogleFolder && responseNewGoogleFolder.data) {
+            req.googleDriveFileStore = responseNewGoogleFolder.data;
+        }
+        const response: any = await GoogleDrive.createFolder('', 'DriveSyncFiles', req.userStore.google);
+        if (response && response.data) {
+            req.googleDriveFileStore = response.data;
+        }
+        // debug('Folder has been created ', req.googleDriveFileStore);
+    } catch (error) {
+        debug('createPlaylistFolder error ', error);
+        return next(error);
+    }
+    return next();
 };

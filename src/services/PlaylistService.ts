@@ -19,8 +19,6 @@ export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: 
     const params = _.merge(req.params, req.body);
     if (_.isEmpty(params.playlistUrl)) {
         return next(Boom.notFound('Please enter playlistUrl.'));
-    } else if (_.isEmpty(params.driveFolderId)) {
-        return next(Boom.notFound('Please enter Drive FolderId.'));
     } else if (_.isEmpty(params.type)) {
         return next(Boom.notFound('Please enter type of the media playlist.'));
     } else if (['0', '1'].indexOf(params.type) === -1) {
@@ -66,6 +64,8 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
                 req.googleDriveFileStore = response.data;
             }
             playlist.driveFolderId = req.googleDriveFileStore.id;
+        } else {
+            debug('driveFolderId : This will not create new folder.');
         }
         const playlistModel = getMongoRepository(PlaylistEntity);
         await playlistModel.save(playlist);

@@ -16,10 +16,11 @@ const playlistRoute: express.Router = express.Router();
 playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
-    GoogleDriveService.createFolder,
+    GoogleDriveService.createRootFolder,
     UserService.updateRootDirectory,
     YtplService.fetchPlaylistDetailByUrlId,
     YouTubeService.getPlaylistDetail,
+    // GoogleDriveService.createPlaylistFolder,
     PlaylistService.addPlaylist,
     PlaylistController.playlist
 ]);
