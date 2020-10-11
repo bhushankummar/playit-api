@@ -3,6 +3,8 @@ import * as passport from 'passport';
 import * as PlaylistService from '../services/PlaylistService';
 import * as UserService from '../services/UserService';
 import * as GoogleDriveService from '../services/GoogleDriveService';
+import * as YtplService from '../services/YtplService';
+import * as YouTubeService from '../services/YouTubeService';
 import * as PlaylistController from '../controllers/PlaylistController';
 
 const playlistRoute: express.Router = express.Router();
@@ -16,6 +18,8 @@ playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
     GoogleDriveService.createFolder,
     UserService.updateRootDirectory,
+    YtplService.fetchPlaylistDetailByUrlId,
+    YouTubeService.getPlaylistDetail,
     PlaylistService.addPlaylist,
     PlaylistController.playlist
 ]);

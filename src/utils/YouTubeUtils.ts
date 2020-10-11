@@ -23,3 +23,14 @@ export const mapYouTubeResponse = (youtubeItemStore: Partial<IYoutubePlaylist>):
     ytplPlaylistStore.items = items;
     return ytplPlaylistStore;
 };
+
+export const mapYouTubePlaylistResponse = (youtubeItemStore: any): Partial<IYtplPlaylist> => {
+    const ytplPlaylistStore: Partial<IYtplPlaylist> = {};
+    ytplPlaylistStore.id = youtubeItemStore.id;
+    if (youtubeItemStore.snippet) {
+        ytplPlaylistStore.title = youtubeItemStore.snippet.title;
+        const url = `https://www.youtube.com/playlist?list=${youtubeItemStore.id}`;
+        ytplPlaylistStore.url = url;
+    }
+    return ytplPlaylistStore;
+};

@@ -17,8 +17,8 @@ const debug = Debug('PL:PlaylistService');
  */
 export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body);
-    if (_.isEmpty(params.playlistId)) {
-        return next(Boom.notFound('Please enter playlistId.'));
+    if (_.isEmpty(params.playlistUrl)) {
+        return next(Boom.notFound('Please enter playlistUrl.'));
     } else if (_.isEmpty(params.driveFolderId)) {
         return next(Boom.notFound('Please enter Drive FolderId.'));
     } else if (_.isEmpty(params.type)) {
@@ -36,7 +36,7 @@ export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: 
  * @param: url
  */
 export const addPlaylist: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    debug('Inside addPlaylist');
+    // debug('Inside addPlaylist');
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(req.userStore)) {
         return next(Boom.notFound('Invalid User'));
@@ -49,24 +49,23 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         email: req.userStore.email
     };
     try {
-        const playlistMetadata: any = await YtplUtils.findPlaylistItems(params.playlistId);
-        req.youTubePlaylistStore = playlistMetadata;
-        if (_.isEmpty(playlistMetadata)) {
+        if (_.isEmpty(req.youTubePlaylistStore)) {
             return next(Boom.notFound('This is not a valid playlist, Please try again.'));
         }
 
-        const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, playlistMetadata.title, req.userStore.google);
+        const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
         if (response && response.data) {
             req.googleDriveFileStore = response.data;
         }
 
         const playlist: PlaylistEntity = new PlaylistEntity();
+        playlist.url = req.youTubePlaylistStore.url;
+        playlist.title = req.youTubePlaylistStore.title;
+        playlist.urlId = req.youTubePlaylistStore.id;
+
         playlist.user = userProfile;
         playlist.type = params.type;
         playlist.driveFolderId = params.driveFolderId;
-        playlist.url = playlistMetadata.url;
-        playlist.title = playlistMetadata.title;
-        playlist.urlId = playlistMetadata.id;
         const playlistModel = getMongoRepository(PlaylistEntity);
         await playlistModel.save(playlist);
         req.playlistStore = playlist;

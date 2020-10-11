@@ -2,15 +2,9 @@ import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
-import * as find from 'find';
-import * as Boom from 'boom';
-import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
 import * as YtplUtils from '../utils/YtplUtils';
-import * as GoogleUtils from '../utils/GoogleUtils';
-import * as YouTubeUtils from '../utils/YouTubeUtils';
 import { IYtplPlaylist } from '../interface/IYtplPlaylist';
-import { google } from 'googleapis';
-import { IYoutubePlaylist, IYoutubePlaylistItem } from '../interface/IYoutubePlaylist';
+
 
 const debug = Debug('PL:YouTubeService');
 
@@ -34,6 +28,28 @@ export const fetchPlaylistItems: express.RequestHandler = async (req: IRequest, 
         return next();
     } catch (error) {
         debug('fetchPlaylistItems YtplUtils error ', error);
+        return next();
+    }
+};
+
+/**
+ * List Playlist detail by URL Id
+ */
+export const fetchPlaylistDetailByUrlId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(params.playlistUrl)) {
+        // debug('CRITICAL : Return from empty req.playlistStore');
+        return next();
+    }
+    try {
+        const documents: IYtplPlaylist = await YtplUtils.findPlaylistItems(params.playlistUrl);
+        // debug('documents ', documents);
+        req.youTubePlaylistStore = documents;
+        // debug('req.youTubePlaylistStore.items  ', JSON.stringify(req.youTubePlaylistStore.items, undefined, 2));
+        debug('YouTube Playlist detail  ', req.youTubePlaylistStore);
+        return next();
+    } catch (error) {
+        debug('fetchPlaylistDetailByUrlId YtplUtils error ', error);
         return next();
     }
 };

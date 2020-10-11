@@ -68,3 +68,40 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         return next(error);
     }
 };
+
+/**
+ * List all the Playlist Songs
+ */
+export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.body, req.params);
+    if (_.isEmpty(params.playlistUrl)) {
+        // debug('CRITICAL : Return from empty req.playlistStore');
+        return next();
+    } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
+        return next();
+    }
+    try {
+        const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
+        oauth2Client.setCredentials(req.userStore.google);
+        const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
+        const playListItemsData = {
+            part: 'snippet',
+            id: params.playlistUrl
+        };
+        // debug('playListItemsData ', playListItemsData);
+        const response: any = await youtubeClient.playlists.list(playListItemsData);
+        if (response && response.data && response.data.items && response.data.items[0]) {
+            // debug('response ', response.data);
+            // debug('response ', response.data.items[0]);
+            const playlist = response.data.items[0];
+            // debug('playlist ', playlist);
+            const ytplPlaylistStore = YouTubeUtils.mapYouTubePlaylistResponse(playlist);
+            debug('ytplPlaylistStore ', ytplPlaylistStore);
+            req.youTubePlaylistStore = ytplPlaylistStore;
+        }
+        return next();
+    } catch (error) {
+        debug('getPlaylistDetail error ', error);
+        return next(error);
+    }
+};
