@@ -30,7 +30,7 @@
         "cron": "^1.8.2",
         "debug": "^4.1.1",
         "express": "^4.17.1",
-        "ffmpeg-binaries": "^4.0.0",
+        "ffmpeg-static": "^4.2.7",
         "find": "^0.3.0",
         "fs-extra": "^8.1.0",
         "googleapis": "^47.0.0",
