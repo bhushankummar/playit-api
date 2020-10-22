@@ -71,7 +71,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
             const response: any = await MediaDownloader.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
             updatedItem.localFilePath = response.filePath;
             updatedItem.isDownloaded = true;
-            debug('Media download complete ', response);
+            // debug('Media download complete ', response);
         } catch (error) {
             updatedItem.isDownloaded = false;
             debug('downloadMediaHQUsingMediaItem error ', error);

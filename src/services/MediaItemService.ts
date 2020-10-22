@@ -390,7 +390,7 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
             order: {
                 lastDownloadTimeStamp: 'ASC'
             },
-            take: 5
+            take: 3
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
