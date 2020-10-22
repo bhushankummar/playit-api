@@ -372,9 +372,16 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
     try {
         const whereCondition: FindManyOptions = {
             where: {
-                downloadAttemptCount: {
-                    $lt: 10
-                },
+                $or: [
+                    {
+                        downloadAttemptCount: {
+                            $lt: 10
+                        }
+                    },
+                    {
+                        downloadAttemptCount: undefined
+                    }
+                ],
                 isUploaded: false,
                 isDownloaded: false
                 // This is for development purpose only

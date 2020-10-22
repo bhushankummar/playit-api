@@ -32,7 +32,6 @@ export class MediaItemEntity {
     url: string;
 
     @Column({ nullable: false })
-    @Column()
     title: string;
 
     @Column({ nullable: false })
@@ -58,7 +57,7 @@ export class MediaItemEntity {
     isDownloaded: boolean;
 
     @Column({ default: 0 })
-    downloadAttemptCount: number;
+    downloadAttemptCount: number = 0;
 
     @Column()
     lastDownloadTimeStamp: Date;
