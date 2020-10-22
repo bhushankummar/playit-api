@@ -388,7 +388,7 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
                 // _id: new ObjectId('5f807c255786e50026a0482e')
             },
             order: {
-                lastDownloadTimeStamp: 'ASC'
+                downloadAttemptCount: 'ASC'
             },
             take: 3
         };
@@ -462,10 +462,15 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
             }
         ]
     };
+    const orderBy: any = {
+        order: {
+            lastDownloadTimeStamp: 'ASC'
+        }
+    };
     // debug('whereCondition ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
-        req.mediaItemStore = await mediaItemModel.findOne(whereCondition);
+        req.mediaItemStore = await mediaItemModel.findOne(whereCondition, orderBy);
         // debug('req.mediaItemsStore ', req.mediaItemsStore);
     } catch (error) {
         debug('error ', error);
