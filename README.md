@@ -23,6 +23,7 @@ export SANDBOX='false'
 export PORT=3007
 export CRONE_JOB_ACTION='EXECUTE'
 export API_URL=http://localhost:3007
+export FRONT_END_URL=http://localhost:4200
 export FFPROBE_PATH=./node_modules/ffmpeg-static/ffmpeg
 export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
