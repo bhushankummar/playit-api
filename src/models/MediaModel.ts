@@ -28,7 +28,7 @@ const schema: mongoose.Schema = new Schema({
         type: String,
         required: true
     },
-    playlistId: {
+    playlistUrlId: {
         type: String,
         required: true
     },

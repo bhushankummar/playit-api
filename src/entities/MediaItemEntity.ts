@@ -19,7 +19,7 @@ export class MediaError {
 }
 
 @Entity('mediaItems')
-@Index(['user._id', 'playlistId', 'urlId'], { unique: true })
+@Index(['user._id', 'playlistUrlId', 'urlId'], { unique: true })
 export class MediaItemEntity {
 
     @ObjectIdColumn()
@@ -39,7 +39,7 @@ export class MediaItemEntity {
     urlId: string;
 
     @Column({ nullable: false })
-    playlistId: string;
+    playlistUrlId: string;
 
     @Column({ nullable: false })
     type: string;
@@ -72,7 +72,7 @@ export class MediaItemEntity {
     updatedDate: Date;
 
     @Column()
-    errors: object;
+    errors: object[];
 
     @Column()
     localFilePath: string;

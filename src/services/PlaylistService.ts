@@ -59,10 +59,6 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         playlist.type = params.type;
         playlist.driveFolderId = params.driveFolderId;
         if (_.isEmpty(params.driveFolderId)) {
-            const response: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
-            if (response && response.data) {
-                req.googleDriveFileStore = response.data;
-            }
             playlist.driveFolderId = req.googleDriveFileStore.id;
         } else {
             debug('driveFolderId : This will not create new folder.');

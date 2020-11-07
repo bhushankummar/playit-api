@@ -27,17 +27,16 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
         email: req.userStore.email
     };
     // debug('userProfile %o ', userProfile);
-    const whereCondition: any = {
-        user: userProfile
-    };
+    const whereCondition: any = {};
+    whereCondition.user = userProfile;
     if (params.isUploaded !== undefined) {
         whereCondition.isUploaded = params.isUploaded;
     }
     if (params.isDownloaded !== undefined) {
         whereCondition.isDownloaded = params.isDownloaded;
     }
-    if (params.playlistId !== undefined) {
-        whereCondition.playlistId = params.playlistId;
+    if (params.playlistUrlId !== undefined) {
+        whereCondition.playlistUrlId = params.playlistUrlId;
     }
     if (params.driveFolderId !== undefined) {
         whereCondition.driveFolderId = params.driveFolderId;
@@ -54,7 +53,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
             where: whereCondition,
             order: {
                 title: 'ASC',
-                playlistId: 'ASC'
+                playlistUrlId: 'ASC'
             }
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -67,7 +66,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
 };
 
 /**
- * List all the Media Items using PlaylistId and Google Drive Folder Id
+ * List all the Media Items using playlistUrlId and Google Drive Folder Id
  */
 export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
@@ -83,7 +82,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
     try {
         const whereCondition: any = {
             user: userProfile,
-            playlistId: req.playlistStore.urlId,
+            playlistUrlId: req.playlistStore.urlId,
             driveFolderId: req.playlistStore.driveFolderId
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
@@ -225,7 +224,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 url: value.url_simple,
                 urlId: value.id,
                 type: req.playlistStore.type,
-                playlistId: req.youTubePlaylistStore.id,
+                playlistUrlId: req.youTubePlaylistStore.id,
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: value.isUploaded,
                 isDownloaded: value.isDownloaded
@@ -347,10 +346,10 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
     };
     // debug('userProfile ', userProfile);
     try {
-        const whereCondition: FindManyOptions = {
+        const whereCondition: FindManyOptions<MediaItemEntity> = {
             where: {
                 user: userProfile,
-                playlistId: req.playlistStore.urlId,
+                playlistUrlId: req.playlistStore.urlId,
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: false,
                 isDownloaded: false

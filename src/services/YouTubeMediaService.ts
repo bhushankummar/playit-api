@@ -20,9 +20,8 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
         return next();
     }
     const tempMediaItems = [];
-    await bluebird.map(req.mediaItemsStore, async (item: MediaItemEntity) => {
+    await bluebird.map(req.mediaItemsStore, async (updatedItem: MediaItemEntity) => {
         // debug('item %o ', item);
-        const updatedItem: any = JSON.parse(JSON.stringify(item));
         let rootDirector = MEDIA_DIRECTORY.VIDEO;
         let mediaType = 'mp4';
         let downloadOptionKey = 1;
@@ -44,14 +43,13 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
             updatedItem.errors = [];
         }
         try {
-            if (_.isEmpty(updatedItem.playlistId)) {
-                debug('CRITICAL : Skipping Audio Media Item which has not playlistId.');
+            if (_.isEmpty(updatedItem.playlistUrlId)) {
+                debug('CRITICAL : Skipping Audio Media Item which has not playlistUrlId.');
                 return;
             }
             if (_.isEmpty(updatedItem.errors) === false) {
-                const lastError: MediaError = _.last(updatedItem.errors);
+                const lastError: any = _.last(updatedItem.errors);
                 downloadOptionKey = lastError.downloadOptions + 1;
-
 
                 if (updatedItem.type === MEDIA_TYPE.AUDIO) {
                     if (_.isEmpty(AUDIO_DOWNLOAD_OPTIONS[downloadOptionKey]) === false) {
