@@ -63,7 +63,7 @@ export const SORT_BY = {
 export const GOOGLE_AUTH = {
     CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
     CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
-    REDIRECT_URL: `${APP.FRONT_END_URL}/api/v1/user/register/oauth/callback`,
+    REDIRECT_URL: `${APP.API_URL}/api/v1/user/register/oauth/callback`,
     SCOPES: [
         'https://www.googleapis.com/auth/drive',
         'https://www.googleapis.com/auth/userinfo.profile',

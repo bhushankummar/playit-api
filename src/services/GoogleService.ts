@@ -5,7 +5,6 @@ import * as _ from 'lodash';
 import * as Boom from 'boom';
 import { google } from 'googleapis';
 import { GOOGLE_AUTH } from '../constants';
-import { oauth2Client } from '../utils/GoogleUtils';
 import * as GoogleUtils from '../utils/GoogleUtils';
 
 const debug = Debug('PL:GoogleService');
@@ -17,6 +16,7 @@ export const generatesAuthUrlForRegister: express.RequestHandler = (req: IReques
     if (!_.isEmpty(req.userStore)) {
         return next(Boom.conflict('User is already registered with same email'));
     }
+    const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         scope: GOOGLE_AUTH.SCOPES
@@ -74,6 +74,7 @@ export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, 
     if (_.isEmpty(req.userStore)) {
         return next(Boom.conflict('You are not registered User.'));
     }
+    const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
         state: req.userStore._id.toString(),

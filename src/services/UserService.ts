@@ -36,6 +36,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
  */
 export const registerUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body, req.query);
+    // debug('params.state ', params.state);
     if (_.isEmpty(params.state) === false) {
         return next();
     }
@@ -85,6 +86,7 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
         };
         const userModel = getMongoRepository(UserEntity);
         const response = await userModel.update(whereCondition, userData);
+        // debug('response ', response);
     } catch (error) {
         debug('updateGoogleToken error ', error);
         return next(error);
