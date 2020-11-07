@@ -122,6 +122,8 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     try {
         debug('driveFolderId : This will not create new folder.');
+        const isSkipTest = true;
+        if(isSkipTest){
         // const query = 'name = "Data"';
         const query = `"name = '${req.youTubePlaylistStore.title}'"`;
         // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
@@ -141,6 +143,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
                 return next();
             }
         }
+    }
 
         const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
             req.userStore.googleDriveParentId,
