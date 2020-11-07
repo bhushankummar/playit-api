@@ -50,8 +50,15 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
     }
     // debug('whereCondition %o ', whereCondition);
     try {
+        const options: FindManyOptions<MediaItemEntity> = {
+            where: whereCondition,
+            order: {
+                title: 'ASC',
+                playlistId: 'ASC'
+            }
+        };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
-        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        req.mediaItemsStore = await mediaItemModel.find(options);
     } catch (error) {
         debug('error ', error);
         return next(error);

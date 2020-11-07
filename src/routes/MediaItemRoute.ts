@@ -20,16 +20,6 @@ mediaItemRoute.post('/', passport.authenticate('bearer'), [
 ]);
 
 /**
- * Search All Playlist's Media
- * This API will return all the Playlist of the User
- */
-mediaItemRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
-    PlaylistService.searchOneByPlaylistIdAndUserId,
-    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
-    MediaItemController.mediaItemData
-]);
-
-/**
  * Sync MediaItem with YouTube Playlist & Google Drive
  * Adds New File if new found
  * Updates the Update Status if file is already uploaded

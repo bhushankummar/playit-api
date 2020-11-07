@@ -110,7 +110,6 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
     }
 };
 
-
 /**
  * This function will Create a playlist folder into Google Drive
  */
@@ -143,15 +142,15 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
             }
         }
 
-        const responseNewGoogleFolder: any = await GoogleDrive.createFolder(req.userStore.googleDriveParentId, req.youTubePlaylistStore.title, req.userStore.google);
+        const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
+            req.userStore.googleDriveParentId,
+            req.youTubePlaylistStore.title,
+            req.userStore.google
+        );
         if (responseNewGoogleFolder && responseNewGoogleFolder.data) {
             req.googleDriveFileStore = responseNewGoogleFolder.data;
         }
-        const response: any = await GoogleDrive.createFolder('', 'DriveSyncFiles', req.userStore.google);
-        if (response && response.data) {
-            req.googleDriveFileStore = response.data;
-        }
-        // debug('Folder has been created ', req.googleDriveFileStore);
+        debug('Folder has been created ', req.googleDriveFileStore);
     } catch (error) {
         debug('createPlaylistFolder error ', error);
         return next(error);

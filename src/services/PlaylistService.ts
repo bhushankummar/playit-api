@@ -6,7 +6,7 @@ import * as _ from 'lodash';
 import * as mongodb from 'mongodb';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDrive';
-import { getMongoRepository, FindOneOptions } from 'typeorm';
+import { getMongoRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
 
@@ -88,12 +88,19 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
         _id: req.userStore._id,
         email: req.userStore.email
     };
+    debug('userProfile ', userProfile);
     try {
         const whereCondition = {
             user: userProfile
         };
+        const options: FindManyOptions<PlaylistEntity> = {
+            where: whereCondition,
+            order: {
+                title: 'ASC'
+            }
+        };
         const playlistModel = getMongoRepository(PlaylistEntity);
-        req.playlistItemStore = await playlistModel.find(whereCondition);
+        req.playlistItemStore = await playlistModel.find(options);
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));
