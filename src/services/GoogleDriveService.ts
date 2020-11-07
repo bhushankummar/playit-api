@@ -122,8 +122,8 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     try {
         debug('driveFolderId : This will not create new folder.');
-        const isSkipTest = true;
-        if (isSkipTest) {
+        const isCheckPlaylistFolder = false;
+        if (isCheckPlaylistFolder) {
             // const query = 'name = "Data"';
             const query = `"name = '${req.youTubePlaylistStore.title}'"`;
             // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
