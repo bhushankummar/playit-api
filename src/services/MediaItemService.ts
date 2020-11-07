@@ -225,6 +225,10 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 urlId: value.id,
                 type: req.playlistStore.type,
                 playlistUrlId: req.youTubePlaylistStore.id,
+                playlist: {
+                    _id: req.playlistStore._id,
+                    title: req.playlistStore.title
+                },
                 driveFolderId: req.playlistStore.driveFolderId,
                 isUploaded: value.isUploaded,
                 isDownloaded: value.isDownloaded

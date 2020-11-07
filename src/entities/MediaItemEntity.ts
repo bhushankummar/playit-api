@@ -10,6 +10,14 @@ class User {
     email: string;
 }
 
+class Playlist {
+    @ObjectIdColumn()
+    _id: ObjectID;
+
+    @Column()
+    title?: string;
+}
+
 export class MediaError {
     @Column({ nullable: false })
     downloadOptions: number;
@@ -40,6 +48,9 @@ export class MediaItemEntity {
 
     @Column({ nullable: false })
     playlistUrlId: string;
+
+    @Column(type => Playlist)
+    playlist: Playlist;
 
     @Column({ nullable: false })
     type: string;
