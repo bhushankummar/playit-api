@@ -50,6 +50,7 @@ export const fetchPlaylistDetailByUrlId: express.RequestHandler = async (req: IR
         return next();
     } catch (error) {
         debug('fetchPlaylistDetailByUrlId YtplUtils error ', error);
-        return next(error);
+        // Do not throw error so it can fetch playlist data from next function
+        return next();
     }
 };
