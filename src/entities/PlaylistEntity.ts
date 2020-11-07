@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Timestamp } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Timestamp, Index } from 'typeorm';
 import moment = require('moment');
 
 class User {
@@ -10,6 +10,7 @@ class User {
 }
 
 @Entity('playlists')
+@Index(['user._id', 'urlId', 'type'], { unique: true })
 export class PlaylistEntity {
 
     @ObjectIdColumn()

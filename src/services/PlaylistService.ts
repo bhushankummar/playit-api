@@ -120,7 +120,7 @@ export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (
     try {
         const whereCondition = {
             user: userProfile,
-            urlId: params.playlistId
+            urlId: params.playlistUrl
         };
         // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);

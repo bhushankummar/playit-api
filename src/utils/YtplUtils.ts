@@ -62,10 +62,12 @@ export const cleanFileName = (fileName: string) => {
         'Full Video:'
     ];
     fileName = fileName.split(/'/g).join(' ');
+    fileName = fileName.toString().replace(/"/g, '\\"');
+    fileName = fileName.replace(/\/\//g, '');
     cleanWords.forEach((word: string) => {
         fileName = fileName.split(word).join(' ');
-        fileName = fileName.split(word.toLowerCase()).join(' ');
-        fileName = fileName.split(word.toUpperCase()).join(' ');
+        fileName = fileName.split(word.toLowerCase()).join(' '); // Lowercase
+        fileName = fileName.split(word.toUpperCase()).join(' '); // Uppercase
         fileName = fileName.trim();
     });
     fileName = fileName.replace(/ +(?= )/g, '');

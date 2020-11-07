@@ -13,6 +13,7 @@ export const init = async () => {
     const connection: Connection = await createConnection({
         type: 'mongodb',
         url: DB.MONGO_URL,
+        synchronize: true,
         useNewUrlParser: true,
         useUnifiedTopology: true,
         entities: [
