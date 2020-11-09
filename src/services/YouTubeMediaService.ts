@@ -5,7 +5,7 @@ import * as fs from 'fs';
 import * as path from 'path';
 import * as _ from 'lodash';
 import * as bluebird from 'bluebird';
-import * as MediaDownloader from '../utils/MediaDownloader';
+import * as MediaDownloader from '../utils/MediaDownloaderUtils';
 
 import { APP, AUDIO_DOWNLOAD_OPTIONS, MEDIA_DIRECTORY, MEDIA_TYPE, VIDEO_DOWNLOAD_OPTIONS } from '../constants';
 import { MediaItemEntity, MediaError } from '../entities/MediaItemEntity';

@@ -2,8 +2,8 @@ import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
-import * as Boom from 'boom';
-import * as GoogleDrive from '../utils/GoogleDrive';
+import * as YtplUtils from '../utils/YtplUtils';
+import * as GoogleDrive from '../utils/GoogleDriveUtils';
 import { getMongoRepository, FindManyOptions } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
@@ -218,9 +218,13 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     const mediaItemsNew = [];
     await bluebird.map(req.data.mediaItemsNew, async (value: any) => {
         try {
+            let extension = 'mp4';
+            if (req.playlistStore.type === '0') {
+                extension = 'mp3';
+            }
             const data: Partial<MediaItemEntity> = {
                 user: userProfile,
-                title: value.title,
+                title: YtplUtils.prepareFileName(value, extension),
                 url: value.url_simple,
                 urlId: value.id,
                 type: req.playlistStore.type,

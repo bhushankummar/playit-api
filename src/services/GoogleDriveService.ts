@@ -3,7 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
-import * as GoogleDrive from '../utils/GoogleDrive';
+import * as GoogleDrive from '../utils/GoogleDriveUtils';
 import * as utils from '../utils';
 const debug = Debug('PL:GoogleDriveService');
 

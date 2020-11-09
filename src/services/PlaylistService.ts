@@ -5,7 +5,7 @@ import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as mongodb from 'mongodb';
 import * as YtplUtils from '../utils/YtplUtils';
-import * as GoogleDrive from '../utils/GoogleDrive';
+import * as GoogleDrive from '../utils/GoogleDriveUtils';
 import { getMongoRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');

@@ -1,4 +1,4 @@
-import * as YouTube from './YtplUtils';
+import * as YtplUtils from './YtplUtils';
 import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
@@ -10,7 +10,7 @@ import { MediaItemEntity } from '../entities/MediaItemEntity';
 const youtubedl = require('youtube-dl');
 const debug = Debug('PL:MediaDownloader');
 
-export const downloadMedia = (options: any[], type: string, item: MediaItemEntity, driveDirectory: any) => {
+export const downloadMedia = (options: any[], extension: string, item: MediaItemEntity, driveDirectory: any) => {
     return new Promise((resolve: any, reject: any) => {
         const mediaUrl = item.url;
         const media = youtubedl(mediaUrl, options);
@@ -20,7 +20,7 @@ export const downloadMedia = (options: any[], type: string, item: MediaItemEntit
             fileName: ''
         };
         media.on('info', () => {
-            const newFileName = YouTube.prepareFileName(item, type);
+            const newFileName = YtplUtils.prepareFileName(item, extension);
             const filePath = path.join(driveDirectory, newFileName);
             mediaResponse.filePath = filePath;
             mediaResponse.fileName = newFileName;
@@ -70,10 +70,10 @@ export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) =>
             APP.FFPROBE_PATH
         ];
         const mediaUrl = item.url;
-        // const metaData: any = await YouTube.findMetadata(mediaUrl, options);
+        // const metaData: any = await YtplUtils.findMetadata(mediaUrl, options);
         // const oldFileName = metaData._filename;
         const oldFileName = item.title.concat('.mp4');
-        const newFileName = YouTube.prepareFileName(item, 'mp4');
+        const newFileName = YtplUtils.prepareFileName(item, 'mp4');
         mediaResponse.fileName = newFileName;
         debug('oldFileName ', oldFileName);
         // debug('Download started %o ', mediaResponse.fileName);
