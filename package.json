@@ -6,7 +6,7 @@
     "scripts": {
         "start": "npm run version && export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
-        "prebuild": "npm run tslint && rm -rf ./dist/*",
+        "prebuild": "npm run tslint && rm -rf ./dist/src/* && rm -rf ./dist/test/*",
         "build": "npm run build-ts",
         "build-ts": "tsc",
         "serve-build": "npm run version && node dist/src/server.js",
