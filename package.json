@@ -4,8 +4,10 @@
     "description": "Playit API for Web/Mobile/Desktop APP",
     "main": "dist",
     "scripts": {
+        "precommit": "npm run lint:fix",
         "start": "npm run version && export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
         "tslint": "tslint -c tslint.json -p tsconfig.json",
+        "tslint:fix": "tslint -c tslint.json -p tsconfig.json --fix",
         "prebuild": "npm run tslint && rm -rf ./dist/src/* && rm -rf ./dist/test/*",
         "build": "npm run build-ts",
         "build-ts": "tsc",
