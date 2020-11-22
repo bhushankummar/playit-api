@@ -49,8 +49,9 @@
         "request": "^2.88.0",
         "request-promise": "^4.2.5",
         "typeorm": "^0.2.22",
+        "util": "^0.12.3",
         "youtube-dl": "^3.0.2",
-        "ytpl": "^0.1.19"
+        "ytpl": "^1.0.1"
     },
     "devDependencies": {
         "@types/bcrypt": "^3.0.0",

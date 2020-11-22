@@ -36,6 +36,7 @@ export const fetchPlaylistItems: express.RequestHandler = async (req: IRequest, 
  * List Playlist detail by URL Id
  */
 export const fetchPlaylistDetailByUrlId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    debug('Inside fetchPlaylistDetailByUrlId ');
     const params = _.merge(req.body, req.params);
     if (_.isEmpty(params.playlistUrl)) {
         // debug('CRITICAL : Return from empty req.playlistStore');

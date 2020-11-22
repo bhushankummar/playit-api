@@ -1,23 +1,38 @@
 import { YOUTUBE } from '../constants';
 import * as ytpl from 'ytpl';
+import * as util from 'util';
 import * as _ from 'lodash';
+import * as Debug from 'debug';
 import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 
 const youtubedl = require('youtube-dl');
+const debug = Debug('PL:YtplUtils');
 
 /**
  * Get the File Metadata
  */
-export const findPlaylistItems = (playlistId: string): Promise<IYtplPlaylist> => {
-    return new Promise((resolve: any, reject: any) => {
+export const findPlaylistItems = async (playlistId: string): Promise<IYtplPlaylist> => {
+    debug('Inside findPlaylistItems');
+    const ytplPromise = util.promisify(ytpl);
+    try {
         const options: any = { limit: 10000 };
-        ytpl(playlistId, options, (error: any, documents: IYtplPlaylist) => {
-            if (error) {
-                reject(error);
-            }
-            resolve(documents);
-        });
-    });
+        const documents: any = await ytplPromise(playlistId, options);
+        debug('documents ', documents);
+        return documents;
+    } catch (error) {
+        debug('error ', error);
+        return error;
+    }
+    // return new Promise((resolve: any, reject: any) => {
+    //     const options: any = { limit: 10000 };
+    //     ytpl(playlistId, options, (error: any, documents: IYtplPlaylist) => {
+    //         if (error) {
+    //             debug('error ', error);
+    //             reject(error);
+    //         }
+    //         resolve(documents);
+    //     });
+    // });
 };
 
 /**
