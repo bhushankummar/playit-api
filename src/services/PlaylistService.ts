@@ -84,7 +84,7 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
         _id: req.userStore._id,
         email: req.userStore.email
     };
-    debug('userProfile ', userProfile);
+    // debug('userProfile ', userProfile);
     try {
         const whereCondition = {
             user: userProfile

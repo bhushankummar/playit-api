@@ -53,7 +53,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
                     nextPageToken = _.clone(response.data.nextPageToken);
                 }
             } catch (error) {
-                debug('listPlaylistItems YouTubeUtils error ', error);
+                debug('listPlaylistItems error ', error, req.playlistStore);
                 return next(Boom.notFound(error));
             }
         } while (nextPageToken !== '');
@@ -64,7 +64,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         req.youTubePlaylistStore = ytplPlaylistStore;
         return next();
     } catch (error) {
-        debug('listPlaylistItems YtplUtils error ', error);
+        debug('listPlaylistItems error ', error, req.playlistStore);
         return next(error);
     }
 };
