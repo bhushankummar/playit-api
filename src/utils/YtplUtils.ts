@@ -23,16 +23,6 @@ export const findPlaylistItems = async (playlistId: string): Promise<IYtplPlayli
         debug('error ', error);
         return error;
     }
-    // return new Promise((resolve: any, reject: any) => {
-    //     const options: any = { limit: 10000 };
-    //     ytpl(playlistId, options, (error: any, documents: IYtplPlaylist) => {
-    //         if (error) {
-    //             debug('error ', error);
-    //             reject(error);
-    //         }
-    //         resolve(documents);
-    //     });
-    // });
 };
 
 /**
