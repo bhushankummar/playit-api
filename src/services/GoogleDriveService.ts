@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import * as utils from '../utils';
+import * as Boom from 'boom';
 const debug = Debug('PL:GoogleDriveService');
 
 /**
@@ -121,7 +121,10 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
         return next();
     } else if (_.isEmpty(params.driveFolderId) === false) {
         return next();
+    } else if (_.isEmpty(req.youTubePlaylistStore)) {
+        return next(Boom.notFound('Failed to fetch the Playlist data.'));
     }
+    debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
     try {
         debug('driveFolderId : This will not create new folder.');
         const isCheckPlaylistFolder = false;
@@ -177,7 +180,6 @@ export const removeFolder: express.RequestHandler = async (req: IRequest, res: e
     }
     try {
         const folderId = req.playlistStore.driveFolderId;
-        let nextPageToken = '';
         const response: any = await GoogleDrive.removeFile(req.userStore.google, folderId);
         if (response && response.data) {
             debug('response.data ', response.data);
