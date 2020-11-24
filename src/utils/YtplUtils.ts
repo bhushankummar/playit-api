@@ -16,7 +16,7 @@ export const findPlaylistItems = async (playlistId: string): Promise<IYtplPlayli
     const ytplPromise = util.promisify(ytpl);
     try {
         const options: any = { limit: 10000 };
-        const documents: any = await ytplPromise(playlistId, options);
+        const documents: any = await ytplPromise(playlistId);
         debug('documents ', documents);
         return documents;
     } catch (error) {

@@ -162,3 +162,30 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     return next();
 };
+
+/**
+ * This function will Remove Folder from to the drive
+ */
+export const removeFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore)) {
+        debug('CRITICAL : Empty req.playlistStore');
+        return next();
+    }
+    try {
+        const folderId = req.playlistStore.driveFolderId;
+        let nextPageToken = '';
+        const response: any = await GoogleDrive.removeFile(req.userStore.google, folderId);
+        if (response && response.data) {
+            debug('response.data ', response.data);
+        }
+        req.googleDriveStore = response.data;
+        return next();
+    } catch (error) {
+        debug('removeFolder error ', error);
+        return next(error);
+    }
+};
