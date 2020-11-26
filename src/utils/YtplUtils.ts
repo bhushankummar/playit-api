@@ -11,23 +11,6 @@ const debug = Debug('PL:YtplUtils');
 /**
  * Get the File Metadata
  */
-export const findPlaylistItems = async (playlistId: string): Promise<IYtplPlaylist> => {
-    debug('Inside findPlaylistItems');
-    const ytplPromise = util.promisify(ytpl);
-    try {
-        const options: any = { limit: 10000 };
-        const documents: any = await ytplPromise(playlistId);
-        debug('documents ', documents);
-        return documents;
-    } catch (error) {
-        debug('error ', error);
-        return error;
-    }
-};
-
-/**
- * Get the File Metadata
- */
 export const findMetadata = (url: string, options: any) => {
     return new Promise((resolve: any, reject: any) => {
         youtubedl.getInfo(url, options, (error: any, info: any) => {
