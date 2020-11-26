@@ -20,7 +20,7 @@ export const googleDetail: express.RequestHandler = (req: IRequest, res: express
 export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const token = `token=${req.tokenStore.token}`;
     const frontEndUrl = APP.FRONT_END_URL;
-    return res.redirect(`${frontEndUrl}?${token}`);
+    return res.redirect(`${frontEndUrl}/login?${token}`);
 };
 
 /**
