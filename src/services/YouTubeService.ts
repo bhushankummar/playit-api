@@ -51,7 +51,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
                     nextPageToken = _.clone(response.data.nextPageToken);
                 }
             } catch (error) {
-                debug('listPlaylistItems error ', error, req.playlistStore, playListItemsData);
+                debug('listPlaylistItems error %o req.playlistStore %o playListItemsData %o', error, req.playlistStore, playListItemsData);
                 // return next(Boom.notFound(error));
             }
         } while (nextPageToken !== '');

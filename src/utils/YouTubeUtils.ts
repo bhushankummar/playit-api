@@ -5,7 +5,10 @@ import { IYoutubePlaylist } from '../interface/IYoutubePlaylist';
 
 export const mapYouTubeResponse = (youtubeItemStore: Partial<IYoutubePlaylist>): Partial<IYtplPlaylist> => {
     const ytplPlaylistStore: Partial<IYtplPlaylist> = {};
-    ytplPlaylistStore.total_items = youtubeItemStore.pageInfo.totalResults;
+    ytplPlaylistStore.total_items = 0;
+    if (youtubeItemStore && youtubeItemStore.pageInfo && youtubeItemStore.pageInfo.totalResults) {
+        ytplPlaylistStore.total_items = youtubeItemStore.pageInfo.totalResults;
+    }
     ytplPlaylistStore.items = [];
 
     const items: Partial<IYtplItem>[] = [];
