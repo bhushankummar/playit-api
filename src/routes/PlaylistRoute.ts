@@ -17,7 +17,7 @@ playlistRoute.post('/', passport.authenticate('bearer'), [
     PlaylistService.validateNewPlaylist,
     PlaylistService.searchOneByPlaylistUrlIdAndUserId,
     GoogleDriveService.createRootFolder,
-    UserService.updateRootDirectory,
+    // UserService.updateRootDirectory,
     // YtplService.fetchPlaylistDetailByUrlId,
     YouTubeService.getPlaylistDetail,
     GoogleDriveService.createPlaylistFolder,

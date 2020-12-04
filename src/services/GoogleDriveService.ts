@@ -74,6 +74,7 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
         debug('Upload complete %o ', req.mediaItemStore.title);
     } catch (error) {
         debug('uploadToDrive error ', error);
+        debug('uploadToDrive error ', req.userStore);
     }
     return next();
 };
