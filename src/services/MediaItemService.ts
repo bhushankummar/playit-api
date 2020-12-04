@@ -478,7 +478,8 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     };
     const orderBy: any = {
         order: {
-            lastDownloadTimeStamp: 'ASC'
+            lastDownloadTimeStamp: 'ASC',
+            lastUploadTimeStamp: 'DESC'
         }
     };
     // debug('whereCondition ', whereCondition);
