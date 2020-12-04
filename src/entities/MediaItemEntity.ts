@@ -70,6 +70,9 @@ export class MediaItemEntity {
     @Column({ default: 0 })
     downloadAttemptCount: number = 0;
 
+    @Column({ default: 0 })
+    googleDriveUploadAttemptCount: number = 0;
+
     @Column()
     lastDownloadTimeStamp: Date;
 

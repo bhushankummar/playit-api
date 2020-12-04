@@ -150,7 +150,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
          * Identify the files those are in the database but not available in the YouTube
          */
         if (_.isEmpty(item) === true) {
-            debug('Identify for the Remove. %o ', item);
+            debug('Identify for the Remove. %o ', value);
             mediaItemsRemove.push(value);
         }
 
@@ -479,7 +479,8 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     const orderBy: any = {
         order: {
             lastDownloadTimeStamp: 'ASC',
-            lastUploadTimeStamp: 'DESC'
+            lastUploadTimeStamp: 'DESC',
+            googleDriveUploadAttemptCount: 'DESC'
         }
     };
     // debug('whereCondition ', whereCondition);
@@ -507,8 +508,10 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         const whereCondition: any = {
             '_id': new ObjectId(req.mediaItemStore._id)
         };
+        const count = (req.mediaItemStore.googleDriveUploadAttemptCount || 0) + 1;
         const updateData: Partial<MediaItemEntity> = {
             lastUploadTimeStamp: moment().toDate(),
+            googleDriveUploadAttemptCount: count
         };
         if (req.googleDriveFileStore && req.googleDriveFileStore.id) {
             updateData.fileId = req.googleDriveFileStore.id;
@@ -516,7 +519,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         }
         if (_.isEmpty(req.mediaItemStore.localFilePath)) {
             updateData.localFilePath = '';
-            updateData.downloadAttemptCount = 0;
+            updateData.googleDriveUploadAttemptCount = 0;
             updateData.isUploaded = false;
             updateData.isDownloaded = false;
         }

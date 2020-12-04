@@ -14,7 +14,7 @@ describe('YouTube', () => {
         const items = _.sortBy(playlistItems, 'title');
         let cleanFileNames = [];
         items.forEach((value) => {
-            const fileName = YtplUtils.prepareFileName(value, 'mp3');
+            const fileName = YtplUtils.prepareFileName(value, 'mp3', true);
             // debug('fileName  ', fileName);
             cleanFileNames.push(fileName);
         });

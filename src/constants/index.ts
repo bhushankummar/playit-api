@@ -152,7 +152,10 @@ export const SYNC_TO_YOUTUBE_SCHEDULE = {
 
 export const AUDIO_DOWNLOAD_OPTIONS = {
     1: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'],
-    2: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3']
+    2: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'],
+    3: ['-f', 'bestaudio[ext=m4a]/worstaudio', '-x', '--audio-format', 'mp3'],
+    4: ['-f', 'bestaudio[ext=m4a]/best', '-x', '--audio-format', 'mp3'],
+    5: ['--format=22']
 };
 
 export const VIDEO_DOWNLOAD_OPTIONS = {

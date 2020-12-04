@@ -68,7 +68,7 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
             try {
                 fs.unlinkSync(req.mediaItemStore.localFilePath);
             } catch (error) {
-                debug('error *******fs.unlinkSync %o ', req.mediaItemStore);
+                // debug('error *******fs.unlinkSync %o ', req.mediaItemStore);
             }
         }
         // debug('Files has been uploaded ', req.googleDriveFileStore);

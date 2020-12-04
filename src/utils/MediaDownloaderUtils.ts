@@ -20,7 +20,7 @@ export const downloadMedia = (options: any[], extension: string, item: MediaItem
             fileName: ''
         };
         media.on('info', () => {
-            const newFileName = YtplUtils.prepareFileName(item, extension);
+            const newFileName = YtplUtils.prepareFileName(item, extension, true);
             const filePath = path.join(driveDirectory, newFileName);
             mediaResponse.filePath = filePath;
             mediaResponse.fileName = newFileName;
@@ -56,6 +56,9 @@ export const downloadVideo = (item: MediaItemEntity, localDirectory: any, downlo
     return downloadMedia(downloadOption, 'mp4', item, localDirectory);
 };
 
+/**
+ * This is not in use as of now.
+ */
 export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) => {
     return new Promise(async (resolve: any, reject: any) => {
         const mediaResponse = {
@@ -73,7 +76,7 @@ export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) =>
         // const metaData: any = await YtplUtils.findMetadata(mediaUrl, options);
         // const oldFileName = metaData._filename;
         const oldFileName = item.title.concat('.mp4');
-        const newFileName = YtplUtils.prepareFileName(item, 'mp4');
+        const newFileName = YtplUtils.prepareFileName(item, 'mp4', true);
         mediaResponse.fileName = newFileName;
         debug('oldFileName ', oldFileName);
         // debug('Download started %o ', mediaResponse.fileName);

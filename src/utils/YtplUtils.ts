@@ -1,9 +1,6 @@
 import { YOUTUBE } from '../constants';
-import * as ytpl from 'ytpl';
-import * as util from 'util';
 import * as _ from 'lodash';
 import * as Debug from 'debug';
-import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 
 const youtubedl = require('youtube-dl');
 const debug = Debug('PL:YtplUtils');
@@ -22,13 +19,15 @@ export const findMetadata = (url: string, options: any) => {
     });
 };
 
-export const prepareFileName = (item: any, extension: string) => {
+export const prepareFileName = (item: any, extension: string, isAddExtension = false) => {
     let fileName = cleanFileName(item.title);
     let youtubeId = item.urlId;
     if (_.isEmpty(youtubeId)) {
         youtubeId = item.id;
     }
-    fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId, '.', extension);
+    if (isAddExtension === true) {
+        fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId, '.', extension);
+    }
     return fileName;
 };
 

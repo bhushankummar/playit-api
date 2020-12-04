@@ -5,10 +5,8 @@ import * as _ from 'lodash';
 import * as find from 'find';
 import * as Boom from 'boom';
 import { APP, MEDIA_DIRECTORY, MEDIA_EXTENSION, YOUTUBE, MEDIA_TYPE } from '../constants';
-import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleUtils from '../utils/GoogleUtils';
 import * as YouTubeUtils from '../utils/YouTubeUtils';
-import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 import { google } from 'googleapis';
 import { IYoutubePlaylist, IYoutubePlaylistItem } from '../interface/IYoutubePlaylist';
 
@@ -53,11 +51,11 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
                     nextPageToken = _.clone(response.data.nextPageToken);
                 }
             } catch (error) {
-                debug('listPlaylistItems error ', error, req.playlistStore);
-                return next(Boom.notFound(error));
+                debug('listPlaylistItems error ', error, req.playlistStore, playListItemsData);
+                // return next(Boom.notFound(error));
             }
         } while (nextPageToken !== '');
-        youtubePlaylistStoreData.items = youtubePlaylistStoreItems;
+        youtubePlaylistStoreData.items = youtubePlaylistStoreItems || [];
         const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
         ytplPlaylistStore.id = req.playlistStore.urlId;
         debug('Total songs in YouTube ', ytplPlaylistStore.items.length);
