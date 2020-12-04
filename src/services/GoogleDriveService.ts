@@ -56,8 +56,9 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
     }
     try {
         if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {
-            debug('CRITICAL: This file does not exits. %o ', req.mediaItemStore);
+            debug('CRITICAL: This file does not exits %o ', req.mediaItemStore);
             req.mediaItemStore.localFilePath = '';
+            req.mediaItemStore.downloadAttemptCount = 0;
             return next();
         }
         debug('Start uploading %o ', req.mediaItemStore.title);
@@ -73,8 +74,9 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
         // debug('Files has been uploaded ', req.googleDriveFileStore);
         debug('Upload complete %o ', req.mediaItemStore.title);
     } catch (error) {
+        debug('Upload failed %o ', req.mediaItemStore.title);
         debug('uploadToDrive error ', error);
-        debug('uploadToDrive error ', req.userStore);
+        debug('uploadToDrive error %o ', req.userStore);
     }
     return next();
 };

@@ -507,14 +507,16 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         const whereCondition: any = {
             '_id': new ObjectId(req.mediaItemStore._id)
         };
-        const updateData: any = {
-            lastUploadTimeStamp: moment().toISOString(),
+        const updateData: Partial<MediaItemEntity> = {
+            lastUploadTimeStamp: moment().toDate(),
         };
         if (req.googleDriveFileStore && req.googleDriveFileStore.id) {
             updateData.fileId = req.googleDriveFileStore.id;
             updateData.isUploaded = true;
         }
         if (_.isEmpty(req.mediaItemStore.localFilePath)) {
+            updateData.localFilePath = '';
+            updateData.downloadAttemptCount = 0;
             updateData.isUploaded = false;
             updateData.isDownloaded = false;
         }
