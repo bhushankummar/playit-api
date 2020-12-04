@@ -18,6 +18,7 @@ export const googleDetail: express.RequestHandler = (req: IRequest, res: express
  * Get token details
  */
 export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    debug('Completed req.tokenStore.token ', req.tokenStore.token);
     const token = `token=${req.tokenStore.token}`;
     const frontEndUrl = APP.FRONT_END_URL;
     return res.redirect(`${frontEndUrl}/login?${token}`);

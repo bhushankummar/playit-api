@@ -24,8 +24,8 @@ userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
     GoogleService.retrieveGoogleProfileFromOAuth2,
     UserService.registerUser,
-    UserService.updateGoogleToken,
     UserService.searchOneByState,
+    UserService.updateGoogleToken,
     TokenService.createToken,
     GoogleController.redirectToHome
 ]);

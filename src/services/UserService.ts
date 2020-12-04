@@ -81,8 +81,10 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
         const whereCondition = {
             _id: stateObjectId
         };
+        const googleStore = _.merge(req.userStore.google, req.googleStore);
+        debug('merged googleStore ', googleStore);
         const userData = {
-            google: req.googleStore
+            google: googleStore
         };
         const userModel = getMongoRepository(UserEntity);
         const response = await userModel.update(whereCondition, userData);
