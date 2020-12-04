@@ -9,8 +9,18 @@ const debug = Debug('PL:GoogleController');
  * Get token details
  */
 export const googleDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    debug('req.googleStore ', req.googleStore);
+    // debug('req.googleStore ', req.googleStore);
     req.data = req.googleStore;
+    return next();
+};
+
+/**
+ * Get token details
+ */
+export const redirectToOAuth: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    // debug('req.googleStore ', req.googleStore);
+    req.data = req.googleStore;
+    return res.redirect(req.googleStore.url);
     return next();
 };
 

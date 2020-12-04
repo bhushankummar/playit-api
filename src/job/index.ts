@@ -24,7 +24,7 @@ export const initAllJobs: any = () => {
 
     // DownloadVideoToLocal.init().start();
     UploadAudioToGoogleDrive.init().start();
-    UploadVideoToGoogleDrive.init().start();
+    // UploadVideoToGoogleDrive.init().start();
     // EmptyTrashGoogleDrive.init().start();
 
     const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();

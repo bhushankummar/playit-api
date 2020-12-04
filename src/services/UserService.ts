@@ -37,7 +37,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
 export const registerUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body, req.query);
     // debug('params.state ', params.state);
-    if (_.isEmpty(params.state) === false) {
+    if (_.isEmpty(req.userStore) === false) {
         return next();
     }
     try {
@@ -70,7 +70,7 @@ export const validateLoginUserData: express.RequestHandler = (req: IRequest, res
  */
 export const updateGoogleToken: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body, req.query);
-    if (_.isEmpty(params.state) === true) {
+    if (_.isEmpty(req.userStore) === true) {
         return next();
     }
     // debug('Inside updateGoogleToken ', params.state);
@@ -189,6 +189,24 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
         req.userStore.googleDriveParentId = req.googleDriveFileStore.id;
     } catch (error) {
         debug('updateRootDirectory error ', error);
+        return next(error);
+    }
+    return next();
+};
+
+/**
+ * Search user by email
+ * @param: email
+ */
+export const searchOneByGoogleEmaillAddress: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    const params = _.merge(req.params, req.body, req.query);
+    try {
+        const whereCondition: any = {
+            email: req.googleProfileStore.emailAddresses[0].value
+        };
+        const userModel = getMongoRepository(UserEntity);
+        req.userStore = await userModel.findOne(whereCondition);
+    } catch (error) {
         return next(error);
     }
     return next();

@@ -71,13 +71,9 @@ export const retrieveGoogleProfileFromOAuth2: express.RequestHandler = async (re
  * Generates oAuth URL
  */
 export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.conflict('You are not registered User.'));
-    }
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     const url = oauth2Client.generateAuthUrl({
         access_type: 'offline',
-        state: req.userStore._id.toString(),
         scope: GOOGLE_AUTH.SCOPES
     });
     req.googleStore = { url };

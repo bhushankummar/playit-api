@@ -23,8 +23,9 @@ userRoute.get('/register', [
 userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
     GoogleService.retrieveGoogleProfileFromOAuth2,
+    UserService.searchOneByGoogleEmaillAddress,
     UserService.registerUser,
-    UserService.searchOneByState,
+    // UserService.searchOneByState,
     UserService.updateGoogleToken,
     TokenService.createToken,
     GoogleController.redirectToHome
@@ -48,11 +49,11 @@ userRoute.post('/google/me', passport.authenticate('bearer'), [
 /**
  * Login
  */
-userRoute.put('/login', [
-    UserService.validateLoginUserData,
-    UserService.searchOneByEmail,
+userRoute.get('/login', [
+    // UserService.validateLoginUserData,
+    // UserService.searchOneByEmail,
     GoogleService.generatesAuthUrlForLogin,
-    GoogleController.googleDetail
+    GoogleController.redirectToOAuth
 ]);
 
 /**
