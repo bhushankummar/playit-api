@@ -20,7 +20,6 @@ export const googleDetail: express.RequestHandler = (req: IRequest, res: express
 export const redirectToOAuth: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
     // debug('req.googleStore ', req.googleStore);
     req.data = req.googleStore;
-    return res.redirect(req.googleStore.url);
     return next();
 };
 
