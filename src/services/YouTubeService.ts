@@ -113,7 +113,7 @@ export const getPlaylistDetailUsingPlaylistUrl: express.RequestHandler = async (
         return next();
     }
     try {
-        const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(req.playlistStore.urlId, req.userStore.google)
+        const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(req.playlistStore.urlId, req.userStore.google);
         // debug('youTubePlaylistStore ', youTubePlaylistStore);
         req.youTubePlaylistStore = youTubePlaylistStore;
         return next();

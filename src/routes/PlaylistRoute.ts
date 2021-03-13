@@ -46,7 +46,6 @@ playlistRoute.post('/crone/verify/drive-folder', [
     PlaylistService.searchOneByLastSyncTimeStamp,
     UserService.searchOneByPlaylistUser,
     GoogleDriveService.createRootFolder,
-    // UserService.updateRootDirectory,
     YouTubeService.getPlaylistDetailUsingPlaylistUrl,
     GoogleDriveService.createPlaylistFolder,
     PlaylistService.updatePlaylistDriveFolder,

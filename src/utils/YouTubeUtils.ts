@@ -69,4 +69,4 @@ export const searchPlaylist = async (playlistUrl: string, googleCredentials: any
         debug('searchPlaylist error ', error);
         return reject(error);
     }
-}
+};
