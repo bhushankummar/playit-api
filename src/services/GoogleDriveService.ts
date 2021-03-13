@@ -15,7 +15,6 @@ export const createRootFolder: express.RequestHandler = async (req: IRequest, re
         return next();
     }
     try {
-        // const query = 'name = "Data"';
         const query = 'name = "DriveSyncFiles"';
         // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
         const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
@@ -129,29 +128,23 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
     try {
-        const isCheckPlaylistFolder = false;
-        if (isCheckPlaylistFolder) {
-            // const query = 'name = "Data"';
-            const query = `"name = '${req.youTubePlaylistStore.title}'"`;
-            // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
-            const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
-            if (folderResponse && folderResponse.data) {
-                // debug('folderResponse.data ', folderResponse);
-                // debug('folderResponse.data ', folderResponse.data);
-                const folder = _.find(folderResponse.data.files, (value) => {
-                    if (value.trashed === false) {
-                        return value;
-                    }
-                });
-                // debug('folder ', folder);
-                req.googleDriveFileStore = folder;
-                if (_.isEmpty(folder) === false) {
-                    debug('Google Drive Folder with same name found.');
-                    return next();
+        const query = `name = "${req.youTubePlaylistStore.title}"`;
+        const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
+        if (folderResponse && folderResponse.data) {
+            // debug('folderResponse.data ', folderResponse);
+            // debug('folderResponse.data ', folderResponse.data);
+            const folder = _.find(folderResponse.data.files, (value) => {
+                if (value.trashed === false) {
+                    return value;
                 }
+            });
+            // debug('folder ', folder);
+            req.googleDriveFileStore = folder;
+            if (_.isEmpty(folder) === false) {
+                debug('Google Drive Folder with same name found.');
+                return next();
             }
         }
-
         const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
             req.userStore.googleDriveParentId,
             req.youTubePlaylistStore.title,
