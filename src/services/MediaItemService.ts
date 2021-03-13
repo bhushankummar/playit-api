@@ -464,17 +464,17 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
  */
 export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const whereCondition: any = {
-        $or: [
-            {
-                lastUploadTimeStamp: {
-                    $lt: moment().subtract(1, 'minutes').toDate()
-                    // '$lt': moment().subtract(1, 'seconds').toISOString()
-                }
-            },
-            {
-                lastUploadTimeStamp: undefined
-            }
-        ],
+        // $or: [
+        //     {
+        //         lastUploadTimeStamp: {
+        //             $lt: moment().subtract(1, 'minutes').toDate()
+        //             // '$lt': moment().subtract(1, 'seconds').toISOString()
+        //         }
+        //     },
+        //     {
+        //         lastUploadTimeStamp: undefined
+        //     }
+        // ],
         isDownloaded: true,
         isUploaded: false,
     };
