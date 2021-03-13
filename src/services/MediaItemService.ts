@@ -520,6 +520,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         if (_.isEmpty(req.mediaItemStore.localFilePath)) {
             updateData.localFilePath = '';
             updateData.googleDriveUploadAttemptCount = 0;
+            updateData.downloadAttemptCount = 0;
             updateData.isUploaded = false;
             updateData.isDownloaded = false;
         }
