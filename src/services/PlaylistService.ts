@@ -303,3 +303,39 @@ export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRe
     }
     return next();
 };
+
+/**
+ * Update Playlist
+ * @param: userId
+ * @param: type
+ * @param: url
+ */
+export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.userStore)) {
+        return next(Boom.notFound('Invalid User'));
+    }
+    try {
+        if (_.isEmpty(req.youTubePlaylistStore)) {
+            return next(Boom.notFound('This is not a valid playlist, Please try again.'));
+        }
+
+        const playlistModel = getMongoRepository(PlaylistEntity);
+        const whereCondition = {
+            _id: req.playlistStore._id
+        };
+
+        const updateData = {
+            lastSyncTimeStamp: moment().toISOString(),
+            url: req.youTubePlaylistStore.url,
+            title: req.youTubePlaylistStore.title,
+            urlId: req.youTubePlaylistStore.id,
+            driveFolderId: req.googleDriveFileStore.id
+        };
+
+        await playlistModel.update(whereCondition, updateData);
+    } catch (error) {
+        debug('error ', error);
+        return next(Boom.notFound(error));
+    }
+    return next();
+};

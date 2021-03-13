@@ -23,7 +23,7 @@ userRoute.get('/register', [
 userRoute.get('/register/oauth/callback', [
     GoogleService.retrieveAuthorizationCode,
     GoogleService.retrieveGoogleProfileFromOAuth2,
-    UserService.searchOneByGoogleEmaillAddress,
+    UserService.searchOneByGoogleEmailAddress,
     UserService.registerUser,
     // UserService.searchOneByState,
     UserService.updateGoogleToken,

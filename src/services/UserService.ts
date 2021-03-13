@@ -120,13 +120,15 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
 };
 
 /**
- * Search user by email
+ * Search user by Playlist
  * @param: email
  */
 export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.playlistStore)) {
+        debug('Empty req.playlistStore');
         return next();
     } else if (_.isEmpty(req.playlistStore.user)) {
+        debug('Empty req.playlistStore.user');
         return next();
     } else if (_.isEmpty(req.playlistStore.user._id)) {
         debug('CRITICAL : req.playlistStore.user._id is empty %o ', req.playlistStore);
@@ -138,6 +140,7 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
+        // debug('req.userStore ', JSON.stringify(req.userStore, null, 2));
     } catch (error) {
         return next(error);
     }
@@ -198,7 +201,7 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
  * Search user by email
  * @param: email
  */
-export const searchOneByGoogleEmaillAddress: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const searchOneByGoogleEmailAddress: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const params = _.merge(req.params, req.body, req.query);
     try {
         const whereCondition: any = {

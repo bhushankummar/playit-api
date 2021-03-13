@@ -54,6 +54,13 @@ node dist/src/server.js
 ./node_modules/youtube-dl/bin/youtube-dl --version
 ```
 
+### Stop Specific Cron Jobs
+```
+export DOWNLOAD_AUDIO_SCHEDULE_ACTION='false'
+export UPLOAD_AUDIO_SCHEDULE_ACTION='false'
+export SYNC_TO_YOUTUBE_SCHEDULE_ACTION='false'
+```
+
 ### References
 ```
 https://askubuntu.com/a/807918

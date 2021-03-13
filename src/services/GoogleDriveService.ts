@@ -127,9 +127,8 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     } else if (_.isEmpty(req.youTubePlaylistStore)) {
         return next(Boom.notFound('Failed to fetch the Playlist data.'));
     }
-    debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
+    // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
     try {
-        debug('driveFolderId : This will not create new folder.');
         const isCheckPlaylistFolder = false;
         if (isCheckPlaylistFolder) {
             // const query = 'name = "Data"';

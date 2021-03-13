@@ -115,6 +115,7 @@ export const CRONE_JOB = {
 };
 
 export const DOWNLOAD_AUDIO_SCHEDULE = {
+    ACTION: process.env.DOWNLOAD_AUDIO_SCHEDULE_ACTION || true,
     Seconds: '0',
     Minutes: '*/1',
     Hours: '*',
@@ -124,8 +125,19 @@ export const DOWNLOAD_AUDIO_SCHEDULE = {
 };
 
 export const UPLOAD_AUDIO_SCHEDULE = {
+    ACTION: process.env.UPLOAD_AUDIO_SCHEDULE_ACTION || true,
     Seconds: '0',
     Minutes: '*/1',
+    Hours: '*',
+    DayOfMonth: '*',
+    Months: '*',
+    DayOfWeek: '*'
+};
+
+export const SYNC_TO_YOUTUBE_SCHEDULE = {
+    ACTION: process.env.SYNC_TO_YOUTUBE_SCHEDULE_ACTION || true,
+    Seconds: '0',
+    Minutes: '*/3',
     Hours: '*',
     DayOfMonth: '*',
     Months: '*',
@@ -141,14 +153,6 @@ export const UPLOAD_VIDEO_SCHEDULE = {
     DayOfWeek: '*'
 };
 
-export const SYNC_TO_YOUTUBE_SCHEDULE = {
-    Seconds: '0',
-    Minutes: '*/3',
-    Hours: '*',
-    DayOfMonth: '*',
-    Months: '*',
-    DayOfWeek: '*'
-};
 
 export const AUDIO_DOWNLOAD_OPTIONS = {
     1: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'],

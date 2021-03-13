@@ -42,4 +42,15 @@ playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
     PlaylistController.playlist
 ]);
 
+playlistRoute.post('/crone/verify/drive-folder', [
+    PlaylistService.searchOneByLastSyncTimeStamp,
+    UserService.searchOneByPlaylistUser,
+    GoogleDriveService.createRootFolder,
+    // UserService.updateRootDirectory,
+    YouTubeService.getPlaylistDetailUsingPlaylistUrl,
+    GoogleDriveService.createPlaylistFolder,
+    PlaylistService.updatePlaylistDriveFolder,
+    PlaylistController.playlist
+]);
+
 export { playlistRoute };

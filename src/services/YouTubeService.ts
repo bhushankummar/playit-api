@@ -93,13 +93,32 @@ export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, r
             // debug('response ', response.data.items[0]);
             const playlist = response.data.items[0];
             // debug('playlist ', playlist);
-            const ytplPlaylistStore = YouTubeUtils.mapYouTubePlaylistResponse(playlist);
-            debug('ytplPlaylistStore ', ytplPlaylistStore);
-            req.youTubePlaylistStore = ytplPlaylistStore;
+            const youTubePlaylistStore = YouTubeUtils.mapYouTubePlaylistResponse(playlist);
+            debug('youTubePlaylistStore ', youTubePlaylistStore);
+            req.youTubePlaylistStore = youTubePlaylistStore;
         }
         return next();
     } catch (error) {
         debug('getPlaylistDetail error ', error);
+        return next(error);
+    }
+};
+
+/**
+ * List all the Playlist Songs
+ */
+export const getPlaylistDetailUsingPlaylistUrl: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+    if (_.isEmpty(req.playlistStore)) {
+        // debug('CRITICAL : Return from empty req.playlistStore');
+        return next();
+    }
+    try {
+        const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(req.playlistStore.urlId, req.userStore.google)
+        // debug('youTubePlaylistStore ', youTubePlaylistStore);
+        req.youTubePlaylistStore = youTubePlaylistStore;
+        return next();
+    } catch (error) {
+        debug('getPlaylistDetailUsingPlaylistUrl error ', error);
         return next(error);
     }
 };

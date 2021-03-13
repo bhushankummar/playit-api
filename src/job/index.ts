@@ -1,8 +1,7 @@
 import * as DownloadAudioToLocal from './DownloadAudioToLocal';
 import * as UploadAudioToGoogleDrive from './UploadAudioToGoogleDrive';
-import * as UploadVideoToGoogleDrive from './UploadVideoToGoogleDrive';
 import * as SyncMediaItemWithYouTube from './SyncMediaItemWithYouTube';
-import { CRONE_JOB } from '../constants';
+import { CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE, UPLOAD_AUDIO_SCHEDULE, SYNC_TO_YOUTUBE_SCHEDULE } from '../constants';
 import * as _ from 'lodash';
 import * as Debug from 'debug';
 
@@ -19,14 +18,16 @@ export const initAllJobs: any = () => {
         return;
     }
     debug('Start initializing Crone Jobs');
-    const downloadAudioToLocalJob = DownloadAudioToLocal.init();
-    downloadAudioToLocalJob.start();
+    if (DOWNLOAD_AUDIO_SCHEDULE.ACTION === true) {
+        const downloadAudioToLocalJob = DownloadAudioToLocal.init();
+        downloadAudioToLocalJob.start();
+    }
 
-    // DownloadVideoToLocal.init().start();
-    UploadAudioToGoogleDrive.init().start();
-    // UploadVideoToGoogleDrive.init().start();
-    // EmptyTrashGoogleDrive.init().start();
-
-    const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();
-    syncMediaItemWithYouTubeJob.start();
+    if (UPLOAD_AUDIO_SCHEDULE.ACTION === true) {
+        UploadAudioToGoogleDrive.init().start();
+    }
+    if (SYNC_TO_YOUTUBE_SCHEDULE.ACTION === true) {
+        const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();
+        syncMediaItemWithYouTubeJob.start();
+    }
 };
