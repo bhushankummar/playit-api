@@ -475,6 +475,16 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
         //         lastUploadTimeStamp: undefined
         //     }
         // ],
+        $or: [
+            {
+                googleDriveUploadAttemptCount: {
+                    $lt: 5
+                }
+            },
+            {
+                googleDriveUploadAttemptCount: undefined
+            }
+        ],
         isDownloaded: true,
         isUploaded: false,
     };
