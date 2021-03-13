@@ -35,7 +35,6 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
  * Add new user with Google Data
  */
 export const registerUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body, req.query);
     // debug('params.state ', params.state);
     if (_.isEmpty(req.userStore) === false) {
         return next();
@@ -178,7 +177,6 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
  * Update Google Root Directory
  */
 export const updateRootDirectory: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body, req.query);
     if (_.isEmpty(req.userStore) === true) {
         return next();
     }
@@ -204,15 +202,14 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
  * @param: email
  */
 export const searchOneByGoogleEmailAddress: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body, req.query);
     try {
         const whereCondition: any = {
             email: req.googleProfileStore.emailAddresses[0].value
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
+        return next();
     } catch (error) {
         return next(error);
     }
-    return next();
 };

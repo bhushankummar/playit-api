@@ -4,6 +4,7 @@ import * as PlaylistService from '../services/PlaylistService';
 import * as UserService from '../services/UserService';
 import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as YouTubeService from '../services/YouTubeService';
+import * as MediaItemService from '../services/MediaItemService';
 import * as PlaylistController from '../controllers/PlaylistController';
 
 const playlistRoute: express.Router = express.Router();
@@ -39,6 +40,8 @@ playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
     PlaylistService.searchOneByPlaylistIdAndUserId,
     GoogleDriveService.removeFolder,
     PlaylistService.removePlaylist,
+    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
+    MediaItemService.removeMediaItems,
     PlaylistController.playlist
 ]);
 

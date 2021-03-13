@@ -152,11 +152,11 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
         // debug('whereCondition ', whereCondition);
         req.playlistStore = await playlistModel.findOne(whereCondition);
         // debug('req.playlistStore ', req.playlistStore);
+        return next();
     } catch (error) {
         debug('error ', error);
         return next(Boom.notFound(error));
     }
-    return next();
 };
 
 /**
@@ -190,6 +190,7 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
     try {
         const playlistModel = getMongoRepository(PlaylistEntity);
         const whereCondition = {
+            // _id: new mongodb.ObjectId('604c9478fe2c8c00266c9e3c')
             $or: [
                 {
                     lastSyncTimeStamp: {
