@@ -155,6 +155,7 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
     if (_.isEmpty(req.mediaItemStore)) {
         return next();
     } else if (_.isEmpty(req.mediaItemStore.user)) {
+        debug('CRITICAL : req.mediaItemStore.user is empty %o ', req.mediaItemStore.user);
         return next();
     } else if (_.isEmpty(req.mediaItemStore.user._id)) {
         debug('CRITICAL : req.mediaItemStore.user._id is empty %o ', req.mediaItemStore);
@@ -166,10 +167,11 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
+        return next();
     } catch (error) {
+        debug('error ', error);
         return next(error);
     }
-    return next();
 };
 
 /**

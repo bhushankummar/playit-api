@@ -462,19 +462,19 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
  */
 export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const whereCondition: any = {
-        isDownloaded: true,
-        isUploaded: false,
         $or: [
             {
                 lastUploadTimeStamp: {
-                    '$lt': moment().subtract(1, 'minutes').toISOString()
+                    $lt: moment().subtract(1, 'minutes').toDate()
                     // '$lt': moment().subtract(1, 'seconds').toISOString()
                 }
             },
             {
                 lastUploadTimeStamp: undefined
             }
-        ]
+        ],
+        isDownloaded: true,
+        isUploaded: false,
     };
     const orderBy: any = {
         order: {
@@ -487,12 +487,12 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemStore = await mediaItemModel.findOne(whereCondition, orderBy);
-        // debug('req.mediaItemsStore ', req.mediaItemsStore);
+        debug('req.mediaItemsStore Pending to Upload Media ', req.mediaItemsStore);
+        return next();
     } catch (error) {
         debug('error ', error);
         return next(error);
     }
-    return next();
 };
 
 /**
@@ -527,9 +527,10 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         // debug('updateData ', updateData);
         const response = await mediaItemModel.update(whereCondition, updateData);
         // debug('updateDownloadMedia update ', response);
+        return next();
     } catch (error) {
         debug('updateUploadMedia error ', error);
         debug('updateUploadMedia error in  ', req.mediaItemStore);
+        return next();
     }
-    return next();
 };
