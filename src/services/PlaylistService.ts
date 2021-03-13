@@ -325,7 +325,7 @@ export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRe
         };
 
         const updateData = {
-            lastSyncTimeStamp: moment().toISOString(),
+            // lastSyncTimeStamp: moment().toISOString(),
             url: req.youTubePlaylistStore.url,
             title: req.youTubePlaylistStore.title,
             urlId: req.youTubePlaylistStore.id,
