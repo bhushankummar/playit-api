@@ -478,7 +478,7 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
         $or: [
             {
                 googleDriveUploadAttemptCount: {
-                    $lt: 5
+                    $lt: 2
                 }
             },
             {
