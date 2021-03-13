@@ -40,7 +40,7 @@ playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
     PlaylistService.searchOneByPlaylistIdAndUserId,
     GoogleDriveService.removeFolder,
     PlaylistService.removePlaylist,
-    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
+    // MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
     MediaItemService.removeMediaItems,
     PlaylistController.playlist
 ]);

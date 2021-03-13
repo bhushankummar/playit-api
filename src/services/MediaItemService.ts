@@ -538,7 +538,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
 };
 
 /**
- * Remove Playlist
+ * Remove All Media Items which Matches the Playlist
  */
 export const removeMediaItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     if (_.isEmpty(req.userStore)) {
@@ -549,8 +549,7 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     try {
         const playlistItem = {
-            _id: req.playlistStore._id,
-            email: req.userStore.email
+            _id: req.playlistStore._id
         };
         const whereCondition: Partial<MediaItemEntity> = {
             playlist: playlistItem
