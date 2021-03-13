@@ -41,7 +41,8 @@ export const ENDPOINT = {
     DOWNLOAD: `${APP.API_URL}/api/v1/youtube/crone/download`,
     UPLOAD: `${APP.API_URL}/api/v1/google-drive/crone/upload`,
     EMPTY_TRASH: `${APP.API_URL}/api/v1/google-drive/crone/empty/trash`,
-    SYNC_TO_YOUTUBE: `${APP.API_URL}/api/v1/media-item/sync/crone/youtube`
+    SYNC_TO_YOUTUBE: `${APP.API_URL}/api/v1/media-item/sync/crone/youtube`,
+    SYNC_GOOGLE_DRIVE_FOLDER: `${APP.API_URL}/api/v1/playlist/crone/verify/drive-folder`
 };
 
 export const YOUTUBE = {

@@ -1,6 +1,7 @@
 import * as DownloadAudioToLocal from './DownloadAudioToLocal';
 import * as UploadAudioToGoogleDrive from './UploadAudioToGoogleDrive';
 import * as SyncMediaItemWithYouTube from './SyncMediaItemWithYouTube';
+import * as SyncGoogleDriveFolder from './SyncGoogleDriveFolder';
 import { CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE, UPLOAD_AUDIO_SCHEDULE, SYNC_TO_YOUTUBE_SCHEDULE } from '../constants';
 import * as _ from 'lodash';
 import * as Debug from 'debug';
@@ -29,5 +30,9 @@ export const initAllJobs: any = () => {
     if (SYNC_TO_YOUTUBE_SCHEDULE.ACTION === true) {
         const syncMediaItemWithYouTubeJob = SyncMediaItemWithYouTube.init();
         syncMediaItemWithYouTubeJob.start();
+    }
+    if (SYNC_TO_YOUTUBE_SCHEDULE.ACTION === true) {
+        const syncGoogleDriveFolderJob = SyncGoogleDriveFolder.init();
+        syncGoogleDriveFolderJob.start();
     }
 };
