@@ -15,7 +15,7 @@ export interface IRequest extends Request {
     youTubeStore: any;
     youTubePlaylistStore: any;
     googleStore: any;
-    mediaItemStore: MediaItemEntity;
+    mediaStore: MediaItemEntity;
     mediaItemsStore: MediaItemEntity[];
     googleProfileStore: any;
     googleDriveFileStore: IGoogleDriveFileStore;

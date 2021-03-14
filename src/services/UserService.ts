@@ -151,18 +151,18 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
  * @param: email
  */
 export const searchOneByMediaItemUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.mediaItemStore)) {
+    if (_.isEmpty(req.mediaStore)) {
         return next();
-    } else if (_.isEmpty(req.mediaItemStore.user)) {
-        debug('CRITICAL : req.mediaItemStore.user is empty %o ', req.mediaItemStore.user);
+    } else if (_.isEmpty(req.mediaStore.user)) {
+        debug('CRITICAL : req.mediaStore.user is empty %o ', req.mediaStore.user);
         return next();
-    } else if (_.isEmpty(req.mediaItemStore.user._id)) {
-        debug('CRITICAL : req.mediaItemStore.user._id is empty %o ', req.mediaItemStore);
+    } else if (_.isEmpty(req.mediaStore.user._id)) {
+        debug('CRITICAL : req.mediaStore.user._id is empty %o ', req.mediaStore);
         return next();
     }
     try {
         const whereCondition = {
-            _id: req.mediaItemStore.user._id
+            _id: req.mediaStore.user._id
         };
         const userModel = getMongoRepository(UserEntity);
         req.userStore = await userModel.findOne(whereCondition);
