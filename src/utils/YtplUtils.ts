@@ -47,7 +47,7 @@ export const cleanFileName = (fileName: string) => {
         'Official:',
         'Full Video:'
     ];
-    fileName = fileName.split(/'/g).join(' ');
+    // fileName = fileName.split(/'/g).join(' ');
     fileName = fileName.replace(/\|/g, '-');
     fileName = fileName.toString().replace(/"/g, '\\"');
     fileName = fileName.replace(/\/\//g, '');
