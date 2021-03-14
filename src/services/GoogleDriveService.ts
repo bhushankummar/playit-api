@@ -53,6 +53,9 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
     } else if (_.isEmpty(req.userStore)) {
         debug('CRITICAL : req.userStore is empty %o ', req.userStore);
         return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        debug('CRITICAL : req.userStore.google is empty %o ', req.userStore.google);
+        return next();
     }
     try {
         if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {

@@ -46,7 +46,7 @@ export const ENDPOINT = {
 };
 
 export const YOUTUBE = {
-    ID_SEPARATOR: '?v='
+    ID_SEPARATOR: 'v='
 };
 
 export const USER_ROLES = {
