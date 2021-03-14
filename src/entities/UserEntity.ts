@@ -1,3 +1,4 @@
+/* tslint:disable */
 import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 class Google {

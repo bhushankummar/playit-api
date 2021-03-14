@@ -48,7 +48,7 @@ export const cleanFileName = (fileName: string) => {
         'Full Video:'
     ];
     fileName = fileName.split(/'/g).join(' ');
-    fileName.replace(/\|/g, "-");
+    fileName = fileName.replace(/\|/g, '-');
     fileName = fileName.toString().replace(/"/g, '\\"');
     fileName = fileName.replace(/\/\//g, '');
     cleanWords.forEach((word: string) => {
