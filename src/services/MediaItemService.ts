@@ -60,7 +60,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(options);
     } catch (error) {
-        debug('error ', error);
+        debug('searchAllByLoggedInUser error ', error);
         return next(error);
     }
     return next();
@@ -244,7 +244,8 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             }
             mediaItemsNew.push(data);
         } catch (error) {
-            debug('error ', error);
+            debug('error mediaItemsNew ', error);
+            debug('error mediaItemsNew ', mediaItemsNew)
         }
     }, { concurrency: CONCURRENCY });
     if (_.isEmpty(mediaItemsNew) === false) {
@@ -252,7 +253,8 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             const mediaItemModel = getMongoRepository(MediaItemEntity);
             await mediaItemModel.insertMany(mediaItemsNew);
         } catch (error) {
-            debug('error ', error);
+            debug('error insertMany ', error);
+            debug('error insertMany ', mediaItemsNew)
         }
     }
 
@@ -317,8 +319,8 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
             // debug('mediaRemoveItem ', value);
             await mediaItemModel.remove(mediaItemsRemove);
         } catch (error) {
-            debug('mediaItemsRemove error ', error);
-            debug('mediaItemsRemove error in  ', mediaItemsRemove);
+            debug('mediaItemModel.remove error ', error);
+            debug('mediaItemModel.remove error in  ', mediaItemsRemove);
         }
     }
 
@@ -502,7 +504,7 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
         debug('req.mediaStore Pending to Upload Media ', req.mediaStore);
         return next();
     } catch (error) {
-        debug('error ', error);
+        debug('searchOneByIsDownloaded error ', error);
         return next(error);
     }
 };
@@ -558,19 +560,16 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
     }
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     try {
-        const playlistItem = {
-            _id: req.playlistStore._id
-        };
         const whereCondition: Partial<MediaItemEntity> = {
             // playlist: playlistItem
             playlistUrlId: req.playlistStore.urlId,
             type: req.playlistStore.type
         };
         const response = await mediaItemModel.deleteMany(whereCondition);
-        debug('response ', response);
+        // debug('response ', response);
         return next();
     } catch (error) {
-        debug('error ', error);
+        debug('removeMediaItems error ', error);
         return next(Boom.notFound(error));
     }
 };

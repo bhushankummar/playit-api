@@ -65,7 +65,7 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
         await playlistModel.save(playlist);
         req.playlistStore = playlist;
     } catch (error) {
-        debug('error ', error);
+        debug('addPlaylist error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -96,7 +96,7 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
         const playlistModel = getMongoRepository(PlaylistEntity);
         req.playlistItemStore = await playlistModel.find(options);
     } catch (error) {
-        debug('error ', error);
+        debug('searchAllPlaylist error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -124,7 +124,7 @@ export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (
         req.playlistStore = await playlistModel.findOne(whereCondition);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        debug('error ', error);
+        debug('searchOneByPlaylistUrlIdAndUserId error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -154,7 +154,7 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
         // debug('req.playlistStore ', req.playlistStore);
         return next();
     } catch (error) {
-        debug('error ', error);
+        debug('searchOneByPlaylistIdAndUserId error ', error);
         return next(Boom.notFound(error));
     }
 };
@@ -177,7 +177,7 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
         // debug('response ', response);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        debug('error ', error);
+        debug('removePlaylist error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -212,7 +212,7 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
         req.playlistStore = await playlistModel.findOne(options);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        debug('error ', error);
+        debug('searchOneByLastSyncTimeStamp error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -253,7 +253,7 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
         req.playlistStore = await playlistModel.findOne(options);
         // debug('req.playlistStore ', req.playlistStore);
     } catch (error) {
-        debug('error ', error);
+        debug('searchOneByLastUploadTimeStamp error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -276,7 +276,7 @@ export const updateLastSyncTimeStamp: express.RequestHandler = async (req: IRequ
         };
         await playlistModel.update(whereCondition, updateData);
     } catch (error) {
-        debug('error ', error);
+        debug('updateLastSyncTimeStamp error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -299,7 +299,7 @@ export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRe
         };
         await playlistModel.update(whereCondition, updateData);
     } catch (error) {
-        debug('error ', error);
+        debug('updateLastUploadTimeStamp error ', error);
         return next(Boom.notFound(error));
     }
     return next();
@@ -335,7 +335,7 @@ export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRe
 
         await playlistModel.update(whereCondition, updateData);
     } catch (error) {
-        debug('error ', error);
+        debug('updatePlaylistDriveFolder error ', error);
         return next(Boom.notFound(error));
     }
     return next();
