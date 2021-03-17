@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getMongoRepository, FindManyOptions, ObjectID } from 'typeorm';
+import { getMongoRepository, FindManyOptions } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -363,8 +363,6 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
       driveFolderId: req.playlistStore.driveFolderId,
       isUploaded: false,
       isDownloaded: false
-      // This is for development purpose only
-      // _id: new ObjectId('5f807c255786e50026a0482e')
     }
     const options: FindManyOptions<MediaItemEntity> = {
       where: whereCondition,
@@ -431,7 +429,7 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
     try {
       const mediaItemModel = getMongoRepository(MediaItemEntity);
       const whereCondition: Partial<MediaItemEntity> = {
-        _id: new ObjectID(value._id.toString())
+        _id: value._id
         // '_id': value._id
       };
       // debug('whereCondition %o ', whereCondition);
@@ -518,7 +516,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
   try {
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     const whereCondition: Partial<MediaItemEntity> = {
-      _id: new ObjectID(req.mediaStore._id.toString())
+      _id: req.mediaStore._id
     };
     const count = (req.mediaStore.googleDriveUploadAttemptCount || 0) + 1;
     const updateData: Partial<MediaItemEntity> = {
@@ -538,7 +536,6 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
     }
     // debug('updateData ', updateData);
     await mediaItemModel.update(whereCondition, updateData);
-    // debug('updateDownloadMedia update ', response);
     return next();
   } catch (error) {
     debug('updateUploadMedia error ', error);

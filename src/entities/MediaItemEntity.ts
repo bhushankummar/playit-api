@@ -30,7 +30,7 @@ export class MediaError {
 export class MediaItemEntity {
 
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public _id: string;
 
     @Column(type => User)
     public user: User;
