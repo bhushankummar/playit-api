@@ -223,9 +223,10 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       if (req.playlistStore.type === '0') {
         extension = 'mp3';
       }
+      const mediaTitle = YtplUtils.prepareFileName(value, extension);
       const data: Partial<MediaItemEntity> = {
         user: userProfile,
-        title: YtplUtils.prepareFileName(value, extension),
+        title: mediaTitle,
         url: value.url_simple,
         urlId: value.id,
         type: req.playlistStore.type,
