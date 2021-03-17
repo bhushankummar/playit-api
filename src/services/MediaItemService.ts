@@ -466,15 +466,25 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
  */
 export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     const whereCondition: any = {
+        // $or: [
+        //     {
+        //         lastUploadTimeStamp: {
+        //             $lt: moment().subtract(1, 'minutes').toDate()
+        //             // '$lt': moment().subtract(1, 'seconds').toISOString()
+        //         }
+        //     },
+        //     {
+        //         lastUploadTimeStamp: undefined
+        //     }
+        // ],
         $or: [
             {
-                lastUploadTimeStamp: {
-                    $lt: moment().subtract(1, 'minutes').toDate()
-                    // '$lt': moment().subtract(1, 'seconds').toISOString()
+                googleDriveUploadAttemptCount: {
+                    $lt: 2
                 }
             },
             {
-                lastUploadTimeStamp: undefined
+                googleDriveUploadAttemptCount: undefined
             }
         ],
         isDownloaded: true,
@@ -490,8 +500,8 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     // debug('whereCondition ', whereCondition);
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
-        req.mediaItemStore = await mediaItemModel.findOne(whereCondition, orderBy);
-        debug('req.mediaItemsStore Pending to Upload Media ', req.mediaItemsStore);
+        req.mediaStore = await mediaItemModel.findOne(whereCondition, orderBy);
+        debug('req.mediaStore Pending to Upload Media ', req.mediaStore);
         return next();
     } catch (error) {
         debug('error ', error);
@@ -504,15 +514,15 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
  */
 export const updateUploadMedia: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
     // debug('Inside updateDownloadAttempt');
-    if (_.isEmpty(req.mediaItemStore)) {
+    if (_.isEmpty(req.mediaStore)) {
         return next();
     }
     try {
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         const whereCondition: any = {
-            '_id': new ObjectId(req.mediaItemStore._id)
+            '_id': new ObjectId(req.mediaStore._id)
         };
-        const count = (req.mediaItemStore.googleDriveUploadAttemptCount || 0) + 1;
+        const count = (req.mediaStore.googleDriveUploadAttemptCount || 0) + 1;
         const updateData: Partial<MediaItemEntity> = {
             lastUploadTimeStamp: moment().toDate(),
             googleDriveUploadAttemptCount: count
@@ -521,7 +531,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
             updateData.fileId = req.googleDriveFileStore.id;
             updateData.isUploaded = true;
         }
-        if (_.isEmpty(req.mediaItemStore.localFilePath)) {
+        if (_.isEmpty(req.mediaStore.localFilePath)) {
             updateData.localFilePath = '';
             updateData.googleDriveUploadAttemptCount = 0;
             updateData.downloadAttemptCount = 0;
@@ -534,7 +544,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
         return next();
     } catch (error) {
         debug('updateUploadMedia error ', error);
-        debug('updateUploadMedia error in  ', req.mediaItemStore);
+        debug('updateUploadMedia error in  ', req.mediaStore);
         return next();
     }
 };

@@ -46,7 +46,7 @@ export const ENDPOINT = {
 };
 
 export const YOUTUBE = {
-    ID_SEPARATOR: '?v='
+    ID_SEPARATOR: 'v='
 };
 
 export const USER_ROLES = {
@@ -138,7 +138,7 @@ export const UPLOAD_AUDIO_SCHEDULE = {
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
     ACTION: process.env.SYNC_TO_YOUTUBE_SCHEDULE_ACTION || true,
     Seconds: '0',
-    Minutes: '*/3',
+    Minutes: '*/1',
     Hours: '*',
     DayOfMonth: '*',
     Months: '*',
@@ -153,7 +153,6 @@ export const UPLOAD_VIDEO_SCHEDULE = {
     Months: '*',
     DayOfWeek: '*'
 };
-
 
 export const AUDIO_DOWNLOAD_OPTIONS = {
     1: ['-f', 'bestaudio[ext=m4a]/bestaudio', '-x', '--audio-format', 'mp3'],

@@ -48,33 +48,38 @@ export const createRootFolder: express.RequestHandler = async (req: IRequest, re
  * This function will upload Audio files to the drive
  */
 export const uploadToDriveUsingPath: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.mediaItemStore)) {
+    if (_.isEmpty(req.mediaStore)) {
         return next();
     } else if (_.isEmpty(req.userStore)) {
         debug('CRITICAL : req.userStore is empty %o ', req.userStore);
         return next();
+    } else if (_.isEmpty(req.userStore.google)) {
+        debug('CRITICAL : req.userStore.google is empty %o ', req.userStore.google);
+        return next();
+    } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+        return next();
     }
     try {
-        if (fs.existsSync(req.mediaItemStore.localFilePath) === false) {
-            debug('CRITICAL: This file does not exits %o ', req.mediaItemStore);
-            req.mediaItemStore.localFilePath = '';
+        if (fs.existsSync(req.mediaStore.localFilePath) === false) {
+            debug('CRITICAL: This file does not exits %o ', req.mediaStore);
+            req.mediaStore.localFilePath = '';
             return next();
         }
-        debug('Start uploading %o ', req.mediaItemStore.title);
-        const response: any = await GoogleDrive.uploadFile(req.mediaItemStore.driveFolderId, req.mediaItemStore.localFilePath, req.userStore.google);
+        debug('Start uploading %o ', req.mediaStore.title);
+        const response: any = await GoogleDrive.uploadFile(req.mediaStore.driveFolderId, req.mediaStore.localFilePath, req.userStore.google);
         if (response && response.data) {
             req.googleDriveFileStore = response.data;
             try {
-                fs.unlinkSync(req.mediaItemStore.localFilePath);
+                fs.unlinkSync(req.mediaStore.localFilePath);
             } catch (error) {
-                // debug('error *******fs.unlinkSync %o ', req.mediaItemStore);
+                // debug('error *******fs.unlinkSync %o ', req.mediaStore);
             }
         }
         // debug('Files has been uploaded ', req.googleDriveFileStore);
-        debug('Upload complete %o ', req.mediaItemStore.title);
+        debug('Upload complete %o ', req.mediaStore.title);
         return next();
     } catch (error) {
-        debug('Upload failed %o ', req.mediaItemStore.title);
+        debug('Upload failed %o ', req.mediaStore.title);
         debug('uploadToDrive error ', error);
         debug('uploadToDrive error %o ', req.userStore);
         return next();
@@ -88,6 +93,8 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
     if (_.isEmpty(req.userStore)) {
         return next();
     } else if (_.isEmpty(req.userStore.google)) {
+        return next();
+    } else if (_.isEmpty(req.userStore.google.refresh_token)) {
         return next();
     } else if (_.isEmpty(req.playlistStore)) {
         debug('CRITICAL : Empty req.playlistStore');
