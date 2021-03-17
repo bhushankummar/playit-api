@@ -118,7 +118,7 @@ export const CRONE_JOB = {
 export const DOWNLOAD_AUDIO_SCHEDULE = {
   ACTION: process.env.DOWNLOAD_AUDIO_SCHEDULE_ACTION || true,
   Seconds: '0',
-  Minutes: '*/1',
+  Minutes: '*/2',
   Hours: '*',
   DayOfMonth: '*',
   Months: '*',
