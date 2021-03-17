@@ -73,7 +73,6 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
         } catch (error) {
             updatedItem.isDownloaded = false;
             debug('downloadMediaHQUsingMediaItem error ', error);
-            debug('downloadMediaHQUsingMediaItem error updatedItem', updatedItem);
             debug('downloadMediaHQUsingMediaItem error error.stderr ', error.stderr);
             const mediaError: MediaError = {
                 message: error.stderr,
@@ -81,6 +80,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
             };
             // debug('item ', item);
             updatedItem.errors.push(mediaError);
+            debug('downloadMediaHQUsingMediaItem error updatedItem', updatedItem);
             // debug('item %o ', item);
         }
         tempMediaItems.push(updatedItem);
