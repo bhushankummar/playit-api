@@ -406,16 +406,16 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
             order: {
                 downloadAttemptCount: 'ASC'
             },
-            take: 3
+            take: 1
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
         req.mediaItemsStore = await mediaItemModel.find(whereCondition);
         debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
+        return next();
     } catch (error) {
         debug('searchAllNotDownloaded error ', error);
         return next(error);
     }
-    return next();
 };
 
 /**
@@ -438,18 +438,20 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
             // debug('value %o ', value);
             // debug('value.errors %o ', value.errors);
             const count = (value.downloadAttemptCount || 0) + 1;
+            let downloadAttemptCount = value.downloadAttemptCount;
+            if (downloadAttemptCount === undefined) {
+                downloadAttemptCount = 0;
+            }
+            downloadAttemptCount += 1;
             const updateData: any = {
                 lastDownloadTimeStamp: moment().toISOString(),
-                downloadAttemptCount: count,
+                downloadAttemptCount: downloadAttemptCount,
                 isDownloaded: value.isDownloaded,
                 localFilePath: value.localFilePath,
                 errors: value.errors
             };
             // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
-
-            // const res = await mediaItemModel.update(whereCondition, updateData);
-            // debug('updateDownloadMedia update ', res);
             // debug('updateDownloadMedia update ', response);
         } catch (error) {
             debug('updateDownloadMedia error ', error);
