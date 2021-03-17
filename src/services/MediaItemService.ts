@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getMongoRepository, FindManyOptions } from 'typeorm';
+import { getMongoRepository, FindManyOptions, ObjectID } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -28,7 +28,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
         email: req.userStore.email
     };
     // debug('userProfile %o ', userProfile);
-    const whereCondition: any = {};
+    const whereCondition: Partial<MediaItemEntity> = {};
     whereCondition.user = userProfile;
     if (params.isUploaded !== undefined) {
         whereCondition.isUploaded = params.isUploaded;
@@ -81,7 +81,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
     };
     // debug('userProfile ', userProfile);
     try {
-        const whereCondition: any = {
+        const whereCondition: Partial<MediaItemEntity> = {
             user: userProfile,
             playlistUrlId: req.playlistStore.urlId,
             driveFolderId: req.playlistStore.driveFolderId
@@ -260,7 +260,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
-            const updateData: any = {
+            const updateData: Partial<MediaItemEntity> = {
                 isUploaded: value.isUploaded,
                 isDownloaded: value.isDownloaded
             };
@@ -271,7 +271,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
                 $set: updateData
             };
             // const whereCondition = value;
-            const whereCondition = {
+            const whereCondition: Partial<MediaItemEntity> = {
                 _id: value._id
             };
             // debug('data ', data);
@@ -356,23 +356,24 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
     };
     // debug('userProfile ', userProfile);
     try {
-        const whereCondition: FindManyOptions<MediaItemEntity> = {
-            where: {
-                user: userProfile,
-                playlistUrlId: req.playlistStore.urlId,
-                driveFolderId: req.playlistStore.driveFolderId,
-                isUploaded: false,
-                isDownloaded: false
-                // This is for development purpose only
-                // _id: new ObjectId('5f807c255786e50026a0482e')
-            },
+        const whereCondition: Partial<MediaItemEntity> = {
+            user: userProfile,
+            playlistUrlId: req.playlistStore.urlId,
+            driveFolderId: req.playlistStore.driveFolderId,
+            isUploaded: false,
+            isDownloaded: false
+            // This is for development purpose only
+            // _id: new ObjectId('5f807c255786e50026a0482e')
+        }
+        const options: FindManyOptions<MediaItemEntity> = {
+            where: whereCondition,
             order: {
                 lastDownloadTimeStamp: 'ASC'
             },
             take: 5
         };
         const mediaItemModel = getMongoRepository(MediaItemEntity);
-        req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+        req.mediaItemsStore = await mediaItemModel.find(options);
         debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
     } catch (error) {
         debug('searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload error ', error);
@@ -430,21 +431,20 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
     await bluebird.map(req.mediaItemsStore, async (value: MediaItemEntity) => {
         try {
             const mediaItemModel = getMongoRepository(MediaItemEntity);
-            const whereCondition: any = {
-                '_id': new ObjectId(value._id)
+            const whereCondition: Partial<MediaItemEntity> = {
+                _id: new ObjectID(value._id.toString())
                 // '_id': value._id
             };
             // debug('whereCondition %o ', whereCondition);
             // debug('value %o ', value);
             // debug('value.errors %o ', value.errors);
-            const count = (value.downloadAttemptCount || 0) + 1;
             let downloadAttemptCount = value.downloadAttemptCount;
             if (downloadAttemptCount === undefined) {
                 downloadAttemptCount = 0;
             }
             downloadAttemptCount += 1;
-            const updateData: any = {
-                lastDownloadTimeStamp: moment().toISOString(),
+            const updateData: Partial<MediaItemEntity> = {
+                lastDownloadTimeStamp: moment().toDate(),
                 downloadAttemptCount: downloadAttemptCount,
                 isDownloaded: value.isDownloaded,
                 localFilePath: value.localFilePath,
@@ -453,12 +453,12 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
             // debug('updateData ', updateData);
             const response = await mediaItemModel.update(whereCondition, updateData);
             // debug('updateDownloadMedia update ', response);
+            return next();
         } catch (error) {
             debug('updateDownloadMedia error ', error);
             debug('updateDownloadMedia error in  ', value);
         }
     }, { concurrency: CONCURRENCY });
-    return next();
 };
 
 /**
@@ -560,16 +560,13 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
     }
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     try {
-        const playlistItem = {
-            _id: req.playlistStore._id
-        };
         const whereCondition: Partial<MediaItemEntity> = {
             // playlist: playlistItem
             playlistUrlId: req.playlistStore.urlId,
             type: req.playlistStore.type
         };
         const response = await mediaItemModel.deleteMany(whereCondition);
-        debug('response ', response);
+        // debug('response ', response);
         return next();
     } catch (error) {
         debug('error ', error);
