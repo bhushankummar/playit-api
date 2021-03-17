@@ -24,21 +24,21 @@ app.use(passport.initialize());
 passport.use(passportConfig.passport);
 
 passport.serializeUser((user, callback) => {
-    return callback(undefined, user);
+  return callback(undefined, user);
 });
 
 passport.deserializeUser((user, callback) => {
-    return callback(undefined, user);
+  return callback(undefined, user);
 });
 
 app.use(config.trimParams);
 
 app.get('/', (req, res) => {
-    return res.json({ message: 'API is running!' });
+  return res.json({ message: 'API is running!' });
 });
 
 app.get('/favicon.ico', (req, res) => {
-    return res.json({ message: 'API is running!' });
+  return res.json({ message: 'API is running!' });
 });
 
 /**
@@ -66,19 +66,19 @@ app.use(config.handle404);
  */
 app.set('PORT', process.env.PORT || 3007);
 app.listen(app.get('PORT'), async (err: any) => {
-    if (err) {
-        return console.log(err);
-    }
-    await database.init();
-    await database.initMongo();
-    CroneJobs.initAllJobs();
-    debug(' Server has been started on PORT: %o', app.get('PORT'));
-    return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);
+  if (err) {
+    return console.log(err);
+  }
+  await database.init();
+  await database.initMongo();
+  CroneJobs.initAllJobs();
+  debug(' Server has been started on PORT: %o', app.get('PORT'));
+  return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);
 });
 
 process.on('uncaughtException', (err) => {
-    console.log('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
-    console.log(err);
+  console.log('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
+  console.log(err);
 });
 
 export { app };

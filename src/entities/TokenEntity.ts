@@ -2,27 +2,27 @@ import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateC
 
 class User {
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 }
 
 @Entity('tokens')
 export class TokenEntity {
 
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 
     @Column()
-    token: string;
+    public token: string;
 
     @Column()
-    timestamp: Date;
+    public timestamp: Date;
 
     @Column(type => User)
-    user: User;
+    public user: User;
 
     @CreateDateColumn()
-    createdDate: string;
+    public createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: string;
+    public updatedDate: string;
 }

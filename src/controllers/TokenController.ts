@@ -8,6 +8,6 @@ Debug('PL:TokenController');
  * Get token details
  */
 export const tokens: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.tokenStore;
-    return next();
+  req.data = req.tokenStore;
+  return next();
 };

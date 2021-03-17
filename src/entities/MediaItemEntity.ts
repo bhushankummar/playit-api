@@ -4,26 +4,26 @@ import moment = require('moment');
 class User {
 
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 
     @Column({ nullable: false })
-    email: string;
+    public email: string;
 }
 
 class Playlist {
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 
     @Column()
-    title?: string;
+    public title?: string;
 }
 
 export class MediaError {
     @Column({ nullable: false })
-    downloadOptions: number;
+    public downloadOptions: number;
 
     @Column({ nullable: false })
-    message: string;
+    public message: string;
 }
 
 @Entity('mediaItems')
@@ -31,63 +31,63 @@ export class MediaError {
 export class MediaItemEntity {
 
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 
     @Column(type => User)
-    user: User;
+    public user: User;
 
     @Column({ nullable: false })
-    url: string;
+    public url: string;
 
     @Column({ nullable: false })
-    title: string;
+    public title: string;
 
     @Column({ nullable: false })
     @Column()
-    urlId: string;
+    public urlId: string;
 
     @Column({ nullable: false })
-    playlistUrlId: string;
+    public playlistUrlId: string;
 
     @Column(type => Playlist)
-    playlist: Playlist;
+    public playlist: Playlist;
 
     @Column({ nullable: false })
-    type: string;
+    public type: string;
 
     @Column({ nullable: false })
-    driveFolderId: string;
+    public driveFolderId: string;
 
     @Column()
-    fileId: string;
+    public fileId: string;
 
     @Column({ default: false })
-    isUploaded: boolean;
+    public isUploaded: boolean;
 
     @Column({ default: false })
-    isDownloaded: boolean;
+    public isDownloaded: boolean;
 
     @Column({ default: 0 })
-    downloadAttemptCount: number = 0;
+    public downloadAttemptCount = 0;
 
     @Column({ default: 0 })
-    googleDriveUploadAttemptCount: number = 0;
+    public googleDriveUploadAttemptCount = 0;
 
     @Column()
-    lastDownloadTimeStamp: Date;
+    public lastDownloadTimeStamp: Date;
 
     @Column()
-    lastUploadTimeStamp: Date;
+    public lastUploadTimeStamp: Date;
 
     @CreateDateColumn({ type: 'timestamp' })
-    createdDate: Date;
+    public createdDate: string;
 
     @UpdateDateColumn({ type: 'timestamp' })
-    updatedDate: Date;
+    public updatedDate: string;
 
     @Column()
-    errors: object[];
+    public errors: MediaError[];
 
     @Column()
-    localFilePath: string;
+    public localFilePath: string;
 }

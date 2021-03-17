@@ -1,45 +1,44 @@
-/* tslint:disable */
 import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 
 class Google {
     @Column()
-    access_token: string;
+    public access_token: string;
 
     @Column()
-    refresh_token: string;
+    public refresh_token: string;
 
     @Column()
-    scope: string;
+    public scope: string;
 
     @Column()
-    token_type: string;
+    public token_type: string;
 
     @Column()
-    id_token: string;
+    public id_token: string;
 
     @Column()
-    expiry_date: number;
+    public expiry_date: number;
 }
 
 @Entity('users')
 export class UserEntity {
 
     @ObjectIdColumn()
-    _id: ObjectID;
+    public _id: ObjectID;
 
     @Index({ unique: true })
     @Column()
-    email: string;
+    public email: string;
 
     @Column()
-    google: Google;
+    public google: Google;
 
     @Column()
-    googleDriveParentId: string;
+    public googleDriveParentId: string;
 
     @CreateDateColumn()
-    createdDate: string;
+    public createdDate: string;
 
     @UpdateDateColumn()
-    updatedDate: string;
+    public updatedDate: string;
 }

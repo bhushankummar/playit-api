@@ -10,17 +10,17 @@ chai.should();
 
 describe('YouTube', () => {
 
-    it('File name should not have special characters.', (done) => {
-        const items = _.sortBy(playlistItems, 'title');
-        let cleanFileNames = [];
-        items.forEach((value) => {
-            const fileName = YtplUtils.prepareFileName(value, 'mp3', true);
-            // debug('fileName  ', fileName);
-            cleanFileNames.push(fileName);
-        });
-        cleanFileNames = _.sortBy(cleanFileNames);
-        debug(cleanFileNames.join('\n'));
-        done();
+  it('File name should not have special characters.', (done) => {
+    const items = _.sortBy(playlistItems, 'title');
+    let cleanFileNames = [];
+    items.forEach((value) => {
+      const fileName = YtplUtils.prepareFileName(value, 'mp3', true);
+      // debug('fileName  ', fileName);
+      cleanFileNames.push(fileName);
     });
+    cleanFileNames = _.sortBy(cleanFileNames);
+    debug(cleanFileNames.join('\n'));
+    done();
+  });
 
 });

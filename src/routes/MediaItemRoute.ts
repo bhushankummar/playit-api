@@ -14,8 +14,8 @@ const mediaItemRoute: express.Router = express.Router();
  * This API will return all the Medias of User
  */
 mediaItemRoute.post('/', passport.authenticate('bearer'), [
-    MediaItemService.searchAllByLoggedInUser,
-    MediaItemController.mediaItemData
+  MediaItemService.searchAllByLoggedInUser,
+  MediaItemController.mediaItemData
 ]);
 
 /**
@@ -26,15 +26,15 @@ mediaItemRoute.post('/', passport.authenticate('bearer'), [
  * This API called from the Cron Job
  */
 mediaItemRoute.post('/sync/crone/youtube', [
-    PlaylistService.searchOneByLastSyncTimeStamp,
-    PlaylistService.updateLastSyncTimeStamp,
-    UserService.searchOneByPlaylistUser,
-    MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
-    GoogleDriveService.searchAllFiles,
-    YouTubeService.listPlaylistItems,
-    MediaItemService.identifySyncItemsForYouTube,
-    MediaItemService.syncWithYouTube,
-    MediaItemController.mediaItemSync
+  PlaylistService.searchOneByLastSyncTimeStamp,
+  PlaylistService.updateLastSyncTimeStamp,
+  UserService.searchOneByPlaylistUser,
+  MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
+  GoogleDriveService.searchAllFiles,
+  YouTubeService.listPlaylistItems,
+  MediaItemService.identifySyncItemsForYouTube,
+  MediaItemService.syncWithYouTube,
+  MediaItemController.mediaItemSync
 ]);
 
 export { mediaItemRoute };

@@ -12,57 +12,57 @@ const userRoute: express.Router = express.Router();
  * Register API : It will generate Google oAuth URL
  */
 userRoute.get('/register', [
-    UserService.searchOneByEmail,
-    GoogleService.generatesAuthUrlForRegister,
-    GoogleController.googleDetail
+  UserService.searchOneByEmail,
+  GoogleService.generatesAuthUrlForRegister,
+  GoogleController.googleDetail
 ]);
 
 /**
  * This API Will be call by Google oAuth
  */
 userRoute.get('/register/oauth/callback', [
-    GoogleService.retrieveAuthorizationCode,
-    GoogleService.retrieveGoogleProfileFromOAuth2,
-    UserService.searchOneByGoogleEmailAddress,
-    UserService.registerUser,
-    // UserService.searchOneByState,
-    UserService.updateGoogleToken,
-    TokenService.createToken,
-    GoogleController.redirectToHome
+  GoogleService.retrieveAuthorizationCode,
+  GoogleService.retrieveGoogleProfileFromOAuth2,
+  UserService.searchOneByGoogleEmailAddress,
+  UserService.registerUser,
+  // UserService.searchOneByState,
+  UserService.updateGoogleToken,
+  TokenService.createToken,
+  GoogleController.redirectToHome
 ]);
 
 /**
  * Retrieve ME Detail
  */
 userRoute.get('/me', passport.authenticate('bearer'), [
-    UserController.userDetail
+  UserController.userDetail
 ]);
 
 /**
  * Retrieve Google Profile
  */
 userRoute.post('/google/me', passport.authenticate('bearer'), [
-    GoogleService.retrieveGoogleProfile,
-    GoogleController.googleProfileDetail
+  GoogleService.retrieveGoogleProfile,
+  GoogleController.googleProfileDetail
 ]);
 
 /**
  * Login
  */
 userRoute.get('/login', [
-    // UserService.validateLoginUserData,
-    // UserService.searchOneByEmail,
-    GoogleService.generatesAuthUrlForLogin,
-    GoogleController.redirectToOAuth
+  // UserService.validateLoginUserData,
+  // UserService.searchOneByEmail,
+  GoogleService.generatesAuthUrlForLogin,
+  GoogleController.redirectToOAuth
 ]);
 
 /**
  * User logout
  */
 userRoute.delete('/logout', passport.authenticate('bearer'), [
-    TokenService.searchOneByToken,
-    TokenService.deleteTokenById,
-    UserController.logout
+  TokenService.searchOneByToken,
+  TokenService.deleteTokenById,
+  UserController.logout
 ]);
 
 export { userRoute };

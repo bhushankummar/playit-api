@@ -12,10 +12,10 @@ const youtubeRoute: express.Router = express.Router();
  * type : 0 = Audio ; 1 = Video
  */
 youtubeRoute.post('/crone/download', [
-    MediaItemService.searchAllNotDownloaded,
-    YouTubeMediaService.downloadMediaHQUsingMediaItem,
-    MediaItemService.updateDownloadMedia,
-    YouTubeController.youtubeData
+  MediaItemService.searchAllNotDownloaded,
+  YouTubeMediaService.downloadMediaHQUsingMediaItem,
+  MediaItemService.updateDownloadMedia,
+  YouTubeController.youtubeData
 ]);
 
 export { youtubeRoute };

@@ -10,25 +10,25 @@ import { MediaItemEntity } from '../../entities/MediaItemEntity';
 const debug = Debug('PL:DB');
 
 export const init = async () => {
-    const connection: Connection = await createConnection({
-        type: 'mongodb',
-        url: DB.MONGO_URL,
-        synchronize: true,
-        useNewUrlParser: true,
-        useUnifiedTopology: true,
-        entities: [
-            MediaItemEntity,
-            PlaylistEntity,
-            UserEntity,
-            TokenEntity
-        ]
-    });
-    return connection;
+  const connection: Connection = await createConnection({
+    type: 'mongodb',
+    url: DB.MONGO_URL,
+    synchronize: true,
+    useNewUrlParser: true,
+    useUnifiedTopology: true,
+    entities: [
+      MediaItemEntity,
+      PlaylistEntity,
+      UserEntity,
+      TokenEntity
+    ]
+  });
+  return connection;
 };
 
 export const initMongo = async () => {
-    return mongoose.connect(DB.MONGO_URL, {
-        // useNewUrlParser: true,
-        // useUnifiedTopology: true
-    });
+  return mongoose.connect(DB.MONGO_URL, {
+    // useNewUrlParser: true,
+    // useUnifiedTopology: true
+  });
 };
