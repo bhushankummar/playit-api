@@ -1,5 +1,4 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Unique, Index } from 'typeorm';
-import moment = require('moment');
+import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
 
 class User {
 

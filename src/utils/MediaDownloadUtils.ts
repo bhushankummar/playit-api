@@ -3,12 +3,12 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as Debug from 'debug';
-import * as _ from 'lodash';
 import { APP } from '../constants';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 
+// eslint-disable-next-line @typescript-eslint/no-var-requires
 const youtubedl = require('youtube-dl');
-const debug = Debug('PL:MediaDownloader');
+const debug = Debug('PL:MediaDownload');
 
 export const downloadMedia = (options: any[], extension: string, item: MediaItemEntity, driveDirectory: any) => {
   return new Promise((resolve: any, reject: any) => {
@@ -29,7 +29,7 @@ export const downloadMedia = (options: any[], extension: string, item: MediaItem
     });
 
     // Will be called if download was already completed and there is nothing more to download.
-    media.on('complete', (info: any) => {
+    media.on('complete', () => {
       debug(mediaResponse.fileName, ' already downloaded.');
       resolve(mediaResponse);
     });
@@ -60,7 +60,7 @@ export const downloadVideo = (item: MediaItemEntity, localDirectory: any, downlo
  * This is not in use as of now.
  */
 export const downloadVideoExec = (item: MediaItemEntity, driveDirectory: any) => {
-  return new Promise(async (resolve: any, reject: any) => {
+  return new Promise((resolve: any, reject: any) => {
     const mediaResponse = {
       message: true,
       filePath: '',

@@ -3,9 +3,8 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import * as mongodb from 'mongodb';
 import { UserEntity } from '../entities/UserEntity';
-import { getMongoRepository } from 'typeorm';
+import { getMongoRepository, ObjectID } from 'typeorm';
 
 const debug = Debug('PL:UserService');
 
@@ -19,16 +18,16 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
     return next();
   }
   try {
-    const whereCondition = {
+    const whereCondition: Partial<UserEntity> = {
       email: params.email
     };
     const userModel = getMongoRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', req.userStore);
+    return next();
   } catch (error) {
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -46,11 +45,11 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
     const userModel = getMongoRepository(UserEntity);
     const document = await userModel.save(user);
     req.userStore = document;
+    return next();
   } catch (error) {
     debug('registerUser error: %o ', error);
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -73,26 +72,26 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
     return next();
   }
   // debug('Inside updateGoogleToken ', params.state);
-  const stateObjectId = new mongodb.ObjectID(params.state);
+  const stateObjectId = new ObjectID(params.state);
   // debug('Inside updateGoogleToken stateObjectId', stateObjectId);
   // debug('req.googleStore ', req.googleStore);
   try {
-    const whereCondition = {
+    const whereCondition: Partial<UserEntity> = {
       _id: stateObjectId
     };
     const googleStore = _.merge(req.userStore.google, req.googleStore);
-    debug('merged googleStore ', googleStore);
+    // debug('merged googleStore ', googleStore);
     const userData = {
       google: googleStore
     };
     const userModel = getMongoRepository(UserEntity);
-    const response = await userModel.update(whereCondition, userData);
+    await userModel.update(whereCondition, userData);
     // debug('response ', response);
+    return next();
   } catch (error) {
     debug('updateGoogleToken error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -105,17 +104,17 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
     return next();
   }
 
-  const stateObjectId = new mongodb.ObjectID(params.state);
+  const stateObjectId = new ObjectID(params.state);
   try {
-    const whereCondition: any = {
+    const whereCondition: Partial<UserEntity> = {
       _id: stateObjectId
     };
     const userModel = getMongoRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
+    return next();
   } catch (error) {
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -134,7 +133,7 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
     return next();
   }
   try {
-    const whereCondition = {
+    const whereCondition: Partial<UserEntity> = {
       _id: req.playlistStore.user._id
     };
     const userModel = getMongoRepository(UserEntity);
@@ -161,7 +160,7 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
     return next();
   }
   try {
-    const whereCondition = {
+    const whereCondition: Partial<UserEntity> = {
       _id: req.mediaStore.user._id
     };
     const userModel = getMongoRepository(UserEntity);
@@ -181,20 +180,20 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
     return next();
   }
   try {
-    const whereCondition = {
+    const whereCondition: Partial<UserEntity> = {
       _id: req.userStore._id
     };
-    const userData = {
+    const userData: Partial<UserEntity> = {
       googleDriveParentId: req.googleDriveFileStore.id
     };
     const userModel = getMongoRepository(UserEntity);
-    const response = await userModel.update(whereCondition, userData);
+    await userModel.update(whereCondition, userData);
     req.userStore.googleDriveParentId = req.googleDriveFileStore.id;
+    return next();
   } catch (error) {
     debug('updateRootDirectory error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**

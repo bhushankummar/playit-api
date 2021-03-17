@@ -1,14 +1,12 @@
 import * as Debug from 'debug';
 import * as cron from 'cron';
 import { CRONE_JOB, ENDPOINT, SYNC_TO_YOUTUBE_SCHEDULE } from '../constants';
-import * as _ from 'lodash';
 import * as request from 'request-promise';
 
 const CronJob = cron.CronJob;
 const debug = Debug('PL:JOB-SyncMediaItemWithYouTube');
 
 export const init: any = () => {
-  /*jshint  -W031 : false */
   const croneTime = SYNC_TO_YOUTUBE_SCHEDULE.Seconds + ' ' +
         SYNC_TO_YOUTUBE_SCHEDULE.Minutes + ' ' +
         SYNC_TO_YOUTUBE_SCHEDULE.Hours + ' ' +

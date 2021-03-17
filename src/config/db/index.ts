@@ -1,5 +1,3 @@
-import * as Debug from 'debug';
-import * as mongoose from 'mongoose';
 import { Connection, createConnection } from 'typeorm';
 import { UserEntity } from '../../entities/UserEntity';
 import { TokenEntity } from '../../entities/TokenEntity';
@@ -7,7 +5,7 @@ import { DB } from '../../constants';
 import { PlaylistEntity } from '../../entities/PlaylistEntity';
 import { MediaItemEntity } from '../../entities/MediaItemEntity';
 
-const debug = Debug('PL:DB');
+// const debug = Debug('PL:DB');
 
 export const init = async () => {
   const connection: Connection = await createConnection({
@@ -24,11 +22,4 @@ export const init = async () => {
     ]
   });
   return connection;
-};
-
-export const initMongo = async () => {
-  return mongoose.connect(DB.MONGO_URL, {
-    // useNewUrlParser: true,
-    // useUnifiedTopology: true
-  });
 };

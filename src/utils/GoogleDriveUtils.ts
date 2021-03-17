@@ -2,10 +2,10 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as GoogleUtils from './GoogleUtils';
-import * as Debug from 'debug';
+// import * as Debug from 'debug';
 import { google } from 'googleapis';
 
-const debug = Debug('PL:GoogleDrive');
+// const debug = Debug('PL:GoogleDrive');
 
 export const createFolder = (parentFolderId: string, folderName: string, googleCredentials: any) => {
   return new Promise((resolve: any, reject: any) => {
@@ -24,7 +24,10 @@ export const createFolder = (parentFolderId: string, folderName: string, googleC
       fields: 'id, name, parents, mimeType, modifiedTime'
     };
     drive.files.create(params, (error: any, response: any) => {
-      if (error) {
+      if (error && error.errors) {
+        // debug('uploadFile error ', error);
+        return reject(error.errors);
+      } else if (error) {
         return reject(error);
       }
       return resolve(response);
@@ -51,7 +54,10 @@ export const uploadFile = (driveParentFolderId: string, localFilePath: string, g
       fields: 'id, name, parents, mimeType, modifiedTime'
     };
     drive.files.create(params, (error: any, response: any) => {
-      if (error) {
+      if (error && error.errors) {
+        // debug('uploadFile error ', error);
+        return reject(error.errors);
+      } else if (error) {
         return reject(error);
       }
       return resolve(response);
@@ -65,7 +71,10 @@ export const emptyTrash = (googleCredentials: any) => {
     oauth2Client.setCredentials(googleCredentials);
     const drive = google.drive({ version: 'v3', auth: oauth2Client });
     drive.files.emptyTrash((error: any, response: any) => {
-      if (error) {
+      if (error && error.errors) {
+        // debug('emptyTrash error ', error);
+        return reject(error.errors);
+      } else if (error) {
         // debug('emptyTrash error ', error);
         return reject(error);
       }
@@ -86,8 +95,11 @@ export const removeFile = (googleCredentials: any, fileId: string) => {
       'fileId': fileId
     };
     drive.files.delete(data, (error: any, response: any) => {
-      if (error) {
-        // debug('emptyTrash error ', error);
+      if (error && error.errors) {
+        // debug('removeFile error ', error);
+        return reject(error.errors);
+      } else if (error) {
+        // debug('removeFile error ', error);
         return reject(error);
       }
       return resolve(response);
@@ -115,12 +127,12 @@ export const searchIntoFolderRecursive = (googleCredentials: any, folderId: stri
     }
 
     drive.files.list(params, (error: any, response: any) => {
-      if (error) {
-        // debug('searchIntoFolder error ', error);
-        return reject(error);
-      } else if (error && error.errors) {
+      if (error && error.errors) {
         // debug('searchIntoFolder error ', error);
         return reject(error.errors);
+      } else if (error) {
+        // debug('searchIntoFolder error ', error);
+        return reject(error);
       }
       return resolve(response);
     });
@@ -146,12 +158,12 @@ export const searchFolderByName = (googleCredentials: any, query: string) => {
     };
 
     drive.files.list(params, (error: any, response: any) => {
-      if (error) {
-        // debug('searchIntoFolder error ', error);
-        return reject(error);
-      } else if (error && error.errors) {
+      if (error && error.errors) {
         // debug('searchIntoFolder error ', error);
         return reject(error.errors);
+      } else if (error) {
+        // debug('searchIntoFolder error ', error);
+        return reject(error);
       }
       return resolve(response);
     });

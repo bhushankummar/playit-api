@@ -67,18 +67,17 @@ app.use(config.handle404);
 app.set('PORT', process.env.PORT || 3007);
 app.listen(app.get('PORT'), async (err: any) => {
   if (err) {
-    return console.log(err);
+    return debug(err);
   }
   await database.init();
-  await database.initMongo();
   CroneJobs.initAllJobs();
   debug(' Server has been started on PORT: %o', app.get('PORT'));
-  return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);
+  return debug(`***************************** Server has been started on PORT ${app.get('PORT')}`);
 });
 
 process.on('uncaughtException', (err) => {
-  console.log('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
-  console.log(err);
+  debug('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
+  debug(err);
 });
 
 export { app };

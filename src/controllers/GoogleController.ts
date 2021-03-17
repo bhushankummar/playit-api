@@ -26,7 +26,7 @@ export const redirectToOAuth: express.RequestHandler = (req: IRequest, res: expr
 /**
  * Get token details
  */
-export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response) => {
   debug('Completed req.tokenStore.token ', req.tokenStore.token);
   const token = `token=${req.tokenStore.token}`;
   const frontEndUrl = APP.FRONT_END_URL;

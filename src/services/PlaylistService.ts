@@ -3,8 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import * as mongodb from 'mongodb';
-import { getMongoRepository, FindOneOptions, FindManyOptions } from 'typeorm';
+import { getMongoRepository, FindOneOptions, FindManyOptions, ObjectID } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
 
@@ -84,7 +83,7 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
   };
     // debug('userProfile ', userProfile);
   try {
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile
     };
     const options: FindManyOptions<PlaylistEntity> = {
@@ -116,7 +115,7 @@ export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (
     email: req.userStore.email
   };
   try {
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile,
       urlId: params.playlistUrl
     };
@@ -143,7 +142,7 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
     _id: req.userStore._id,
     email: req.userStore.email
   };
-  const playlistIdObjectId = new mongodb.ObjectID(params.playlistId);
+  const playlistIdObjectId = new ObjectID(params.playlistId.toString());
   try {
     const whereCondition: any = {
       user: userProfile,
@@ -170,10 +169,10 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
   }
   const playlistModel = getMongoRepository(PlaylistEntity);
   try {
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
-    const response = await playlistModel.deleteOne(whereCondition);
+    await playlistModel.deleteOne(whereCondition);
     // debug('response ', response);
     // debug('req.playlistStore ', req.playlistStore);
   } catch (error) {
@@ -190,12 +189,10 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
   try {
     const playlistModel = getMongoRepository(PlaylistEntity);
     const whereCondition = {
-      // _id: new mongodb.ObjectId('604c9478fe2c8c00266c9e3c')
       $or: [
         {
           lastSyncTimeStamp: {
-            '$lt': moment().subtract(2, 'minutes').toISOString()
-            // '$lt': moment().subtract(1, 'seconds').toISOString()
+            $lt: moment().subtract(2, 'minutes').toISOString()
           }
         },
         {
@@ -211,11 +208,11 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
     };
     req.playlistStore = await playlistModel.findOne(options);
     // debug('req.playlistStore ', req.playlistStore);
+    return next();
   } catch (error) {
     debug('searchOneByLastSyncTimeStamp error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -228,20 +225,13 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
       $or: [
         {
           lastUploadTimeStamp: {
-            '$lt': moment().subtract(1, 'minutes').toISOString()
-            // '$lt': moment().subtract(1, 'seconds').toISOString()
+            $lt: moment().subtract(1, 'minutes').toISOString()
+            // $lt: moment().subtract(1, 'seconds').toISOString()
           }
         },
         {
           lastUploadTimeStamp: undefined
         }
-        // {
-        //     // THis is for the development purpose only.
-        //     // It should be playlist url
-        //     // urlId: 'RDCLAK5uy_nbla9IlAw2OQmPRxOiBYdAl_jtWLDPH9Y' // Audio
-        //     // urlId: 'PLV4x9RCRiG1DGb_hwKXmsr3MIDEAl21ov' // Video
-        //     // urlId: 'PLV4x9RCRiG1Bsrpcm4Y5ezVzMIkuSRi0e' // Audio
-        // }
       ]
     };
     const options: FindOneOptions<PlaylistEntity> = {
@@ -252,11 +242,11 @@ export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req
     };
     req.playlistStore = await playlistModel.findOne(options);
     // debug('req.playlistStore ', req.playlistStore);
+    return next();
   } catch (error) {
     debug('searchOneByLastUploadTimeStamp error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -268,18 +258,18 @@ export const updateLastSyncTimeStamp: express.RequestHandler = async (req: IRequ
   }
   try {
     const playlistModel = getMongoRepository(PlaylistEntity);
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
-    const updateData = {
-      lastSyncTimeStamp: moment().toISOString()
+    const updateData: Partial<PlaylistEntity> = {
+      lastSyncTimeStamp: moment().toDate()
     };
     await playlistModel.update(whereCondition, updateData);
+    return next();
   } catch (error) {
     debug('updateLastSyncTimeStamp error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -291,18 +281,18 @@ export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRe
   }
   try {
     const playlistModel = getMongoRepository(PlaylistEntity);
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
-    const updateData = {
-      lastUploadTimeStamp: moment().toISOString()
+    const updateData: Partial<PlaylistEntity> = {
+      lastUploadTimeStamp: moment().toDate()
     };
     await playlistModel.update(whereCondition, updateData);
+    return next();
   } catch (error) {
     debug('updateLastUploadTimeStamp error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -321,22 +311,21 @@ export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRe
     }
 
     const playlistModel = getMongoRepository(PlaylistEntity);
-    const whereCondition = {
+    const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
 
-    const updateData = {
+    const updateData: Partial<PlaylistEntity> = {
       // lastSyncTimeStamp: moment().toISOString(),
       url: req.youTubePlaylistStore.url,
       title: req.youTubePlaylistStore.title,
       urlId: req.youTubePlaylistStore.id,
       driveFolderId: req.googleDriveFileStore.id
     };
-
     await playlistModel.update(whereCondition, updateData);
+    return next();
   } catch (error) {
     debug('updatePlaylistDriveFolder error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };

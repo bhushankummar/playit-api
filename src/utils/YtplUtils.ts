@@ -1,23 +1,8 @@
 import { YOUTUBE } from '../constants';
 import * as _ from 'lodash';
-import * as Debug from 'debug';
+// import * as Debug from 'debug';
 
-const youtubedl = require('youtube-dl');
-const debug = Debug('PL:YtplUtils');
-
-/**
- * Get the File Metadata
- */
-export const findMetadata = (url: string, options: any) => {
-  return new Promise((resolve: any, reject: any) => {
-    youtubedl.getInfo(url, options, (error: any, info: any) => {
-      if (error) {
-        reject(error);
-      }
-      resolve(info);
-    });
-  });
-};
+// const debug = Debug('PL:YtplUtils');
 
 export const prepareFileName = (item: any, extension: string, isAddExtension = false) => {
   let fileName = cleanFileName(item.title);
@@ -47,7 +32,7 @@ export const cleanFileName = (fileName: string) => {
     'Official:',
     'Full Video:'
   ];
-    // fileName = fileName.split(/'/g).join(' ');
+  // fileName = fileName.split(/'/g).join(' ');
   fileName = fileName.replace(/\|/g, '-');
   fileName = fileName.toString().replace(/"/g, '\\"');
   fileName = fileName.replace(/\/\//g, '');

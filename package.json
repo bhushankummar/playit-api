@@ -24,6 +24,7 @@
     "author": "Bhushankumar L (bhushankumar.lilapara@gmail.com)",
     "license": "ISC",
     "dependencies": {
+        "@typeform/eslint-config": "^3.0.2",
         "bluebird": "^3.7.2",
         "body-parser": "^1.19.0",
         "boom": "^7.3.0",

@@ -9,7 +9,6 @@ import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
 import moment = require('moment');
-import { ObjectId } from 'mongodb';
 import * as Boom from 'boom';
 
 const debug = Debug('PL:MediaItemService');
@@ -27,7 +26,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
     _id: req.userStore._id,
     email: req.userStore.email
   };
-    // debug('userProfile %o ', userProfile);
+  // debug('userProfile %o ', userProfile);
   const whereCondition: Partial<MediaItemEntity> = {};
   whereCondition.user = userProfile;
   if (params.isUploaded !== undefined) {
@@ -59,11 +58,11 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
     };
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     req.mediaItemsStore = await mediaItemModel.find(options);
+    return next();
   } catch (error) {
     debug('searchAllByLoggedInUser error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -79,7 +78,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
     _id: req.userStore._id,
     email: req.userStore.email
   };
-    // debug('userProfile ', userProfile);
+  // debug('userProfile ', userProfile);
   try {
     const whereCondition: Partial<MediaItemEntity> = {
       user: userProfile,
@@ -127,7 +126,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      * B - Not Available in google drive
      */
   _.each(req.youTubePlaylistStore.items, (value) => {
-    const item = _.find(req.mediaItemsStore, { urlId: value.id });
+    const item: MediaItemEntity = _.find(req.mediaItemsStore, { urlId: value.id });
     // debug('value ', value);
     const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
     if (_.isEmpty(item) === true && _.isEmpty(itemGoogleDrive) === true) {
@@ -144,13 +143,13 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   });
 
   // TODO : Handle if the req.mediaItemsStore has the duplicate items.
-  _.each(req.mediaItemsStore, (value) => {
+  _.each(req.mediaItemsStore, (value: MediaItemEntity) => {
     // debug('value.urlId ', value.urlId);
     const item = _.find(req.youTubePlaylistStore.items, { id: value.urlId });
     // debug('item %o ', item.length);
     /**
-         * Identify the files those are in the database but not available in the YouTube
-         */
+     * Identify the files those are in the database but not available in the YouTube
+     */
     if (_.isEmpty(item) === true) {
       debug('Identify for the Remove. %o ', value);
       mediaItemsRemove.push(value);
@@ -205,9 +204,9 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     return next();
   } else if (
     _.isEmpty(req.data.mediaItemsNew) &&
-        _.isEmpty(req.data.mediaItemsRemove) &&
-        _.isEmpty(req.data.googleDriveItemsRemove) &&
-        _.isEmpty(req.data.mediaItemsUpdate)
+    _.isEmpty(req.data.mediaItemsRemove) &&
+    _.isEmpty(req.data.googleDriveItemsRemove) &&
+    _.isEmpty(req.data.mediaItemsUpdate)
   ) {
     return next();
   }
@@ -215,7 +214,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     _id: req.userStore._id,
     email: req.userStore.email
   };
-    // debug('req.data.mediaItemsNew ', req.data.mediaItemsNew.length);
+  // debug('req.data.mediaItemsNew ', req.data.mediaItemsNew.length);
   const CONCURRENCY = 1;
   const mediaItemsNew = [];
   await bluebird.map(req.data.mediaItemsNew, async (value: any) => {
@@ -278,7 +277,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       };
       // debug('data ', data);
       // debug('whereCondition ', whereCondition);
-      const response = await mediaItemModel.updateOne(whereCondition, data);
+      await mediaItemModel.updateOne(whereCondition, data);
       // debug('response ', response.result);
     } catch (error) {
       debug('mediaItemsUpdate error ', error);
@@ -356,7 +355,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
     _id: req.userStore._id,
     email: req.userStore.email
   };
-    // debug('userProfile ', userProfile);
+  // debug('userProfile ', userProfile);
   try {
     const whereCondition: Partial<MediaItemEntity> = {
       user: userProfile,
@@ -377,11 +376,11 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: expres
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     req.mediaItemsStore = await mediaItemModel.find(options);
     debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
+    return next();
   } catch (error) {
     debug('searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**
@@ -403,8 +402,6 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
         ],
         isUploaded: false,
         isDownloaded: false
-        // This is for development purpose only
-        // _id: new ObjectId('5f807c255786e50026a0482e')
       },
       order: {
         downloadAttemptCount: 'ASC'
@@ -453,7 +450,7 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
         errors: value.errors
       };
       // debug('updateData ', updateData);
-      const response = await mediaItemModel.update(whereCondition, updateData);
+      await mediaItemModel.update(whereCondition, updateData);
       // debug('updateDownloadMedia update ', response);
       return next();
     } catch (error) {
@@ -472,7 +469,6 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     //     {
     //         lastUploadTimeStamp: {
     //             $lt: moment().subtract(1, 'minutes').toDate()
-    //             // '$lt': moment().subtract(1, 'seconds').toISOString()
     //         }
     //     },
     //     {
@@ -499,7 +495,7 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
       googleDriveUploadAttemptCount: 'DESC'
     }
   };
-    // debug('whereCondition ', whereCondition);
+  // debug('whereCondition ', whereCondition);
   try {
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     req.mediaStore = await mediaItemModel.findOne(whereCondition, orderBy);
@@ -521,8 +517,8 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
   }
   try {
     const mediaItemModel = getMongoRepository(MediaItemEntity);
-    const whereCondition: any = {
-      '_id': new ObjectId(req.mediaStore._id)
+    const whereCondition: Partial<MediaItemEntity> = {
+      _id: new ObjectID(req.mediaStore._id.toString())
     };
     const count = (req.mediaStore.googleDriveUploadAttemptCount || 0) + 1;
     const updateData: Partial<MediaItemEntity> = {
@@ -541,7 +537,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
       updateData.isDownloaded = false;
     }
     // debug('updateData ', updateData);
-    const response = await mediaItemModel.update(whereCondition, updateData);
+    await mediaItemModel.update(whereCondition, updateData);
     // debug('updateDownloadMedia update ', response);
     return next();
   } catch (error) {
@@ -567,7 +563,7 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
       playlistUrlId: req.playlistStore.urlId,
       type: req.playlistStore.type
     };
-    const response = await mediaItemModel.deleteMany(whereCondition);
+    await mediaItemModel.deleteMany(whereCondition);
     // debug('response ', response);
     return next();
   } catch (error) {

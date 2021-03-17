@@ -29,6 +29,7 @@ export const userLoginDetail: express.RequestHandler = (req: IRequest, res: expr
   } else if (_.isEmpty(tokenStore)) {
     return next(Boom.notFound('Please try again'));
   }
+  // eslint-disable-next-line spellcheck/spell-checker
   req.data = {user: userStore, tokPL: tokenStore};
   return next();
 };
