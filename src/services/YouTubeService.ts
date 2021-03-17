@@ -20,11 +20,14 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         // debug('CRITICAL : Return from empty req.playlistStore');
         return next();
     } else if (_.isEmpty(req.playlistStore._id)) {
-        debug('CRITICAL : Return from req.playlistStore._id');
+        debug('CRITICAL : Return from empty req.playlistStore._id');
         return next();
     } else if (_.isEmpty(req.userStore)) {
         return next();
     } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
+        return next();
+    } else if (_.isEmpty(req.playlistStore.urlId) === true) {
+        debug('CRITICAL : Return from empty req.playlistStore.urlId  ', req.playlistStore);
         return next();
     }
     try {
