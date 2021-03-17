@@ -78,7 +78,8 @@
           "etag",
           "maxres",
           "nullable",
-          "worstaudio"
+          "worstaudio",
+          "uuidv4"
         ],
         "skipIfMatch": [
           "http://[^s]*",

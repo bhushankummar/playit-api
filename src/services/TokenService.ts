@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
 import * as crypt from 'crypto';
-import * as Random from '../lib/Random';
+import { v4 as uuidv4 } from 'uuid';
 import { TokenEntity } from '../entities/TokenEntity';
 import { getMongoRepository } from 'typeorm';
 
@@ -24,7 +24,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
   }
   let loginToken = '';
   try {
-    loginToken = Random.secret();
+    loginToken = uuidv4();
   } catch (exception) {
     debug('createToken Exception %o ', exception);
   }
@@ -51,18 +51,18 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
  * Search Token
  */
 export const searchOneByToken: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  if (!req.headers[ 'authorization' ]) {
+  if (!req.headers['authorization']) {
     return next();
   }
   const SPACE = ' ';
-  const authorization = req.headers[ 'authorization' ].split(SPACE);
+  const authorization = req.headers['authorization'].split(SPACE);
   if (authorization.length < 1) {
     return next();
   }
   try {
     const tokenModel = getMongoRepository(TokenEntity);
     const whereCondition = {
-      token: authorization[ 1 ]
+      token: authorization[1]
     };
     req.tokenStore = await tokenModel.findOne(whereCondition);
   } catch (error) {
