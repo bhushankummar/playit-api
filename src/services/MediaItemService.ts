@@ -8,8 +8,8 @@ import { getMongoRepository, FindManyOptions, ObjectID } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
-import moment = require('moment');
 import * as Boom from 'boom';
+import moment = require('moment');
 
 const debug = Debug('PL:MediaItemService');
 

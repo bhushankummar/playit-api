@@ -167,6 +167,7 @@
     "promise/no-new-statics": "error",
     "promise/no-return-in-finally": "error",
     "promise/valid-params": "warn",
-    "no-return-await": "error"
+    "no-return-await": "error",
+    "import/order": "off"
   }
 }

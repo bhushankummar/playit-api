@@ -7,12 +7,12 @@ const CronJob = cron.CronJob;
 const debug = Debug('PL:JOB-SyncGoogleDriveFolder');
 
 export const init: any = () => {
-  const croneTime = SYNC_TO_YOUTUBE_SCHEDULE.Seconds + ' ' +
-        SYNC_TO_YOUTUBE_SCHEDULE.Minutes + ' ' +
-        SYNC_TO_YOUTUBE_SCHEDULE.Hours + ' ' +
-        SYNC_TO_YOUTUBE_SCHEDULE.DayOfMonth + ' ' +
-        SYNC_TO_YOUTUBE_SCHEDULE.Months + ' ' +
-        SYNC_TO_YOUTUBE_SCHEDULE.DayOfWeek;
+  const croneTime = `${SYNC_TO_YOUTUBE_SCHEDULE.Seconds  } ${ 
+    SYNC_TO_YOUTUBE_SCHEDULE.Minutes  } ${ 
+    SYNC_TO_YOUTUBE_SCHEDULE.Hours  } ${ 
+    SYNC_TO_YOUTUBE_SCHEDULE.DayOfMonth  } ${ 
+    SYNC_TO_YOUTUBE_SCHEDULE.Months  } ${ 
+    SYNC_TO_YOUTUBE_SCHEDULE.DayOfWeek}`;
   const job = new CronJob(croneTime, start, undefined, false, CRONE_JOB.TIMEZONE);
   debug('.............. SyncGoogleDriveFolder Job Initiated Successfully, still you have to execute start() ........');
   return job;
