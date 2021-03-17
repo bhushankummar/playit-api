@@ -81,7 +81,7 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
     _id: req.userStore._id,
     email: req.userStore.email
   };
-    // debug('userProfile ', userProfile);
+  // debug('userProfile ', userProfile);
   try {
     const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile
@@ -303,7 +303,7 @@ export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRe
  */
 export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
-    return next(Boom.notFound('Invalid User'));
+    return next();
   }
   try {
     if (_.isEmpty(req.youTubePlaylistStore)) {
