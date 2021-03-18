@@ -123,10 +123,10 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
  */
 export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.playlistStore)) {
-    debug('Empty req.playlistStore');
+    // debug('Empty req.playlistStore');
     return next();
   } else if (_.isEmpty(req.playlistStore.user)) {
-    debug('Empty req.playlistStore.user');
+    // debug('Empty req.playlistStore.user');
     return next();
   } else if (_.isEmpty(req.playlistStore.user._id)) {
     debug('CRITICAL : req.playlistStore.user._id is empty %o ', req.playlistStore);

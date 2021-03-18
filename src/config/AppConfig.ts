@@ -25,7 +25,7 @@ export const trimParams: express.RequestHandler = (req: IRequest, res: express.R
     }
   });
   // debug('Authorization : %o ', req.get('Authorization'));
-  debug('req.body : %o ', req.body);
+  // debug('req.body : %o ', req.body);
   return next();
 };
 

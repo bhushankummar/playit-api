@@ -186,8 +186,8 @@ export const removeFolder: express.RequestHandler = async (req: IRequest, res: e
     const response: any = await GoogleDrive.removeFile(req.userStore.google, folderId);
     if (response && response.data) {
       debug('response.data ', response.data);
+      req.googleDriveStore = response.data;
     }
-    req.googleDriveStore = response.data;
     return next();
   } catch (error) {
     debug('removeFolder error ', error);
