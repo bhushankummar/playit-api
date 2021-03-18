@@ -50,8 +50,8 @@ export const searchPlaylist = async (playlistUrl: string, googleCredentials: any
     oauth2Client.setCredentials(googleCredentials);
     const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
     const playListItemsData = {
-      part: 'snippet',
-      id: playlistUrl
+      part: ['snippet'],
+      id: [playlistUrl]
     };
     // debug('playListItemsData ', playListItemsData);
     const response: any = await youtubeClient.playlists.list(playListItemsData);

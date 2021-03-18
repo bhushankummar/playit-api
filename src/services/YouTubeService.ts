@@ -83,8 +83,8 @@ export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, r
     oauth2Client.setCredentials(req.userStore.google);
     const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
     const playListItemsData = {
-      part: 'snippet',
-      id: params.playlistUrl
+      part: ['snippet'],
+      id: [params.playlistUrl]
     };
     // debug('playListItemsData ', playListItemsData);
     const response: any = await youtubeClient.playlists.list(playListItemsData);
