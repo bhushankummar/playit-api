@@ -65,10 +65,7 @@ app.use(config.handle404);
  *  Server process
  */
 app.set('PORT', process.env.PORT || 3007);
-app.listen(app.get('PORT'), async (err: any) => {
-  if (err) {
-    return debug(err);
-  }
+app.listen(app.get('PORT'), async () => {
   await database.init();
   CroneJobs.initAllJobs();
   debug(' Server has been started on PORT: %o', app.get('PORT'));

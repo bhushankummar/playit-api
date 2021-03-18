@@ -32,7 +32,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     oauth2Client.setCredentials(req.userStore.google);
     const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
     const playListItemsData = {
-      part: 'snippet',
+      part: ['snippet'],
       playlistId: req.playlistStore.urlId,
       pageToken: ''
     };
@@ -52,7 +52,6 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         }
       } catch (error) {
         debug('listPlaylistItems error %o req.playlistStore %o playListItemsData %o', error, req.playlistStore, playListItemsData);
-        // return next(Boom.notFound(error));
       }
     } while (nextPageToken !== '');
     youtubePlaylistStoreData.items = youtubePlaylistStoreItems || [];
@@ -79,24 +78,10 @@ export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, r
     return next();
   }
   try {
-    const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-    oauth2Client.setCredentials(req.userStore.google);
-    const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
-    const playListItemsData = {
-      part: ['snippet'],
-      id: [params.playlistUrl]
-    };
-    // debug('playListItemsData ', playListItemsData);
-    const response: any = await youtubeClient.playlists.list(playListItemsData);
-    if (response && response.data && response.data.items && response.data.items[0]) {
-      // debug('response ', response.data);
-      // debug('response ', response.data.items[0]);
-      const playlist = response.data.items[0];
-      // debug('playlist ', playlist);
-      const youTubePlaylistStore = YouTubeUtils.mapYouTubePlaylistResponse(playlist);
-      debug('youTubePlaylistStore ', youTubePlaylistStore);
-      req.youTubePlaylistStore = youTubePlaylistStore;
-    }
+    const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(
+      params.playlistUrl, req.userStore.google);
+    // debug('youTubePlaylistStore ', youTubePlaylistStore);
+    req.youTubePlaylistStore = youTubePlaylistStore;
     return next();
   } catch (error) {
     debug('getPlaylistDetail error ', error);

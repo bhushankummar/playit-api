@@ -30,18 +30,19 @@ export const cleanFileName = (fileName: string) => {
     'Full Audio:',
     'Lyrical Video:',
     'Official:',
-    'Full Video:'
+    'Full Video:',
   ];
   // fileName = fileName.split(/'/g).join(' ');
-  fileName = fileName.replace(/\|/g, '-');
-  fileName = fileName.toString().replace(/"/g, '\\"');
-  fileName = fileName.replace(/\/\//g, '');
   cleanWords.forEach((word: string) => {
     fileName = fileName.split(word).join(' ');
     fileName = fileName.split(word.toLowerCase()).join(' '); // Lowercase
     fileName = fileName.split(word.toUpperCase()).join(' '); // Uppercase
     fileName = fileName.trim();
   });
+  fileName = fileName.replace(/\|/g, ' - ');
+  fileName = fileName.replace(/:/g, ' - ');
+  fileName = fileName.toString().replace(/"/g, '\\"');
+  fileName = fileName.replace(/\/\//g, '');
   fileName = fileName.replace(/\s\s+/g, ' ');
   fileName = fileName.replace(/ +(?= )/g, '');
   return fileName;
