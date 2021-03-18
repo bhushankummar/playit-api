@@ -39,7 +39,7 @@ export const downloadMedia = (options: any[], extension: string, item: MediaItem
 
     media.on('error', (error: any) => {
       debug('error occurs in downloadMedia item %o ', item);
-      debug('error occurs in downloadMedia mediaResponse %0 ', mediaResponse);
+      debug('error occurs in downloadMedia mediaResponse %o ', mediaResponse);
       debug('error in downloadMedia %o ', error);
       reject(error);
     });

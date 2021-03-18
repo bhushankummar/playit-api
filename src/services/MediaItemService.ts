@@ -403,7 +403,7 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
         isDownloaded: false
       },
       order: {
-        downloadAttemptCount: 'ASC'
+        downloadAttemptCount: 'DESC'
       },
       take: 1
     };
