@@ -1,15 +1,15 @@
-import { Column, Entity, ObjectID, ObjectIdColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 
 class User {
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public _id: string;
 }
 
 @Entity('tokens')
 export class TokenEntity {
 
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public _id: string;
 
     @Column()
     public token: string;

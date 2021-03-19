@@ -1,9 +1,9 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
 
 class User {
 
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public _id: string;
 
     @Column({ nullable: false })
     public email: string;
@@ -11,7 +11,7 @@ class User {
 
 class Playlist {
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public _id: string;
 
     @Column()
     public title?: string;
@@ -78,15 +78,15 @@ export class MediaItemEntity {
     @Column()
     public lastUploadTimeStamp: Date;
 
-    @CreateDateColumn({ type: 'timestamp' })
-    public createdDate: string;
-
-    @UpdateDateColumn({ type: 'timestamp' })
-    public updatedDate: string;
-
     @Column()
     public errors: MediaError[];
 
     @Column()
     public localFilePath: string;
+
+    @CreateDateColumn()
+    public createdDate: string;
+
+    @UpdateDateColumn()
+    public updatedDate: string;
 }

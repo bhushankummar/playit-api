@@ -1,9 +1,9 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
 import moment = require('moment');
 
 class User {
   @ObjectIdColumn()
-  public _id: ObjectID;
+  public _id: string;
 
   @Column()
   public email?: string;

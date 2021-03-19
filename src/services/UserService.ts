@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
 import { UserEntity } from '../entities/UserEntity';
-import { getMongoRepository, ObjectID } from 'typeorm';
+import { getMongoRepository } from 'typeorm';
 
 const debug = Debug('PL:UserService');
 
@@ -72,10 +72,11 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
     return next();
   }
   // debug('Inside updateGoogleToken ', params.state);
-  const stateObjectId = new ObjectID(params.state);
-  // debug('Inside updateGoogleToken stateObjectId', stateObjectId);
   // debug('req.googleStore ', req.googleStore);
   try {
+
+    const stateObjectId = params.state;
+    // debug('Inside updateGoogleToken stateObjectId', stateObjectId);
     const whereCondition: Partial<UserEntity> = {
       _id: stateObjectId
     };
@@ -104,8 +105,8 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
     return next();
   }
 
-  const stateObjectId = new ObjectID(params.state);
   try {
+    const stateObjectId = params.state;
     const whereCondition: Partial<UserEntity> = {
       _id: stateObjectId
     };
@@ -113,6 +114,7 @@ export const searchOneByState: express.RequestHandler = async (req: IRequest, re
     req.userStore = await userModel.findOne(whereCondition);
     return next();
   } catch (error) {
+    debug('searchOneByState error ', error);
     return next(error);
   }
 };
@@ -139,10 +141,11 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
     const userModel = getMongoRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', JSON.stringify(req.userStore, null, 2));
+    return next();
   } catch (error) {
+    debug('searchOneByPlaylistUser error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**

@@ -3,10 +3,9 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import { getMongoRepository, FindOneOptions, FindManyOptions, ObjectID } from 'typeorm';
+import { getMongoRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
-import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 const debug = Debug('PL:PlaylistService');
 
@@ -138,12 +137,12 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
   if (_.isEmpty(req.userStore)) {
     return next(Boom.notFound('Invalid User'));
   }
-  const playlistModel = getMongoRepository(PlaylistEntity);
-  const userProfile = {
-    _id: req.userStore._id,
-    email: req.userStore.email
-  };
   try {
+    const playlistModel = getMongoRepository(PlaylistEntity);
+    const userProfile = {
+      _id: req.userStore._id,
+      email: req.userStore.email
+    };
     const playlistIdObjectId = params.playlistId;
     const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile,
@@ -168,8 +167,8 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
   } else if (_.isEmpty(req.playlistStore)) {
     return next(Boom.notFound('This playlist does not exits.'));
   }
-  const playlistModel = getMongoRepository(PlaylistEntity);
   try {
+    const playlistModel = getMongoRepository(PlaylistEntity);
     const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
