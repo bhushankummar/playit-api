@@ -6,7 +6,18 @@ import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 // eslint-disable-next-line @typescript-eslint/no-var-requires
 const youtubedl = require('youtube-dl');
+// const youtubedl = require('youtube-dl-exec');
 const debug = Debug('PL:MediaDownload');
+
+// const YOUTUBEDL_OPTIONS = {
+//   dumpJson: true,
+//   noWarnings: true,
+//   noCallHome: true,
+//   noCheckCertificate: true,
+//   preferFreeFormats: true,
+//   youtubeSkipDashManifest: true,
+//   referer: 'https://example.com'
+// };
 
 export const downloadMedia = (options: any[], extension: string, item: MediaItemEntity, driveDirectory: any) => {
   return new Promise((resolve: any, reject: any) => {
@@ -44,12 +55,4 @@ export const downloadMedia = (options: any[], extension: string, item: MediaItem
       reject(error);
     });
   });
-};
-
-export const downloadAudio = (playlist: any, item: any, driveDirectory: any, downloadOption) => {
-  return downloadMedia(downloadOption, 'mp3', item, driveDirectory);
-};
-
-export const downloadVideo = (item: MediaItemEntity, localDirectory: any, downloadOption: any) => {
-  return downloadMedia(downloadOption, 'mp4', item, localDirectory);
 };
