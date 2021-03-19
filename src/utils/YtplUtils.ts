@@ -18,9 +18,12 @@ export const prepareFileName = (item: any, extension: string, isAddExtension = f
 
 export const cleanFileName = (fileName: string) => {
   const cleanWords = [
+    'HD',
     'lyrical:',
     'Lyrical :',
     'Lyrical:',
+    'Best Lyric Video',
+    'Best Video',
     'Full Song:',
     'Full Audio:',
     'Lyrical Video:',
@@ -34,6 +37,8 @@ export const cleanFileName = (fileName: string) => {
     'Full Video Song',
     '[Official Video]',
     'Full HD Song',
+    'Full Video HD',
+    'Full Video',
     '/r',
     '/',
     '\\',
@@ -50,6 +55,7 @@ export const cleanFileName = (fileName: string) => {
   });
   fileName = fileName.replace(/\|/g, ' - ');
   fileName = fileName.replace(/:/g, ' - ');
+  fileName = fileName.replace(/- -/g, '');
   fileName = fileName.toString().replace(/"/g, '\\"');
   fileName = fileName.replace(/\/\//g, '');
   fileName = fileName.replace(/\s\s+/g, ' ');
