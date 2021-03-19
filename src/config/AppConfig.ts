@@ -58,7 +58,7 @@ export const handleError = (err: any, req: IRequest, res: express.Response, next
   // debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
   res.status(errorResponse.statusCode || 404).json(errorResponse);
   res.end();
-  debug('----------------------------------------------------------------------------------- ');
+  // debug('----------------------------------------------------------------------------------- ');
 };
 
 export const handleSuccess: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
@@ -69,7 +69,7 @@ export const handleSuccess: express.RequestHandler = (req: IRequest, res: expres
 
   const resObject = req.data || [];
   // debug('Success response :: ----------------------------------------------------------------------------------- ');
-  debug(`END : ${req.method} : ${utils.url(req)}${req.url}`);
+  // debug(`END : ${req.method} : ${utils.url(req)}${req.url}`);
   return res.json(resObject);
 };
 
