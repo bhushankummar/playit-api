@@ -385,7 +385,7 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
         $or: [
           {
             downloadAttemptCount: {
-              $lt: 10
+              $lt: 5
             }
           },
           {
