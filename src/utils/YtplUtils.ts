@@ -31,6 +31,13 @@ export const cleanFileName = (fileName: string) => {
     'Lyrical Video:',
     'Official:',
     'Full Video:',
+    '#',
+    '(Full Song)',
+    '[Full Song]',
+    'Full Song',
+    '(Official Song)',
+    '(Official Video)',
+    'Full Video Song'
   ];
   // fileName = fileName.split(/'/g).join(' ');
   cleanWords.forEach((word: string) => {
