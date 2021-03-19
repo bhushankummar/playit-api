@@ -8,7 +8,7 @@ import { IRequest } from '../interface/IRequest';
 const debug = Debug('PL:Config');
 
 export const trimParams: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  debug(`START : ${req.method} : ${utils.url(req)}${req.url}`);
+  // debug(`START : ${req.method} : ${utils.url(req)}${req.url}`);
   if (req.method === 'OPTIONS') {
     req.data = { message: true };
   }
@@ -55,7 +55,7 @@ export const handleError = (err: any, req: IRequest, res: express.Response, next
   }
   debug('Error :: ');
   debug(errorResponse);
-  debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
+  // debug(`END : ${req.method} : ${utils.url(req)} ${req.url}`);
   res.status(errorResponse.statusCode || 404).json(errorResponse);
   res.end();
   debug('----------------------------------------------------------------------------------- ');

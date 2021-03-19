@@ -80,7 +80,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
       };
       // debug('item ', item);
       updatedItem.errors.push(mediaError);
-      debug('downloadMediaHQUsingMediaItem error updatedItem', updatedItem);
+      debug('downloadMediaHQUsingMediaItem error ', updatedItem);
       // debug('item %o ', item);
     }
     tempMediaItems.push(updatedItem);

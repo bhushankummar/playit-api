@@ -33,6 +33,7 @@ export const cleanFileName = (fileName: string) => {
     '(Official Video)',
     'Full Video Song',
     '[Official Video]',
+    'Full HD Song',
     '/r',
     '/',
     '\\',

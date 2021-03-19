@@ -161,12 +161,12 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     if (responseNewGoogleFolder && responseNewGoogleFolder.data) {
       req.googleDriveFileStore = responseNewGoogleFolder.data;
     }
-    debug('Folder has been created ', req.googleDriveFileStore);
+    // debug('Folder has been created ', req.googleDriveFileStore);
+    return next();
   } catch (error) {
     debug('createPlaylistFolder error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**

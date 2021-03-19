@@ -27,7 +27,7 @@ export class MediaError {
 }
 
 @Entity('mediaItems')
-@Index(['user._id', 'playlistUrlId', 'urlId'], { unique: true })
+@Index(['user._id', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
 export class MediaItemEntity {
 
     @ObjectIdColumn()
@@ -43,7 +43,6 @@ export class MediaItemEntity {
     public title: string;
 
     @Column({ nullable: false })
-    @Column()
     public urlId: string;
 
     @Column({ nullable: false })
