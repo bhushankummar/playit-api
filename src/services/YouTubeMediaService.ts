@@ -19,7 +19,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
   if (_.isEmpty(req.mediaItemsStore)) {
     return next();
   }
-  const tempMediaItems: Partial<MediaItemEntity> = [];
+  const tempMediaItems: MediaItemEntity[] = [];
   await bluebird.map(req.mediaItemsStore, async (updatedItem: MediaItemEntity) => {
     // debug('item %o ', item);
     let rootDirector = MEDIA_DIRECTORY.VIDEO;
