@@ -4,7 +4,7 @@ import { ObjectID } from 'mongodb'
 class User {
 
     @ObjectIdColumn()
-    public _id: string;
+    public _id: ObjectID;
 
     @Column({ nullable: false })
     public email: string;
@@ -31,7 +31,7 @@ export class MediaError {
 export class MediaItemEntity {
 
     @ObjectIdColumn()
-    public _id: string;
+    public _id: ObjectID;
 
     @Column(type => User)
     public user: User;

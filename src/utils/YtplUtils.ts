@@ -18,11 +18,6 @@ export const prepareFileName = (item: any, extension: string, isAddExtension = f
 
 export const cleanFileName = (fileName: string) => {
   const cleanWords = [
-    '/r',
-    '/',
-    '\\',
-    '"',
-    '_',
     'lyrical:',
     'Lyrical :',
     'Lyrical:',
@@ -31,13 +26,19 @@ export const cleanFileName = (fileName: string) => {
     'Lyrical Video:',
     'Official:',
     'Full Video:',
-    '#',
     '(Full Song)',
     '[Full Song]',
     'Full Song',
     '(Official Song)',
     '(Official Video)',
-    'Full Video Song'
+    'Full Video Song',
+    '[Official Video]',
+    '/r',
+    '/',
+    '\\',
+    '"',
+    '_',
+    '#'
   ];
   // fileName = fileName.split(/'/g).join(' ');
   cleanWords.forEach((word: string) => {

@@ -4,7 +4,7 @@ import { ObjectID } from 'mongodb'
 
 class User {
   @ObjectIdColumn()
-  public _id: string;
+  public _id: ObjectID;
 
   @Column()
   public email?: string;
