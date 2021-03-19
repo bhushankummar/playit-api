@@ -14,7 +14,7 @@ class User {
 export class PlaylistEntity {
 
   @ObjectIdColumn()
-  public _id: ObjectID;
+  public _id: string;
 
   @Column(type => User)
   public user: User;

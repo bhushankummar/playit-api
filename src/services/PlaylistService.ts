@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import { getMongoRepository, FindOneOptions, FindManyOptions, ObjectID } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import moment = require('moment');
+import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 const debug = Debug('PL:PlaylistService');
 
@@ -142,9 +143,9 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
     _id: req.userStore._id,
     email: req.userStore.email
   };
-  const playlistIdObjectId = new ObjectID(params.playlistId.toString());
   try {
-    const whereCondition: any = {
+    const playlistIdObjectId = params.playlistId;
+    const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile,
       _id: playlistIdObjectId
     };
@@ -175,11 +176,11 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
     await playlistModel.deleteOne(whereCondition);
     // debug('response ', response);
     // debug('req.playlistStore ', req.playlistStore);
+    return next();
   } catch (error) {
     debug('removePlaylist error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
