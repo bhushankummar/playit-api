@@ -19,7 +19,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
   if (_.isEmpty(req.mediaItemsStore)) {
     return next();
   }
-  const tempMediaItems = [];
+  const tempMediaItems: Partial<MediaItemEntity> = [];
   await bluebird.map(req.mediaItemsStore, async (updatedItem: MediaItemEntity) => {
     // debug('item %o ', item);
     let rootDirector = MEDIA_DIRECTORY.VIDEO;
@@ -45,6 +45,9 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
     try {
       if (_.isEmpty(updatedItem.playlistUrlId)) {
         debug('CRITICAL : Skipping Audio Media Item which has not playlistUrlId.');
+        return;
+      } else if (updatedItem.title === 'Deleted video') {
+        debug('CRITICAL : Skipping Media having Deleted Title.');
         return;
       }
       if (_.isEmpty(updatedItem.errors) === false) {

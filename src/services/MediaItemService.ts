@@ -396,7 +396,7 @@ export const searchAllNotDownloaded: express.RequestHandler = async (req: IReque
         isDownloaded: false
       },
       order: {
-        downloadAttemptCount: 'DESC'
+        downloadAttemptCount: 'ASC'
       },
       take: 1
     };
