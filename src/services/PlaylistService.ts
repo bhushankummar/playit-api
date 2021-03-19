@@ -5,6 +5,7 @@ import * as Boom from 'boom';
 import * as _ from 'lodash';
 import { getMongoRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
+import * as utils from '../utils';
 import moment = require('moment');
 
 const debug = Debug('PL:PlaylistService');
@@ -143,7 +144,7 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
       _id: req.userStore._id,
       email: req.userStore.email
     };
-    const playlistIdObjectId = params.playlistId;
+    const playlistIdObjectId = utils.toObjectId(params.playlistId);
     const whereCondition: Partial<PlaylistEntity> = {
       user: userProfile,
       _id: playlistIdObjectId

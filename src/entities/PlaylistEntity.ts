@@ -1,5 +1,6 @@
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
 import moment = require('moment');
+import { ObjectID } from 'mongodb'
 
 class User {
   @ObjectIdColumn()
@@ -14,7 +15,7 @@ class User {
 export class PlaylistEntity {
 
   @ObjectIdColumn()
-  public _id: string;
+  public _id: ObjectID;
 
   @Column(type => User)
   public user: User;

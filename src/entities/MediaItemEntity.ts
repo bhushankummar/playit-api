@@ -1,4 +1,5 @@
 import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
+import { ObjectID } from 'mongodb'
 
 class User {
 
@@ -11,7 +12,7 @@ class User {
 
 class Playlist {
     @ObjectIdColumn()
-    public _id: string;
+    public _id: ObjectID;
 
     @Column()
     public title?: string;
