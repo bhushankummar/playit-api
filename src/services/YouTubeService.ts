@@ -2,6 +2,7 @@ import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
+import * as Boom from 'boom';
 import * as GoogleUtils from '../utils/GoogleUtils';
 import * as YouTubeUtils from '../utils/YouTubeUtils';
 import { google } from 'googleapis';
@@ -21,6 +22,8 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next();
   } else if (_.isEmpty(req.userStore)) {
     return next();
+  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+    return next(Boom.notFound('No Refresh Token has been set.'));
   } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
     return next();
   } else if (_.isEmpty(req.playlistStore.urlId) === true) {
