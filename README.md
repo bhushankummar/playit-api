@@ -27,6 +27,7 @@ export FRONT_END_URL=http://localhost:4200
 export FFPROBE_PATH=./node_modules/ffmpeg-static/ffmpeg
 export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
+export DOWNLOAD_ATTEMPT=5;
 export LC_ALL=en_US.UTF-8
 export GOOGLE_CLIENT_ID=YourClientId
 export GOOGLE_CLIENT_SECRET=YourClientSecret

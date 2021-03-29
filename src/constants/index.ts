@@ -14,7 +14,8 @@ export const APP = {
   FFPROBE_PATH: process.env.FFPROBE_PATH,
   IS_SANDBOX: false,
   DOWNLOAD_AUDIO_CONCURRENCY: 3,
-  DOWNLOAD_VIDEO_CONCURRENCY: 3
+  DOWNLOAD_VIDEO_CONCURRENCY: 3,
+  DOWNLOAD_ATTEMPT: 2
 };
 
 if (!_.isEmpty(process.env.DOWNLOAD_AUDIO_CONCURRENCY)) {
@@ -28,6 +29,14 @@ if (!_.isEmpty(process.env.DOWNLOAD_AUDIO_CONCURRENCY)) {
 if (!_.isEmpty(process.env.DOWNLOAD_VIDEO_CONCURRENCY)) {
   try {
     APP.DOWNLOAD_VIDEO_CONCURRENCY = parseInt(process.env.DOWNLOAD_VIDEO_CONCURRENCY, 10);
+  } catch (exception) {
+    debug('exception ', exception);
+  }
+}
+
+if (!_.isEmpty(process.env.DOWNLOAD_ATTEMPT)) {
+  try {
+    APP.DOWNLOAD_ATTEMPT = parseInt(process.env.DOWNLOAD_ATTEMPT, 10);
   } catch (exception) {
     debug('exception ', exception);
   }
@@ -54,11 +63,6 @@ export const USER_ROLES = {
     id: '1',
     name: 'ADMIN'
   }
-};
-
-export const SORT_BY = {
-  ASCENDING_ORDER: 'ASC',
-  DESCENDING_ORDER: 'DESC'
 };
 
 export const GOOGLE_AUTH = {
