@@ -189,20 +189,20 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
     const playlistModel = getMongoRepository(PlaylistEntity);
-    const whereCondition = {
-      $or: [
-        {
-          lastSyncTimeStamp: {
-            $lt: moment().subtract(2, 'minutes').toISOString()
-          }
-        },
-        {
-          lastSyncTimeStamp: undefined
-        }
-      ]
-    };
+    // const whereCondition = {
+    //   $or: [
+    //     {
+    //       lastSyncTimeStamp: {
+    //         $lt: moment().subtract(2, 'minutes').toISOString()
+    //       }
+    //     },
+    //     {
+    //       lastSyncTimeStamp: undefined
+    //     }
+    //   ]
+    // };
     const options: FindOneOptions<PlaylistEntity> = {
-      where: whereCondition,
+      // where: whereCondition,
       order: {
         lastSyncTimeStamp: 'ASC'
       }
@@ -305,19 +305,20 @@ export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRe
 export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
+  } else if (_.isEmpty(req.playlistStore)) {
+    return next();
+  } else if (_.isEmpty(req.googleDriveFileStore)) {
+    return next();
+  } else if (_.isEmpty(req.youTubePlaylistStore)) {
+    return next(Boom.notFound('This is not a valid playlist, Please try again.'));
   }
   try {
-    if (_.isEmpty(req.youTubePlaylistStore)) {
-      return next(Boom.notFound('This is not a valid playlist, Please try again.'));
-    }
-
     const playlistModel = getMongoRepository(PlaylistEntity);
     const whereCondition: Partial<PlaylistEntity> = {
       _id: req.playlistStore._id
     };
 
     const updateData: Partial<PlaylistEntity> = {
-      // lastSyncTimeStamp: moment().toISOString(),
       url: req.youTubePlaylistStore.url,
       title: req.youTubePlaylistStore.title,
       urlId: req.youTubePlaylistStore.id,
