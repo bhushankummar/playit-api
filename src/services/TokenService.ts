@@ -3,7 +3,6 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import * as crypt from 'crypto';
 import { v4 as uuidv4 } from 'uuid';
 import { TokenEntity } from '../entities/TokenEntity';
 import { getMongoRepository } from 'typeorm';
