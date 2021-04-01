@@ -13,6 +13,11 @@ const debug = Debug('PL:GoogleDriveService');
 export const createRootFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
+  } else if (_.isEmpty(req.userStore.google)) {
+    debug('CRITICAL : req.userStore.google is empty %o ', req.userStore.google);
+    return next(Boom.notFound('Google oAuth is empty.'));
+  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+    return next(Boom.notFound('Refresh Token is empty.'));
   }
   try {
     const query = 'name = "DriveSyncFiles"';
@@ -37,11 +42,11 @@ export const createRootFolder: express.RequestHandler = async (req: IRequest, re
       req.googleDriveFileStore = response.data;
     }
     // debug('Folder has been created ', req.googleDriveFileStore);
+    return next();
   } catch (error) {
     debug('createRootFolder error ', error);
     return next(error);
   }
-  return next();
 };
 
 /**
