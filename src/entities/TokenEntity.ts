@@ -1,16 +1,17 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { ObjectID } from 'mongodb'
+import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
+
 
 class User {
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public id: string;
 }
 
 @Entity('tokens')
 export class TokenEntity {
 
-    @ObjectIdColumn()
-    public _id: ObjectID;
+    @Column()
+    @Generated('uuid')
+    public id: string;
 
     @Column()
     public token: string;

@@ -1,5 +1,5 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { ObjectID } from 'mongodb'
+import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+
 
 class Google {
     @Column()
@@ -24,8 +24,8 @@ class Google {
 @Entity('users')
 export class UserEntity {
 
-    @ObjectIdColumn()
-    public _id: ObjectID;
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
     @Index({ unique: true })
     @Column()

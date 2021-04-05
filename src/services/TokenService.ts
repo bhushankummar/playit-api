@@ -32,7 +32,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
     token.token = loginToken;
     token.timestamp = new Date();
     token.user = {
-      _id: req.userStore._id
+      id: req.userStore.id
     };
     const tokenModel = getMongoRepository(TokenEntity);
     req.tokenStore = await tokenModel.save(token);
@@ -79,7 +79,7 @@ export const deleteTokenById: express.RequestHandler = async (req: IRequest, res
     const tokenModel = getMongoRepository(TokenEntity);
 
     const whereCondition = {
-      _id: tokenStore._id
+      id: tokenStore.id
     };
     await tokenModel.deleteOne(whereCondition);
   } catch (error) {

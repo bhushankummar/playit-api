@@ -1,10 +1,10 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
-import { ObjectID } from 'mongodb'
+import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+
 
 class User {
 
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public id: string;
 
     @Column({ nullable: false })
     public email: string;
@@ -12,7 +12,7 @@ class User {
 
 class Playlist {
     @ObjectIdColumn()
-    public _id: ObjectID;
+    public id: string;
 
     @Column()
     public title?: string;
@@ -27,11 +27,11 @@ export class MediaError {
 }
 
 @Entity('mediaItems')
-@Index(['user._id', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
+@Index(['user.id', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
 export class MediaItemEntity {
 
-    @ObjectIdColumn()
-    public _id: ObjectID;
+    @PrimaryGeneratedColumn('uuid')
+    public id: string;
 
     @Column(type => User)
     public user: User;

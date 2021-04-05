@@ -38,7 +38,7 @@ export const passport = new bearerStrategy({
   }
   try {
     const searchCondition = {
-      _id: tokenDocument.user._id
+      id: tokenDocument.user.id
     };
     const userModel = getMongoRepository(UserEntity);
     userDocument = await userModel.findOne(searchCondition);

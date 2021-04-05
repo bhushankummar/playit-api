@@ -65,24 +65,6 @@ export const uploadFile = (driveParentFolderId: string, localFilePath: string, g
   });
 };
 
-export const emptyTrash = (googleCredentials: any) => {
-  return new Promise((resolve: any, reject: any) => {
-    const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-    oauth2Client.setCredentials(googleCredentials);
-    const drive = google.drive({ version: 'v3', auth: oauth2Client });
-    drive.files.emptyTrash((error: any, response: any) => {
-      if (error && error.errors) {
-        // debug('emptyTrash error ', error);
-        return reject(error.errors);
-      } else if (error) {
-        // debug('emptyTrash error ', error);
-        return reject(error);
-      }
-      return resolve(response);
-    });
-  });
-};
-
 export const removeFile = (googleCredentials: any, fileId: string) => {
   return new Promise((resolve: any, reject: any) => {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();

@@ -9,16 +9,6 @@ const youtubedl = require('youtube-dl');
 // const youtubedl = require('youtube-dl-exec');
 const debug = Debug('PL:MediaDownload');
 
-// const YOUTUBEDL_OPTIONS = {
-//   dumpJson: true,
-//   noWarnings: true,
-//   noCallHome: true,
-//   noCheckCertificate: true,
-//   preferFreeFormats: true,
-//   youtubeSkipDashManifest: true,
-//   referer: 'https://example.com'
-// };
-
 export const downloadMedia = (options: any[], extension: string, item: MediaItemEntity, driveDirectory: any) => {
   return new Promise((resolve: any, reject: any) => {
     const mediaUrl = item.url;

@@ -17,8 +17,8 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
   if (_.isEmpty(req.playlistStore)) {
     // debug('CRITICAL : Return from empty req.playlistStore');
     return next();
-  } else if (_.isEmpty(req.playlistStore._id)) {
-    debug('CRITICAL : Return from empty req.playlistStore._id');
+  } else if (_.isEmpty(req.playlistStore.id)) {
+    debug('CRITICAL : Return from empty req.playlistStore.id');
     return next();
   } else if (_.isEmpty(req.userStore)) {
     return next();
@@ -28,8 +28,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next();
   } else if (_.isEmpty(req.playlistStore.urlId) === true) {
     debug('CRITICAL : Return from empty req.playlistStore.urlId  ', req.playlistStore);
-    return next();
-  }
+    return next(Boom.notFound('Empty req.playlistStore.urlI.'));  }
   try {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     oauth2Client.setCredentials(req.userStore.google);

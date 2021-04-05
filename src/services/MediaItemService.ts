@@ -24,7 +24,7 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
     return next();
   }
   const userProfile = {
-    _id: req.userStore._id,
+    id: req.userStore.id,
     email: req.userStore.email
   };
   // debug('userProfile %o ', userProfile);
@@ -76,7 +76,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
     return next();
   }
   const userProfile = {
-    _id: req.userStore._id,
+    id: req.userStore.id,
     email: req.userStore.email
   };
   // debug('userProfile ', userProfile);
@@ -127,7 +127,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      * B - Not Available in google drive
      */
   const userProfile = {
-    _id: req.userStore._id,
+    id: req.userStore.id,
     email: req.userStore.email
   };
   _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
@@ -144,7 +144,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       type: req.playlistStore.type,
       playlistUrlId: req.youTubePlaylistStore.id,
       playlist: {
-        _id: req.playlistStore._id,
+        id: req.playlistStore.id,
         title: req.playlistStore.title
       },
       driveFolderId: req.playlistStore.driveFolderId
@@ -267,7 +267,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       };
       // const whereCondition = value;
       const whereCondition: Partial<MediaItemEntity> = {
-        _id: value._id
+        id: value.id
       };
       // debug('data ', data);
       // debug('whereCondition ', whereCondition);
@@ -339,45 +339,6 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
 /**
  * Search Media which has been not uploaded and also not downloaded yet
  */
-export const searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  if (_.isEmpty(req.userStore)) {
-    return next();
-  } else if (_.isEmpty(req.playlistStore)) {
-    return next();
-  }
-  const userProfile = {
-    _id: req.userStore._id,
-    email: req.userStore.email
-  };
-  // debug('userProfile ', userProfile);
-  try {
-    const whereCondition: Partial<MediaItemEntity> = {
-      user: userProfile,
-      playlistUrlId: req.playlistStore.urlId,
-      driveFolderId: req.playlistStore.driveFolderId,
-      isUploaded: false,
-      isDownloaded: false
-    }
-    const options: FindManyOptions<MediaItemEntity> = {
-      where: whereCondition,
-      order: {
-        lastDownloadTimeStamp: 'ASC'
-      },
-      take: 5
-    };
-    const mediaItemModel = getMongoRepository(MediaItemEntity);
-    req.mediaItemsStore = await mediaItemModel.find(options);
-    debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
-    return next();
-  } catch (error) {
-    debug('searchAllByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload error ', error);
-    return next(error);
-  }
-};
-
-/**
- * Search Media which has been not uploaded and also not downloaded yet
- */
 export const searchAllNotDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
     const whereCondition: FindManyOptions = {
@@ -423,8 +384,8 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
     try {
       const mediaItemModel = getMongoRepository(MediaItemEntity);
       const whereCondition: Partial<MediaItemEntity> = {
-        _id: value._id
-        // '_id': value._id
+        id: value.id
+        // 'id': value.id
       };
       // debug('whereCondition %o ', whereCondition);
       // debug('value %o ', value);
@@ -513,7 +474,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
   try {
     const mediaItemModel = getMongoRepository(MediaItemEntity);
     const whereCondition: Partial<MediaItemEntity> = {
-      _id: req.mediaStore._id
+      id: req.mediaStore.id
     };
     const count = (req.mediaStore.googleDriveUploadAttemptCount || 0) + 1;
     const updateData: Partial<MediaItemEntity> = {
