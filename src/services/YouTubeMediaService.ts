@@ -10,7 +10,7 @@ import * as MediaDownload from '../utils/MediaDownloadUtils';
 import { APP, AUDIO_DOWNLOAD_OPTIONS, MEDIA_DIRECTORY, MEDIA_TYPE, VIDEO_DOWNLOAD_OPTIONS } from '../constants';
 import { MediaItemEntity, MediaError } from '../entities/MediaItemEntity';
 
-const debug = Debug('PL:YouTubeService');
+const debug = Debug('PL:YouTubeMediaService');
 
 /**
  * Download HQ Audio/Video using URL

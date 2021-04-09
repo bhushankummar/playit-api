@@ -1,22 +1,5 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
-
-
-class User {
-
-    @ObjectIdColumn()
-    public id: string;
-
-    @Column({ nullable: false })
-    public email: string;
-}
-
-class Playlist {
-    @ObjectIdColumn()
-    public id: string;
-
-    @Column()
-    public title?: string;
-}
+import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
 export class MediaError {
     @Column({ nullable: false })
@@ -27,14 +10,8 @@ export class MediaError {
 }
 
 @Entity('mediaItems')
-@Index(['user.id', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
-export class MediaItemEntity {
-
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
-
-    @Column(type => User)
-    public user: User;
+@Index(['userId', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
+export class MediaItemEntity extends BaseEntity {
 
     @Column({ nullable: false })
     public url: string;
@@ -48,8 +25,11 @@ export class MediaItemEntity {
     @Column({ nullable: false })
     public playlistUrlId: string;
 
-    @Column(type => Playlist)
-    public playlist: Playlist;
+    @Column('uuid')
+    public playlistId: string;
+
+    @Column('uuid')
+    public userId: string;
 
     @Column({ nullable: false })
     public type: string;

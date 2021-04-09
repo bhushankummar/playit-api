@@ -23,13 +23,9 @@ export const searchAllByLoggedInUser: express.RequestHandler = async (req: IRequ
     debug('CRITICAL: req.userStore is empty.');
     return next();
   }
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
   // debug('userProfile %o ', userProfile);
   const whereCondition: Partial<MediaItemEntity> = {};
-  whereCondition.user = userProfile;
+  whereCondition.userId = req.userStore.id;
   if (params.isUploaded !== undefined) {
     whereCondition.isUploaded = params.isUploaded;
   }
@@ -75,14 +71,9 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
   } else if (_.isEmpty(req.playlistStore)) {
     return next();
   }
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
-  // debug('userProfile ', userProfile);
   try {
     const whereCondition: Partial<MediaItemEntity> = {
-      user: userProfile,
+      userId: req.userStore.id,
       playlistUrlId: req.playlistStore.urlId,
       driveFolderId: req.playlistStore.driveFolderId
     };
@@ -126,10 +117,6 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      * A - Available in google drive
      * B - Not Available in google drive
      */
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
   _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
     let extension = 'mp4';
     if (req.playlistStore.type === '0') {
@@ -137,16 +124,13 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     }
     const mediaTitle = YtplUtils.prepareFileName(value, extension);
     const data: Partial<MediaItemEntity> = {
-      user: userProfile,
+      userId: req.userStore.id,
       title: mediaTitle,
       url: value.url,
       urlId: value.id,
       type: req.playlistStore.type,
       playlistUrlId: req.youTubePlaylistStore.id,
-      playlist: {
-        id: req.playlistStore.id,
-        title: req.playlistStore.title
-      },
+      playlistId: req.playlistStore.id,
       driveFolderId: req.playlistStore.driveFolderId
     };
 

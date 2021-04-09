@@ -1,24 +1,16 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
 import moment = require('moment');
-
-
-class User {
-  @ObjectIdColumn()
-  public id: string;
-
-  @Column()
-  public email?: string;
-}
+import { BaseEntity } from './BaseEntity';
 
 @Entity('playlists')
 @Index(['user.id', 'urlId', 'type'], { unique: true })
-export class PlaylistEntity {
+export class PlaylistEntity extends BaseEntity {
 
   @PrimaryGeneratedColumn('uuid')
   public id: string;
 
-  @Column(type => User)
-  public user: User;
+  @Column('uuid')
+  public userId: string;
 
   @Column()
   public url: string;
@@ -44,10 +36,4 @@ export class PlaylistEntity {
     default: moment().toISOString()
   })
   public lastUploadTimeStamp: Date;
-
-  @CreateDateColumn()
-  public createdDate: string;
-
-  @UpdateDateColumn()
-  public updatedDate: string;
 }

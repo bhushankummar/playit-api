@@ -1,17 +1,8 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
-
-
-class User {
-    @ObjectIdColumn()
-    public id: string;
-}
+import { Column, Entity,  CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
 @Entity('tokens')
-export class TokenEntity {
-
-    @Column()
-    @Generated('uuid')
-    public id: string;
+export class TokenEntity extends BaseEntity {
 
     @Column()
     public token: string;
@@ -19,8 +10,8 @@ export class TokenEntity {
     @Column()
     public timestamp: Date;
 
-    @Column(type => User)
-    public user: User;
+    @Column('uuid')
+    public userId: string;
 
     @CreateDateColumn()
     public createdDate: string;

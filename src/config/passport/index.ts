@@ -33,12 +33,12 @@ export const passport = new bearerStrategy({
   }
   if (_.isEmpty(tokenDocument)) {
     return callback(new Boom('You are unauthorized User.'), { statusCode: 401 });
-  } else if (_.isEmpty(tokenDocument.user)) {
+  } else if (_.isEmpty(tokenDocument.userId)) {
     return callback(new Boom('You are unauthorized User.'), { statusCode: 401 });
   }
   try {
     const searchCondition = {
-      id: tokenDocument.user.id
+      id: tokenDocument.userId
     };
     const userModel = getMongoRepository(UserEntity);
     userDocument = await userModel.findOne(searchCondition);

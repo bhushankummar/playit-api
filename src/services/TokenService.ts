@@ -31,9 +31,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
     const token: TokenEntity = new TokenEntity();
     token.token = loginToken;
     token.timestamp = new Date();
-    token.user = {
-      id: req.userStore.id
-    };
+    token.userId = req.userStore.id;
     const tokenModel = getMongoRepository(TokenEntity);
     req.tokenStore = await tokenModel.save(token);
     return next();

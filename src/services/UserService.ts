@@ -92,16 +92,13 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
   if (_.isEmpty(req.playlistStore)) {
     // debug('Empty req.playlistStore');
     return next();
-  } else if (_.isEmpty(req.playlistStore.user)) {
-    // debug('Empty req.playlistStore.user');
-    return next();
-  } else if (_.isEmpty(req.playlistStore.user.id)) {
+  } else if (_.isEmpty(req.playlistStore.userId)) {
     debug('CRITICAL : req.playlistStore.user.id is empty %o ', req.playlistStore);
     return next();
   }
   try {
     const whereCondition: Partial<UserEntity> = {
-      id: req.playlistStore.user.id
+      id: req.playlistStore.userId
     };
     const userModel = getMongoRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
@@ -120,16 +117,13 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
 export const searchOneByMediaItemUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.mediaStore)) {
     return next();
-  } else if (_.isEmpty(req.mediaStore.user)) {
-    debug('CRITICAL : req.mediaStore.user is empty %o ', req.mediaStore.user);
-    return next();
-  } else if (_.isEmpty(req.mediaStore.user.id)) {
-    debug('CRITICAL : req.mediaStore.user.id is empty %o ', req.mediaStore);
+  } else if (_.isEmpty(req.mediaStore.userId)) {
+    debug('CRITICAL : req.mediaStore.userId is empty %o ', req.mediaStore.userId);
     return next();
   }
   try {
     const whereCondition: Partial<UserEntity> = {
-      id: req.mediaStore.user.id
+      id: req.mediaStore.userId
     };
     const userModel = getMongoRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);

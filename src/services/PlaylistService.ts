@@ -39,10 +39,7 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
   } else if (_.isEmpty(req.playlistStore) === false) {
     return next(Boom.notFound('This playlist has been already added.'));
   }
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
+
   try {
     if (_.isEmpty(req.youTubePlaylistStore)) {
       return next(Boom.notFound('This is not a valid playlist, Please try again.'));
@@ -53,7 +50,7 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
     playlist.title = req.youTubePlaylistStore.title;
     playlist.urlId = req.youTubePlaylistStore.id;
 
-    playlist.user = userProfile;
+    playlist.userId = req.userStore.id;
     playlist.type = params.type;
     playlist.driveFolderId = params.driveFolderId;
     if (_.isEmpty(params.driveFolderId)) {
@@ -64,11 +61,11 @@ export const addPlaylist: express.RequestHandler = async (req: IRequest, res: ex
     const playlistModel = getMongoRepository(PlaylistEntity);
     await playlistModel.save(playlist);
     req.playlistStore = playlist;
+    return next();
   } catch (error) {
     debug('addPlaylist error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -78,14 +75,10 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
   if (_.isEmpty(req.userStore)) {
     return next(Boom.notFound('Invalid User'));
   }
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
   // debug('userProfile ', userProfile);
   try {
     const whereCondition: Partial<PlaylistEntity> = {
-      user: userProfile
+      userId: req.userStore.id
     };
     const options: FindManyOptions<PlaylistEntity> = {
       where: whereCondition,
@@ -95,11 +88,11 @@ export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, r
     };
     const playlistModel = getMongoRepository(PlaylistEntity);
     req.playlistItemStore = await playlistModel.find(options);
+    return next();
   } catch (error) {
     debug('searchAllPlaylist error ', error);
     return next(Boom.notFound(error));
   }
-  return next();
 };
 
 /**
@@ -111,13 +104,9 @@ export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (
     return next(Boom.notFound('Invalid User'));
   }
   const playlistModel = getMongoRepository(PlaylistEntity);
-  const userProfile = {
-    id: req.userStore.id,
-    email: req.userStore.email
-  };
   try {
     const whereCondition: Partial<PlaylistEntity> = {
-      user: userProfile,
+      userId: req.userStore.id,
       urlId: params.playlistUrl
     };
     // debug('whereCondition ', whereCondition);
@@ -140,13 +129,9 @@ export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req
   }
   try {
     const playlistModel = getMongoRepository(PlaylistEntity);
-    const userProfile = {
-      id: req.userStore.id,
-      email: req.userStore.email
-    };
     const playlistIdObjectId = utils.toObjectId(params.playlistId);
     const whereCondition: Partial<PlaylistEntity> = {
-      user: userProfile,
+      userId: req.userStore.id,
       id: playlistIdObjectId
     };
     // debug('whereCondition ', whereCondition);

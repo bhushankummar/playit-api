@@ -1,4 +1,5 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, CreateDateColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
 
 class Google {
@@ -22,10 +23,7 @@ class Google {
 }
 
 @Entity('users')
-export class UserEntity {
-
-    @PrimaryGeneratedColumn('uuid')
-    public id: string;
+export class UserEntity extends BaseEntity {
 
     @Index({ unique: true })
     @Column()
