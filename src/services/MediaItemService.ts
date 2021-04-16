@@ -209,7 +209,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
 export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next();
   } else if (_.isEmpty(req.playlistStore)) {
     return next();

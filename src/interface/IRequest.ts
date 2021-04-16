@@ -1,5 +1,5 @@
 import { Request } from 'express';
-import { GoogleEntity, UserEntity } from '../entities/UserEntity';
+import { UserEntity } from '../entities/UserEntity';
 import { TokenEntity } from '../entities/TokenEntity';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
@@ -14,7 +14,7 @@ export interface IRequest extends Request {
     playlistItemStore: PlaylistEntity[];
     youTubeStore: any;
     youTubePlaylistStore: any;
-    googleStore: Credentials;
+    googleStore: any;
     mediaStore: MediaItemEntity;
     mediaItemsStore: MediaItemEntity[];
     googleProfileStore: any;
