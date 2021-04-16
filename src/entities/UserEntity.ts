@@ -8,7 +8,7 @@ export class UserEntity extends BaseEntity {
     @Column()
     public email: string;
 
-    @Column()
+    @Column({ nullable: true })
     public googleDriveParentId: string;
 
     @Column({ nullable: false })
@@ -26,7 +26,7 @@ export class UserEntity extends BaseEntity {
     @Column()
     public id_token: string;
 
-    @Column()
+    @Column({type: 'bigint'})
     public expiry_date: number;
 }
 
