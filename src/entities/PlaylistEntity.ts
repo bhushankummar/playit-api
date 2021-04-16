@@ -1,13 +1,10 @@
-import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import moment = require('moment');
 import { BaseEntity } from './BaseEntity';
 
 @Entity('playlists')
 @Index(['user.id', 'urlId', 'type'], { unique: true })
 export class PlaylistEntity extends BaseEntity {
-
-  @PrimaryGeneratedColumn('uuid')
-  public id: string;
 
   @Column('uuid')
   public userId: string;

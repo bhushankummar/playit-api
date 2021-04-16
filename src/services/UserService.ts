@@ -1,7 +1,6 @@
 import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
-import * as Boom from 'boom';
 import * as _ from 'lodash';
 import { UserEntity } from '../entities/UserEntity';
 import { getMongoRepository } from 'typeorm';

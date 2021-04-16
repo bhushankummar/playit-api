@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 export class MediaError {

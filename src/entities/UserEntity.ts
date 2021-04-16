@@ -1,4 +1,4 @@
-import { Column, Entity, CreateDateColumn, UpdateDateColumn, Index, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 

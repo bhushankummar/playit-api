@@ -1,4 +1,4 @@
-import { Column, Entity,  CreateDateColumn, UpdateDateColumn, PrimaryGeneratedColumn, Generated } from 'typeorm';
+import { Column, Entity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 @Entity('tokens')
