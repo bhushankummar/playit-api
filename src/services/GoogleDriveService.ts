@@ -13,16 +13,16 @@ const debug = Debug('PL:GoogleDriveService');
 export const createRootFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
-    debug('CRITICAL : req.userStore.google is empty %o ', req.userStore.google);
+  } else if (_.isEmpty(req.userStore.access_token)) {
+    debug('CRITICAL : req.userStore.google is empty %o ', req.userStore);
     return next(Boom.notFound('Google oAuth is empty.'));
-  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next(Boom.notFound('Refresh Token is empty.'));
   }
   try {
     const query = 'name = "DriveSyncFiles"';
     // const query = 'name = "DriveSyncFiles" in parents and trashed=false';
-    const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
+    const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore, query);
     if (folderResponse && folderResponse.data) {
       // debug('folderResponse.data ', folderResponse);
       // debug('folderResponse.data ', folderResponse.data);
@@ -37,7 +37,7 @@ export const createRootFolder: express.RequestHandler = async (req: IRequest, re
         return next();
       }
     }
-    const response: any = await GoogleDrive.createFolder('', 'DriveSyncFiles', req.userStore.google);
+    const response: any = await GoogleDrive.createFolder('', 'DriveSyncFiles', req.userStore);
     if (response && response.data) {
       req.googleDriveFileStore = response.data;
     }
@@ -58,10 +58,10 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
   } else if (_.isEmpty(req.userStore)) {
     debug('CRITICAL : req.userStore is empty %o ', req.userStore);
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
-    debug('CRITICAL : req.userStore.google is empty %o ', req.userStore.google);
+  } else if (_.isEmpty(req.userStore.access_token)) {
+    debug('CRITICAL : req.userStore.google is empty %o ', req.userStore);
     return next();
-  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next();
   }
   try {
@@ -71,7 +71,7 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
       return next();
     }
     debug('Start uploading %o ', req.mediaStore.title);
-    const response: any = await GoogleDrive.uploadFile(req.mediaStore.driveFolderId, req.mediaStore.localFilePath, req.userStore.google);
+    const response: any = await GoogleDrive.uploadFile(req.mediaStore.driveFolderId, req.mediaStore.localFilePath, req.userStore);
     if (response && response.data) {
       req.googleDriveFileStore = response.data;
       try {
@@ -97,9 +97,9 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
 export const searchAllFiles: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
+  } else if (_.isEmpty(req.userStore.access_token)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next();
   } else if (_.isEmpty(req.playlistStore)) {
     debug('CRITICAL : Empty req.playlistStore');
@@ -110,7 +110,7 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
     let nextPageToken = '';
     let files: any[] = [];
     do {
-      const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore.google, folderId, nextPageToken);
+      const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore, folderId, nextPageToken);
       if (response && response.data) {
         // debug('response.data.nextPageToken ', response.data.nextPageToken);
         nextPageToken = response.data.nextPageToken || '';
@@ -142,7 +142,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
   // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
   try {
     const query = `name = "${req.youTubePlaylistStore.title}"`;
-    const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore.google, query);
+    const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore, query);
     if (folderResponse && folderResponse.data) {
       // debug('folderResponse.data ', folderResponse);
       // debug('folderResponse.data ', folderResponse.data);
@@ -161,7 +161,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
       req.userStore.googleDriveParentId,
       req.youTubePlaylistStore.title,
-      req.userStore.google
+      req.userStore
     );
     if (responseNewGoogleFolder && responseNewGoogleFolder.data) {
       req.googleDriveFileStore = responseNewGoogleFolder.data;
@@ -180,7 +180,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
 export const removeFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
+  } else if (_.isEmpty(req.userStore.access_token)) {
     return next();
   } else if (_.isEmpty(req.playlistStore)) {
     debug('CRITICAL : Empty req.playlistStore');
@@ -188,7 +188,7 @@ export const removeFolder: express.RequestHandler = async (req: IRequest, res: e
   }
   try {
     const folderId = req.playlistStore.driveFolderId;
-    const response: any = await GoogleDrive.removeFile(req.userStore.google, folderId);
+    const response: any = await GoogleDrive.removeFile(req.userStore, folderId);
     if (response && response.data) {
       // debug('response.data ', response.data);
       req.googleDriveStore = response.data;

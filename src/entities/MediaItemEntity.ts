@@ -1,4 +1,4 @@
-import { Column, CreateDateColumn, Entity,  UpdateDateColumn, Index } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 export class MediaError {
@@ -47,10 +47,10 @@ export class MediaItemEntity extends BaseEntity {
     public isDownloaded: boolean;
 
     @Column({ default: 0 })
-    public downloadAttemptCount = 0;
+    public downloadAttemptCount: number;
 
     @Column({ default: 0 })
-    public googleDriveUploadAttemptCount = 0;
+    public googleDriveUploadAttemptCount: number;
 
     @Column()
     public lastDownloadTimeStamp: Date;
@@ -58,15 +58,9 @@ export class MediaItemEntity extends BaseEntity {
     @Column()
     public lastUploadTimeStamp: Date;
 
-    @Column()
+    @Column({ type: 'json' })
     public errors: MediaError[];
 
     @Column()
     public localFilePath: string;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
 }

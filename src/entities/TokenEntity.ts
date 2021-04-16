@@ -1,4 +1,4 @@
-import { Column, Entity, CreateDateColumn, UpdateDateColumn } from 'typeorm';
+import { Column, Entity } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
 @Entity('tokens')
@@ -12,10 +12,4 @@ export class TokenEntity extends BaseEntity {
 
     @Column('uuid')
     public userId: string;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
 }

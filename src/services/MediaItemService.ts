@@ -209,7 +209,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
 export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
+  } else if (_.isEmpty(req.userStore)) {
     return next();
   } else if (_.isEmpty(req.playlistStore)) {
     return next();
@@ -269,7 +269,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         debug('mediaItemsRemove : File Id is empty. ', value);
         return;
       }
-      await GoogleDrive.removeFile(req.userStore.google, value.fileId);
+      await GoogleDrive.removeFile(req.userStore, value.fileId);
     } catch (error) {
       if (error && error.errors) {
         debug('mediaItemsRemove from google drive error ', error.errors);
@@ -307,7 +307,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         debug('googleDriveItemsRemove File Id is empty.', value);
         return;
       }
-      await GoogleDrive.removeFile(req.userStore.google, value.id);
+      await GoogleDrive.removeFile(req.userStore, value.id);
     } catch (error) {
       if (error && error.errors) {
         debug('googleDriveItemsRemove error ', error.errors);

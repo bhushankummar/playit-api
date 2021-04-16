@@ -22,7 +22,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next();
   } else if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google.refresh_token)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next(Boom.notFound('No Refresh Token has been set.'));
   } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
     return next();
@@ -31,7 +31,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next(Boom.notFound('Empty req.playlistStore.urlI.'));  }
   try {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-    oauth2Client.setCredentials(req.userStore.google);
+    oauth2Client.setCredentials(req.userStore);
     const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
     const playListItemsData = {
       part: ['snippet'],
@@ -81,7 +81,7 @@ export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, r
   }
   try {
     const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(
-      params.playlistUrl, req.userStore.google);
+      params.playlistUrl, req.userStore);
     // debug('youTubePlaylistStore ', youTubePlaylistStore);
     req.youTubePlaylistStore = youTubePlaylistStore;
     return next();
@@ -100,7 +100,7 @@ export const getPlaylistDetailUsingPlaylistUrl: express.RequestHandler = async (
     return next();
   }
   try {
-    const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(req.playlistStore.urlId, req.userStore.google);
+    const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(req.playlistStore.urlId, req.userStore);
     // debug('youTubePlaylistStore ', youTubePlaylistStore);
     req.youTubePlaylistStore = youTubePlaylistStore;
     return next();

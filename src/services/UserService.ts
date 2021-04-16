@@ -40,7 +40,14 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
   try {
     const user: UserEntity = new UserEntity();
     user.email = req.googleProfileStore.emailAddresses[0].value;
-    user.google = req.googleStore;
+
+    user.access_token = req.googleStore.access_token;
+    user.expiry_date = req.googleStore.expiry_date;
+    user.id_token = req.googleStore.id_token;
+    user.refresh_token = req.googleStore.refresh_token;
+    user.scope = req.googleStore.scope;
+    user.token_type = req.googleStore.token_type;
+
     const userModel = getMongoRepository(UserEntity);
     const document = await userModel.save(user);
     req.userStore = document;
@@ -68,11 +75,9 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
     const whereCondition: Partial<UserEntity> = {
       id: stateObjectId
     };
-    const googleStore = _.merge(req.userStore.google, req.googleStore);
+    const updatedUserData = _.merge(req.userStore, req.googleStore);
     // debug('merged googleStore ', googleStore);
-    const userData = {
-      google: googleStore
-    };
+    const userData: Partial<UserEntity> = updatedUserData;
     const userModel = getMongoRepository(UserEntity);
     await userModel.update(whereCondition, userData);
     // debug('response ', response);
