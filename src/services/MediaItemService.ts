@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getRepository, FindManyOptions } from 'typeorm';
+import { getRepository, FindManyOptions, MoreThan, LessThan } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -325,28 +325,20 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
  */
 export const searchAllNotDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
-    const whereCondition: FindManyOptions = {
-      where: {
-        $or: [
-          {
-            downloadAttemptCount: {
-              $lt: 5
-            }
-          },
-          {
-            downloadAttemptCount: undefined
-          }
-        ],
-        isUploaded: false,
-        isDownloaded: false
-      },
+    const whereCondition = {
+      downloadAttemptCount: LessThan(5),
+      isUploaded: false,
+      isDownloaded: false
+    };
+    const options: FindManyOptions = {
+      where: whereCondition,
       order: {
         downloadAttemptCount: 'ASC'
       },
       take: 1
     };
     const mediaItemModel = getRepository(MediaItemEntity);
-    req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+    req.mediaItemsStore = await mediaItemModel.find(options);
     debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
     return next();
   } catch (error) {
@@ -402,16 +394,6 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
  */
 export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   const whereCondition: any = {
-    // $or: [
-    //     {
-    //         lastUploadTimeStamp: {
-    //             $lt: moment().subtract(1, 'minutes').toDate()
-    //         }
-    //     },
-    //     {
-    //         lastUploadTimeStamp: undefined
-    //     }
-    // ],
     $or: [
       {
         googleDriveUploadAttemptCount: {

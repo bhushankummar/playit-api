@@ -37,7 +37,7 @@ export class MediaItemEntity extends BaseEntity {
     @Column({ nullable: false })
     public driveFolderId: string;
 
-    @Column()
+    @Column({ nullable: true })
     public fileId: string;
 
     @Column({ default: false })
@@ -52,15 +52,15 @@ export class MediaItemEntity extends BaseEntity {
     @Column({ default: 0 })
     public googleDriveUploadAttemptCount: number;
 
-    @Column()
+    @Column({ nullable: true })
     public lastDownloadTimeStamp: Date;
 
-    @Column()
+    @Column({ nullable: true })
     public lastUploadTimeStamp: Date;
 
-    @Column({ type: 'json' })
+    @Column({ type: 'json', nullable: true })
     public errors: MediaError[];
 
-    @Column()
+    @Column({ nullable: true })
     public localFilePath: string;
 }
