@@ -5,7 +5,7 @@ import * as Boom from 'boom';
 import * as _ from 'lodash';
 import { v4 as uuidv4 } from 'uuid';
 import { TokenEntity } from '../entities/TokenEntity';
-import { getMongoRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 const debug = Debug('PL:TokenService');
 
@@ -32,7 +32,7 @@ export const createToken: express.RequestHandler = async (req: IRequest, res: ex
     token.token = loginToken;
     token.timestamp = new Date();
     token.userId = req.userStore.id;
-    const tokenModel = getMongoRepository(TokenEntity);
+    const tokenModel = getRepository(TokenEntity);
     req.tokenStore = await tokenModel.save(token);
     return next();
   } catch (error) {
@@ -54,7 +54,7 @@ export const searchOneByToken: express.RequestHandler = async (req: IRequest, re
     return next();
   }
   try {
-    const tokenModel = getMongoRepository(TokenEntity);
+    const tokenModel = getRepository(TokenEntity);
     const whereCondition = {
       token: authorization[1]
     };
@@ -74,12 +74,12 @@ export const deleteTokenById: express.RequestHandler = async (req: IRequest, res
     return next();
   }
   try {
-    const tokenModel = getMongoRepository(TokenEntity);
+    const tokenModel = getRepository(TokenEntity);
 
     const whereCondition = {
       id: tokenStore.id
     };
-    await tokenModel.deleteOne(whereCondition);
+    await tokenModel.delete(whereCondition);
   } catch (error) {
     return next(error);
   }

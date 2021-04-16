@@ -5,7 +5,7 @@ import * as moment from 'moment';
 import * as passportHttpBearer from 'passport-http-bearer';
 import { TokenEntity } from '../../entities/TokenEntity';
 import { UserEntity } from '../../entities/UserEntity';
-import { getMongoRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 import { IRequest } from '../../interface/IRequest';
 
 const debug = Debug('PL:Passport');
@@ -25,7 +25,7 @@ export const passport = new bearerStrategy({
     const whereCondition = {
       token: token
     };
-    const tokenModel = getMongoRepository(TokenEntity);
+    const tokenModel = getRepository(TokenEntity);
     tokenDocument = await tokenModel.findOne(whereCondition);
   } catch (error) {
     debug('Error %o ', error);
@@ -40,7 +40,7 @@ export const passport = new bearerStrategy({
     const searchCondition = {
       id: tokenDocument.userId
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     userDocument = await userModel.findOne(searchCondition);
     // debug('userDocument ', userDocument);
   } catch (error) {

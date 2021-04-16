@@ -3,7 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as _ from 'lodash';
 import { UserEntity } from '../entities/UserEntity';
-import { getMongoRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 const debug = Debug('PL:UserService');
 
@@ -20,7 +20,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
     const whereCondition: Partial<UserEntity> = {
       email: params.email
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', req.userStore);
     return next();
@@ -48,7 +48,8 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
     user.scope = req.googleStore.scope;
     user.token_type = req.googleStore.token_type;
 
-    const userModel = getMongoRepository(UserEntity);
+    // const userModel = getRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     const document = await userModel.save(user);
     req.userStore = document;
     return next();
@@ -78,7 +79,7 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
     const updatedUserData = _.merge(req.userStore, req.googleStore);
     // debug('merged googleStore ', googleStore);
     const userData: Partial<UserEntity> = updatedUserData;
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     await userModel.update(whereCondition, userData);
     // debug('response ', response);
     return next();
@@ -104,7 +105,7 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
     const whereCondition: Partial<UserEntity> = {
       id: req.playlistStore.userId
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', JSON.stringify(req.userStore, null, 2));
     return next();
@@ -129,7 +130,7 @@ export const searchOneByMediaItemUser: express.RequestHandler = async (req: IReq
     const whereCondition: Partial<UserEntity> = {
       id: req.mediaStore.userId
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     return next();
   } catch (error) {
@@ -152,7 +153,7 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
     const userData: Partial<UserEntity> = {
       googleDriveParentId: req.googleDriveFileStore.id
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     await userModel.update(whereCondition, userData);
     req.userStore.googleDriveParentId = req.googleDriveFileStore.id;
     return next();
@@ -171,7 +172,7 @@ export const searchOneByGoogleEmailAddress: express.RequestHandler = async (req:
     const whereCondition: any = {
       email: req.googleProfileStore.emailAddresses[0].value
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     return next();
   } catch (error) {
