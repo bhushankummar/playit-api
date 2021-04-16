@@ -1,8 +1,16 @@
-import { Column, Entity, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
+@Entity('users')
+export class UserEntity extends BaseEntity {
 
-class Google {
+    @Index({ unique: true })
+    @Column()
+    public email: string;
+
+    @Column()
+    public googleDriveParentId: string;
+
     @Column()
     public access_token: string;
 
@@ -20,24 +28,4 @@ class Google {
 
     @Column()
     public expiry_date: number;
-}
-
-@Entity('users')
-export class UserEntity extends BaseEntity {
-
-    @Index({ unique: true })
-    @Column()
-    public email: string;
-
-    @Column()
-    public google: Google;
-
-    @Column()
-    public googleDriveParentId: string;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
 }

@@ -3,7 +3,7 @@ import moment = require('moment');
 import { BaseEntity } from './BaseEntity';
 
 @Entity('playlists')
-@Index(['user.id', 'urlId', 'type'], { unique: true })
+@Index(['userId', 'urlId', 'type'], { unique: true })
 export class PlaylistEntity extends BaseEntity {
 
   @Column('uuid')
