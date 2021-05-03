@@ -26,14 +26,14 @@ export const cleanFileName = (fileName: string) => {
     'Best Lyric Video',
     'Best Video',
     'Official:',
+    '(Full Song)',
+    '[Full Song]',
     'Full Song',
     'Full Song:',
     'Full Audio:',
     'Full Video HD',
     'Full Video',
     'Full Video:',
-    '(Full Song)',
-    '[Full Song]',
     'Full Video Song',
     'Full HD Song',
     'Full Video HD',
@@ -41,14 +41,16 @@ export const cleanFileName = (fileName: string) => {
     '[Official Video]',
     '(Official Song)',
     '(Official Video)',
-    'Video',
     '(Video Song)',
+    'Video',
     '/r',
     '/',
     '\\',
     '"',
     '_',
-    '#'
+    '#',
+    '()',
+    '[]'
   ];
   // fileName = fileName.split(/'/g).join(' ');
   cleanWords.forEach((word: string) => {

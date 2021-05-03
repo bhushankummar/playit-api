@@ -80,7 +80,8 @@
           "nullable",
           "worstaudio",
           "uuidv4",
-          "referer"
+          "referer",
+          "timestamptz"
         ],
         "skipIfMatch": [
           "http://[^s]*",

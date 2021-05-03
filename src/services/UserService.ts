@@ -1,10 +1,9 @@
 import * as express from 'express';
 import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
-import * as Boom from 'boom';
 import * as _ from 'lodash';
 import { UserEntity } from '../entities/UserEntity';
-import { getMongoRepository } from 'typeorm';
+import { getRepository } from 'typeorm';
 
 const debug = Debug('PL:UserService');
 
@@ -21,7 +20,7 @@ export const searchOneByEmail: express.RequestHandler = async (req: IRequest, re
     const whereCondition: Partial<UserEntity> = {
       email: params.email
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', req.userStore);
     return next();
@@ -41,8 +40,16 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
   try {
     const user: UserEntity = new UserEntity();
     user.email = req.googleProfileStore.emailAddresses[0].value;
-    user.google = req.googleStore;
-    const userModel = getMongoRepository(UserEntity);
+
+    user.access_token = req.googleStore.access_token;
+    user.expiry_date = req.googleStore.expiry_date;
+    user.id_token = req.googleStore.id_token;
+    user.refresh_token = req.googleStore.refresh_token;
+    user.scope = req.googleStore.scope;
+    user.token_type = req.googleStore.token_type;
+
+    // const userModel = getRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     const document = await userModel.save(user);
     req.userStore = document;
     return next();
@@ -50,17 +57,6 @@ export const registerUser: express.RequestHandler = async (req: IRequest, res: e
     debug('registerUser error: %o ', error);
     return next(error);
   }
-};
-
-/**
- * Validate user login parameter
- */
-export const validateLoginUserData: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  const params = _.merge(req.params, req.body);
-  if (_.isEmpty(params.email)) {
-    return next(Boom.notFound('Please enter email.'));
-  }
-  return next();
 };
 
 /**
@@ -78,43 +74,17 @@ export const updateGoogleToken: express.RequestHandler = async (req: IRequest, r
     const stateObjectId = params.state;
     // debug('Inside updateGoogleToken stateObjectId', stateObjectId);
     const whereCondition: Partial<UserEntity> = {
-      _id: stateObjectId
+      id: stateObjectId
     };
-    const googleStore = _.merge(req.userStore.google, req.googleStore);
+    const updatedUserData = _.merge(req.userStore, req.googleStore);
     // debug('merged googleStore ', googleStore);
-    const userData = {
-      google: googleStore
-    };
-    const userModel = getMongoRepository(UserEntity);
+    const userData: Partial<UserEntity> = updatedUserData;
+    const userModel = getRepository(UserEntity);
     await userModel.update(whereCondition, userData);
     // debug('response ', response);
     return next();
   } catch (error) {
     debug('updateGoogleToken error ', error);
-    return next(error);
-  }
-};
-
-/**
- * Search user by email
- * @param: email
- */
-export const searchOneByState: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  const params = _.merge(req.params, req.body, req.query);
-  if (_.isEmpty(params.state) === true) {
-    return next();
-  }
-
-  try {
-    const stateObjectId = params.state;
-    const whereCondition: Partial<UserEntity> = {
-      _id: stateObjectId
-    };
-    const userModel = getMongoRepository(UserEntity);
-    req.userStore = await userModel.findOne(whereCondition);
-    return next();
-  } catch (error) {
-    debug('searchOneByState error ', error);
     return next(error);
   }
 };
@@ -127,18 +97,15 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
   if (_.isEmpty(req.playlistStore)) {
     // debug('Empty req.playlistStore');
     return next();
-  } else if (_.isEmpty(req.playlistStore.user)) {
-    // debug('Empty req.playlistStore.user');
-    return next();
-  } else if (_.isEmpty(req.playlistStore.user._id)) {
-    debug('CRITICAL : req.playlistStore.user._id is empty %o ', req.playlistStore);
+  } else if (_.isEmpty(req.playlistStore.userId)) {
+    debug('CRITICAL : req.playlistStore.user.id is empty %o ', req.playlistStore);
     return next();
   }
   try {
     const whereCondition: Partial<UserEntity> = {
-      _id: req.playlistStore.user._id
+      id: req.playlistStore.userId
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     // debug('req.userStore ', JSON.stringify(req.userStore, null, 2));
     return next();
@@ -155,18 +122,15 @@ export const searchOneByPlaylistUser: express.RequestHandler = async (req: IRequ
 export const searchOneByMediaItemUser: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.mediaStore)) {
     return next();
-  } else if (_.isEmpty(req.mediaStore.user)) {
-    debug('CRITICAL : req.mediaStore.user is empty %o ', req.mediaStore.user);
-    return next();
-  } else if (_.isEmpty(req.mediaStore.user._id)) {
-    debug('CRITICAL : req.mediaStore.user._id is empty %o ', req.mediaStore);
+  } else if (_.isEmpty(req.mediaStore.userId)) {
+    debug('CRITICAL : req.mediaStore.userId is empty %o ', req.mediaStore.userId);
     return next();
   }
   try {
     const whereCondition: Partial<UserEntity> = {
-      _id: req.mediaStore.user._id
+      id: req.mediaStore.userId
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     return next();
   } catch (error) {
@@ -184,12 +148,12 @@ export const updateRootDirectory: express.RequestHandler = async (req: IRequest,
   }
   try {
     const whereCondition: Partial<UserEntity> = {
-      _id: req.userStore._id
+      id: req.userStore.id
     };
     const userData: Partial<UserEntity> = {
       googleDriveParentId: req.googleDriveFileStore.id
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     await userModel.update(whereCondition, userData);
     req.userStore.googleDriveParentId = req.googleDriveFileStore.id;
     return next();
@@ -208,7 +172,7 @@ export const searchOneByGoogleEmailAddress: express.RequestHandler = async (req:
     const whereCondition: any = {
       email: req.googleProfileStore.emailAddresses[0].value
     };
-    const userModel = getMongoRepository(UserEntity);
+    const userModel = getRepository(UserEntity);
     req.userStore = await userModel.findOne(whereCondition);
     return next();
   } catch (error) {

@@ -50,8 +50,6 @@ userRoute.post('/google/me', passport.authenticate('bearer'), [
  * Login
  */
 userRoute.get('/login', [
-  // UserService.validateLoginUserData,
-  // UserService.searchOneByEmail,
   GoogleService.generatesAuthUrlForLogin,
   GoogleController.redirectToOAuth
 ]);

@@ -29,9 +29,9 @@ export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
 export DOWNLOAD_ATTEMPT=5;
 export LC_ALL=en_US.UTF-8
-export GOOGLE_CLIENT_ID=YourClientId
+export GOOGLE_CLIENTid=YourClientId
 export GOOGLE_CLIENT_SECRET=YourClientSecret
-export MONGO_URL=mongodb://yourmongo/playit-dev
+export DATABASE_URL=postgres://yourmongo/playit-dev
 ```
 
 ### Run the Application (Development Purpose Only)

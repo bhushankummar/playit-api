@@ -76,7 +76,7 @@ export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, 
     access_type: 'offline',
     scope: GOOGLE_AUTH.SCOPES
   });
-  req.googleStore = { url };
+  req.data = { url };
   return next();
 };
 
@@ -86,12 +86,12 @@ export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, 
 export const retrieveGoogleProfile: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
-  } else if (_.isEmpty(req.userStore.google)) {
+  } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next();
   }
   try {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-    oauth2Client.setCredentials(req.userStore.google);
+    oauth2Client.setCredentials(req.userStore);
     const people = google.people({
       version: 'v1',
       auth: oauth2Client,

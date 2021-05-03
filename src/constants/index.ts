@@ -6,7 +6,7 @@ import * as fs from 'fs';
 const debug = Debug('PL:Constant');
 
 export const DB = {
-  MONGO_URL: process.env.MONGO_URL
+  DATABASE_URL: process.env.DATABASE_URL
 };
 export const APP = {
   API_URL: process.env.API_URL,
@@ -66,7 +66,7 @@ export const USER_ROLES = {
 };
 
 export const GOOGLE_AUTH = {
-  CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
+  GOOGLE_CLIENT_ID: process.env.GOOGLE_CLIENT_ID,
   CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
   REDIRECT_URL: `${APP.API_URL}/api/v1/user/register/oauth/callback`,
   SCOPES: [
@@ -171,9 +171,9 @@ export const VIDEO_DOWNLOAD_OPTIONS = {
   2: ['--format=136']
 };
 
-if (_.isEmpty(DB.MONGO_URL)) {
+if (_.isEmpty(DB.DATABASE_URL)) {
   debug('----------------------------------------------------------------------------------- ');
-  debug('ERROR :  Please export DatabaseUrl : MONGO_URL ,If exported, Ignore');
+  debug('ERROR :  Please export DatabaseUrl : DATABASE_URL ,If exported, Ignore');
   debug('----------------------------------------------------------------------------------- ');
   process.exit(0);
 }

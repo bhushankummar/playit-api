@@ -1,25 +1,29 @@
-import { Connection, createConnection } from 'typeorm';
+import { Connection, ConnectionOptions, createConnection } from 'typeorm';
+import Debug from 'Debug';
 import { UserEntity } from '../../entities/UserEntity';
 import { TokenEntity } from '../../entities/TokenEntity';
 import { DB } from '../../constants';
 import { PlaylistEntity } from '../../entities/PlaylistEntity';
 import { MediaItemEntity } from '../../entities/MediaItemEntity';
 
-// const debug = Debug('PL:DB');
+const debug = Debug('PL:DB');
 
 export const init = async () => {
-  const connection: Connection = await createConnection({
-    type: 'mongodb',
-    url: DB.MONGO_URL,
+  const options: ConnectionOptions = {
+    type: 'postgres',
+    url: DB.DATABASE_URL,
     synchronize: true,
-    useNewUrlParser: true,
-    useUnifiedTopology: true,
     entities: [
       MediaItemEntity,
       PlaylistEntity,
       UserEntity,
       TokenEntity
     ]
-  });
-  return connection;
+  }
+  try {
+    const connection: Connection = await createConnection(options);
+    return connection;
+  } catch (error) {
+    debug('error ', error);
+  }
 };

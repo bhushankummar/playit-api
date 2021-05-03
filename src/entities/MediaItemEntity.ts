@@ -1,22 +1,5 @@
-import { Column, CreateDateColumn, Entity, ObjectIdColumn, UpdateDateColumn, Index } from 'typeorm';
-import { ObjectID } from 'mongodb'
-
-class User {
-
-    @ObjectIdColumn()
-    public _id: ObjectID;
-
-    @Column({ nullable: false })
-    public email: string;
-}
-
-class Playlist {
-    @ObjectIdColumn()
-    public _id: ObjectID;
-
-    @Column()
-    public title?: string;
-}
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
 export class MediaError {
     @Column({ nullable: false })
@@ -27,14 +10,8 @@ export class MediaError {
 }
 
 @Entity('mediaItems')
-@Index(['user._id', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
-export class MediaItemEntity {
-
-    @ObjectIdColumn()
-    public _id: ObjectID;
-
-    @Column(type => User)
-    public user: User;
+@Index(['userId', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
+export class MediaItemEntity extends BaseEntity {
 
     @Column({ nullable: false })
     public url: string;
@@ -48,8 +25,11 @@ export class MediaItemEntity {
     @Column({ nullable: false })
     public playlistUrlId: string;
 
-    @Column(type => Playlist)
-    public playlist: Playlist;
+    @Column('uuid')
+    public playlistId: string;
+
+    @Column('uuid')
+    public userId: string;
 
     @Column({ nullable: false })
     public type: string;
@@ -57,7 +37,7 @@ export class MediaItemEntity {
     @Column({ nullable: false })
     public driveFolderId: string;
 
-    @Column()
+    @Column({ nullable: true })
     public fileId: string;
 
     @Column({ default: false })
@@ -67,26 +47,20 @@ export class MediaItemEntity {
     public isDownloaded: boolean;
 
     @Column({ default: 0 })
-    public downloadAttemptCount = 0;
+    public downloadAttemptCount: number;
 
     @Column({ default: 0 })
-    public googleDriveUploadAttemptCount = 0;
+    public googleDriveUploadAttemptCount: number;
 
-    @Column()
+    @Column({ nullable: true })
     public lastDownloadTimeStamp: Date;
 
-    @Column()
+    @Column({ nullable: true })
     public lastUploadTimeStamp: Date;
 
-    @Column()
+    @Column({ type: 'json', nullable: true })
     public errors: MediaError[];
 
-    @Column()
+    @Column({ nullable: true })
     public localFilePath: string;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
 }

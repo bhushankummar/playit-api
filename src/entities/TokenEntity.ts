@@ -1,16 +1,8 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn } from 'typeorm';
-import { ObjectID } from 'mongodb'
-
-class User {
-    @ObjectIdColumn()
-    public _id: ObjectID;
-}
+import { Column, Entity } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
 @Entity('tokens')
-export class TokenEntity {
-
-    @ObjectIdColumn()
-    public _id: ObjectID;
+export class TokenEntity extends BaseEntity {
 
     @Column()
     public token: string;
@@ -18,12 +10,6 @@ export class TokenEntity {
     @Column()
     public timestamp: Date;
 
-    @Column(type => User)
-    public user: User;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
+    @Column('uuid')
+    public userId: string;
 }

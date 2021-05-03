@@ -44,6 +44,8 @@
         "passport": "^0.4.1",
         "passport-http-bearer": "^1.0.1",
         "path": "^0.12.7",
+        "pg": "^8.5.1",
+        "pg-hstore": "^2.3.3",
         "request": "^2.88.0",
         "request-promise": "^4.2.5",
         "typeorm": "^0.2.31",

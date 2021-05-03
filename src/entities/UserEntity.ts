@@ -1,7 +1,36 @@
-import { Column, Entity, ObjectIdColumn, CreateDateColumn, UpdateDateColumn, Index } from 'typeorm';
-import { ObjectID } from 'mongodb'
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
-class Google {
+@Entity('users')
+export class UserEntity extends BaseEntity {
+
+    @Index({ unique: true })
+    @Column()
+    public email: string;
+
+    @Column({ nullable: true })
+    public googleDriveParentId: string;
+
+    @Column({ nullable: false })
+    public access_token: string;
+
+    @Column({ nullable: false })
+    public refresh_token: string;
+
+    @Column()
+    public scope: string;
+
+    @Column()
+    public token_type: string;
+
+    @Column()
+    public id_token: string;
+
+    @Column({type: 'bigint'})
+    public expiry_date: number;
+}
+
+export class GoogleEntity {
     @Column()
     public access_token: string;
 
@@ -19,27 +48,4 @@ class Google {
 
     @Column()
     public expiry_date: number;
-}
-
-@Entity('users')
-export class UserEntity {
-
-    @ObjectIdColumn()
-    public _id: ObjectID;
-
-    @Index({ unique: true })
-    @Column()
-    public email: string;
-
-    @Column()
-    public google: Google;
-
-    @Column()
-    public googleDriveParentId: string;
-
-    @CreateDateColumn()
-    public createdDate: string;
-
-    @UpdateDateColumn()
-    public updatedDate: string;
 }
