@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getRepository, FindManyOptions, MoreThan, LessThan, WhereExpression } from 'typeorm';
+import { getRepository, FindManyOptions, LessThan } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
