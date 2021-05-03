@@ -25,5 +25,6 @@ export const init = async () => {
     return connection;
   } catch (error) {
     debug('error ', error);
+    process.exit(0);
   }
 };
