@@ -1,5 +1,5 @@
 import { Connection, ConnectionOptions, createConnection } from 'typeorm';
-import Debug from 'Debug';
+import Debug from 'debug';
 import { UserEntity } from '../../entities/UserEntity';
 import { TokenEntity } from '../../entities/TokenEntity';
 import { DB } from '../../constants';
