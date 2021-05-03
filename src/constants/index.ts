@@ -8,7 +8,7 @@ const debug = Debug('PL:Constant');
 export const DB = {
   DATABASE_URL: process.env.DATABASE_URL
 };
-debug('DB ', DB);
+
 export const APP = {
   API_URL: process.env.API_URL,
   FRONT_END_URL: process.env.FRONT_END_URL,

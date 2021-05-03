@@ -151,7 +151,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       data.isUploaded = true;
       data.isDownloaded = true;
       data.fileId = itemGoogleDrive.id;
-      mediaItemsNewList.push(value);
+      mediaItemsNewList.push(data);
     }
   });
 
