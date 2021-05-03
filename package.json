@@ -4,6 +4,7 @@
     "description": "Playit API for Web/Mobile/Desktop APP",
     "main": "dist",
     "scripts": {
+        "heroku-prebuild": "export NPM_CONFIG_PRODUCTION=false; export NODE_ENV=; NPM_CONFIG_PRODUCTION=false NODE_ENV=development npm install --only=dev --dev",
         "precommit": "npm run lint:fix",
         "start": "npm run version && export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
