@@ -73,8 +73,8 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
   }
   try {
     const whereCondition: Partial<MediaItemEntity> = {
-      userId: req.userStore.id,
-      playlistUrlId: req.playlistStore.urlId,
+      userId: req.playlistStore.userId,
+      playlistId: req.playlistStore.id,
       driveFolderId: req.playlistStore.driveFolderId
     };
     // debug('whereCondition ', whereCondition);
@@ -118,6 +118,10 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      * B - Not Available in google drive
      */
   _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
+    if (_.isEmpty(value.id)) {
+      debug('CRITICAL : value.id is empty.');
+      return;
+    }
     let extension = 'mp4';
     if (req.playlistStore.type === '0') {
       extension = 'mp3';
@@ -135,8 +139,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     };
 
     const mediaItem: MediaItemEntity = _.find(req.mediaItemsStore, {
-      urlId: value.id,
-      driveFolderId: req.playlistStore.driveFolderId
+      urlId: value.id
     });
     // debug('value ', value);
     const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
