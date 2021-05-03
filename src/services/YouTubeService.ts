@@ -28,7 +28,8 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next();
   } else if (_.isEmpty(req.playlistStore.urlId) === true) {
     debug('CRITICAL : Return from empty req.playlistStore.urlId  ', req.playlistStore);
-    return next(Boom.notFound('Empty req.playlistStore.urlI.'));  }
+    return next(Boom.notFound('Empty req.playlistStore.urlI.'));
+  }
   try {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     oauth2Client.setCredentials(req.userStore);
@@ -74,12 +75,13 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
 export const getPlaylistDetail: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   const params = _.merge(req.body, req.params);
   if (_.isEmpty(params.playlistUrl)) {
-    // debug('CRITICAL : Return from empty req.playlistStore');
+    debug('CRITICAL : Return from empty params.playlistUrl');
     return next();
   } else if (_.isEmpty(req.youTubePlaylistStore) === false) {
     return next();
   }
   try {
+    // debug('params.playlistUrl ', params.playlistUrl);
     const youTubePlaylistStore = await YouTubeUtils.searchPlaylist(
       params.playlistUrl, req.userStore);
     // debug('youTubePlaylistStore ', youTubePlaylistStore);

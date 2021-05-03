@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getRepository, FindManyOptions, MoreThan, LessThan } from 'typeorm';
+import { getRepository, FindManyOptions, MoreThan, LessThan, WhereExpression } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -393,17 +393,8 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
  * Search Downloaded but yet to Upload
  */
 export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  const whereCondition: any = {
-    $or: [
-      {
-        googleDriveUploadAttemptCount: {
-          $lt: 2
-        }
-      },
-      {
-        googleDriveUploadAttemptCount: undefined
-      }
-    ],
+  const whereCondition = {
+    googleDriveUploadAttemptCount: LessThan(2),
     isDownloaded: true,
     isUploaded: false,
   };

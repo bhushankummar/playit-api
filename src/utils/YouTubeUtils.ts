@@ -46,6 +46,7 @@ export const mapYouTubePlaylistResponse = (youtubeItemStore: any): Partial<IYtpl
 
 export const searchPlaylist = async (playlistUrl: string, googleCredentials: any) => {
   try {
+    // debug('googleCredentials ', googleCredentials);
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
     oauth2Client.setCredentials(googleCredentials);
     const youtubeClient = google.youtube({ version: 'v3', auth: oauth2Client });
@@ -55,6 +56,7 @@ export const searchPlaylist = async (playlistUrl: string, googleCredentials: any
     };
     // debug('playListItemsData ', playListItemsData);
     const response: any = await youtubeClient.playlists.list(playListItemsData);
+    // debug('response ', response);
     if (response && response.data && response.data.items && response.data.items[0]) {
       // debug('response ', response.data);
       // debug('response ', response.data.items[0]);
