@@ -15,12 +15,13 @@ const debug = Debug('PL:YouTubeService');
  */
 export const listPlaylistItems: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.playlistStore)) {
-    // debug('CRITICAL : Return from empty req.playlistStore');
+    debug('CRITICAL : Return from empty req.playlistStore');
     return next();
   } else if (_.isEmpty(req.playlistStore.id)) {
     debug('CRITICAL : Return from empty req.playlistStore.id');
     return next();
   } else if (_.isEmpty(req.userStore)) {
+    debug('CRITICAL : Return from empty req.userStore');
     return next();
   } else if (_.isEmpty(req.userStore.refresh_token)) {
     return next(Boom.notFound('No Refresh Token has been set.'));
@@ -28,7 +29,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     return next();
   } else if (_.isEmpty(req.playlistStore.urlId) === true) {
     debug('CRITICAL : Return from empty req.playlistStore.urlId  ', req.playlistStore);
-    return next(Boom.notFound('Empty req.playlistStore.urlI.'));
+    return next(Boom.notFound('Empty req.playlistStore.urlId'));
   }
   try {
     const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
@@ -54,7 +55,16 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
           nextPageToken = _.clone(response.data.nextPageToken);
         }
       } catch (error) {
-        debug('listPlaylistItems error %o req.playlistStore %o playListItemsData %o', error, req.playlistStore, playListItemsData);
+        nextPageToken = '';
+        debug('listPlaylistItems error ', error.errors);
+        debug('listPlaylistItems error req.playlistStore ', req.playlistStore);
+        debug('listPlaylistItems error playListItemsData ', playListItemsData);
+        if (error && error.errors
+          && error.errors[0]
+          && error.errors[0].reason
+          && error.errors[0].reason === 'quotaExceeded') {
+          return next(error);
+        }
       }
     } while (nextPageToken !== '');
     youtubePlaylistStoreData.items = youtubePlaylistStoreItems || [];

@@ -3,11 +3,11 @@ import { IYtplPlaylist } from '../interface/IYtplPlaylist';
 import { IYtplItem } from '../interface/IYtplItem';
 import { IYoutubePlaylist } from '../interface/IYoutubePlaylist';
 import * as GoogleUtils from './GoogleUtils';
-import * as Debug from 'debug';
+// import * as Debug from 'debug';
 import { google } from 'googleapis';
 import { reject } from 'bluebird';
 
-const debug = Debug('PL:YouTubeUtils');
+// const debug = Debug('PL:YouTubeUtils');
 
 export const mapYouTubeResponse = (youtubeItemStore: Partial<IYoutubePlaylist>): Partial<IYtplPlaylist> => {
   const ytplPlaylistStore: Partial<IYtplPlaylist> = {};
@@ -68,7 +68,7 @@ export const searchPlaylist = async (playlistUrl: string, googleCredentials: any
     }
     return {};
   } catch (error) {
-    debug('searchPlaylist error ', error);
+    // debug('searchPlaylist error ', error);
     return reject(error);
   }
 };
