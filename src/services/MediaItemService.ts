@@ -263,7 +263,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
   }
 
   // debug('req.data.mediaItemsUpdate ', req.data.mediaItemsUpdate.length);
-  await bluebird.map(req.data.mediaItemsUpdate, async (value: any) => {
+  await bluebird.map(req.data.mediaItemsUpdate, async (value: MediaItemEntity) => {
     try {
       const mediaItemModel = getRepository(MediaItemEntity);
       const updateData: Partial<MediaItemEntity> = {
@@ -273,17 +273,11 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       if (value.fileId) {
         updateData.fileId = value.fileId;
       }
-      // const data = {
-      //   $set: updateData
-      // };
-      // const whereCondition = value;
       const whereCondition: Partial<MediaItemEntity> = {
         id: value.id
       };
-      // debug('data ', data);
-      // debug('whereCondition ', whereCondition);
-      await mediaItemModel.update(whereCondition, updateData);
-      // debug('response ', response.result);
+      const response = await mediaItemModel.update(whereCondition, updateData);
+      debug('mediaItemsUpdate response ', response);
     } catch (error) {
       debug('mediaItemsUpdate error ', error);
       debug('mediaItemsUpdate error item ', value);
@@ -293,10 +287,11 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
   await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
     try {
       if (_.isEmpty(value.fileId)) {
-        debug('mediaItemsRemove : File Id is empty. ', value);
+        debug('CRITICAL: mediaItemsRemove : File Id is empty. ', value);
         return;
       }
       await GoogleDrive.removeFile(req.userStore, value.fileId);
+      // debug('googleDriveRemove response ', response);
     } catch (error) {
       if (error && error.errors) {
         debug('mediaItemsRemove from google drive error ', error.errors);
@@ -307,31 +302,22 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     }
   }, { concurrency: CONCURRENCY });
 
-  const mediaItemsRemove = [];
-  await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
-    try {
-      mediaItemsRemove.push(value);
-    } catch (error) {
-      debug('mediaItemsRemove error ', error);
-      debug('mediaItemsRemove error in  ', value);
-    }
-  }, { concurrency: CONCURRENCY });
-
-  if (_.isEmpty(mediaItemsRemove) === false) {
+  if (_.isEmpty(req.data.mediaItemsRemove) === false) {
     try {
       const mediaItemModel = getRepository(MediaItemEntity);
       // debug('mediaRemoveItem ', value);
-      await mediaItemModel.remove(mediaItemsRemove);
+      const response = await mediaItemModel.remove(req.data.mediaItemsRemove);
+      debug('mediaItemsRemove response ', response);
     } catch (error) {
       debug('mediaItemModel.remove error ', error);
-      debug('mediaItemModel.remove error in  ', mediaItemsRemove);
+      debug('mediaItemModel.remove error in  ', req.data.mediaItemsRemove);
     }
   }
 
   await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
     try {
       if (_.isEmpty(value.id)) {
-        debug('googleDriveItemsRemove File Id is empty.', value);
+        debug('CRITICAL: googleDriveItemsRemove File Id is empty.', value);
         return;
       }
       await GoogleDrive.removeFile(req.userStore, value.id);
