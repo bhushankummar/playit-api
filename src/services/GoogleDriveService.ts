@@ -118,7 +118,7 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
       files = files.concat(response.data.files);
       // debug('files ', files.length);
     } while (nextPageToken !== '');
-    debug('Total files in GoogleDrive ', files.length);
+    debug(`Total files in GoogleDrive ${req.playlistStore.title} - ${files.length}`);
     req.googleDriveStore = files;
     return next();
   } catch (error) {

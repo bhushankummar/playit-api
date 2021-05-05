@@ -71,7 +71,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     youtubePlaylistStoreData.items = youtubePlaylistStoreItems || [];
     const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
     ytplPlaylistStore.id = req.playlistStore.urlId;
-    debug('Total songs in YouTube ', ytplPlaylistStore.items.length);
+    debug(`Total songs in YouTube  ${ytplPlaylistStore.title} - ${ytplPlaylistStore.items.length}`);
     req.youTubePlaylistStore = ytplPlaylistStore;
     return next();
   } catch (error) {

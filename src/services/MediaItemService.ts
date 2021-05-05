@@ -81,7 +81,7 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
     const mediaItemModel = getRepository(MediaItemEntity);
     req.mediaItemsStore = await mediaItemModel.find(whereCondition);
     // debug('req.mediaItemsStore : database ', req.mediaItemsStore);
-    debug('req.mediaItemsStore : Total records In database ', req.mediaItemsStore.length);
+    debug(`Total records In database ${req.playlistStore.title} - ${req.mediaItemsStore.length}`);
     return next();
   } catch (error) {
     debug('searchAllByLoggedInUserPlaylistAndDriveFolderId error ', error);
