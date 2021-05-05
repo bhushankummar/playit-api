@@ -56,14 +56,14 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         }
       } catch (error) {
         nextPageToken = '';
-        debug('listPlaylistItems error req.playlistStore ', req.playlistStore);
-        debug('listPlaylistItems error playListItemsData ', playListItemsData);
         if (error && error.errors
           && error.errors[0]
           && error.errors[0].reason
           && error.errors[0].reason === 'quotaExceeded') {
           return next(error);
         } else {
+          debug('listPlaylistItems error req.playlistStore ', req.playlistStore);
+          debug('listPlaylistItems error playListItemsData ', playListItemsData);
           debug('listPlaylistItems error ', error);
         }
       }
