@@ -16,7 +16,7 @@ const playlistRoute: express.Router = express.Router();
 playlistRoute.post('/', passport.authenticate('bearer'), [
   PlaylistService.validateNewPlaylist,
   PlaylistService.searchOneByPlaylistUrlIdAndUserId,
-  GoogleDriveService.createRootFolder,
+  GoogleDriveService.createRootFolderIfNotExits,
   UserService.updateRootDirectory,
   YouTubeService.getPlaylistDetail,
   GoogleDriveService.createPlaylistFolder,
@@ -40,7 +40,6 @@ playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
   PlaylistService.searchOneByPlaylistIdAndUserId,
   GoogleDriveService.removeFolder,
   PlaylistService.removePlaylist,
-  // MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
   MediaItemService.removeMediaItems,
   PlaylistController.playlist
 ]);
@@ -48,7 +47,7 @@ playlistRoute.delete('/:playlistId', passport.authenticate('bearer'), [
 playlistRoute.post('/crone/verify/drive-folder', [
   PlaylistService.searchOneByLastSyncTimeStamp,
   UserService.searchOneByPlaylistUser,
-  GoogleDriveService.createRootFolder,
+  GoogleDriveService.createRootFolderIfNotExits,
   YouTubeService.getPlaylistDetailUsingPlaylistUrl,
   GoogleDriveService.createPlaylistFolder,
   PlaylistService.updatePlaylistDriveFolder,

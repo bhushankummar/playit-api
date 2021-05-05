@@ -56,7 +56,6 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         }
       } catch (error) {
         nextPageToken = '';
-        debug('listPlaylistItems error ', error.errors);
         debug('listPlaylistItems error req.playlistStore ', req.playlistStore);
         debug('listPlaylistItems error playListItemsData ', playListItemsData);
         if (error && error.errors
@@ -64,6 +63,8 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
           && error.errors[0].reason
           && error.errors[0].reason === 'quotaExceeded') {
           return next(error);
+        } else {
+          debug('listPlaylistItems error ', error);
         }
       }
     } while (nextPageToken !== '');
@@ -117,7 +118,14 @@ export const getPlaylistDetailUsingPlaylistUrl: express.RequestHandler = async (
     req.youTubePlaylistStore = youTubePlaylistStore;
     return next();
   } catch (error) {
-    debug('getPlaylistDetailUsingPlaylistUrl error ', error);
+    if (error && error.errors
+      && error.errors[0]
+      && error.errors[0].reason
+      && error.errors[0].reason === 'quotaExceeded') {
+      return next(error);
+    } else {
+      debug('getPlaylistDetailUsingPlaylistUrl error ', error);
+    }
     return next(error);
   }
 };

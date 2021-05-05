@@ -474,9 +474,7 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
   const mediaItemModel = getRepository(MediaItemEntity);
   try {
     const whereCondition: Partial<MediaItemEntity> = {
-      // playlist: playlistItem
-      playlistUrlId: req.playlistStore.urlId,
-      type: req.playlistStore.type
+      playlistId: req.playlistStore.id
     };
     await mediaItemModel.delete(whereCondition);
     // debug('response ', response);

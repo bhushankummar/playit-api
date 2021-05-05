@@ -29,9 +29,9 @@ mediaItemRoute.post('/sync/crone/youtube', [
   PlaylistService.searchOneByLastSyncTimeStamp,
   PlaylistService.updateLastSyncTimeStamp,
   UserService.searchOneByPlaylistUser,
+  YouTubeService.listPlaylistItems,
   MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
   GoogleDriveService.searchAllFiles,
-  YouTubeService.listPlaylistItems,
   MediaItemService.identifySyncItemsForYouTube,
   MediaItemService.syncWithYouTube,
   MediaItemController.mediaItemSync

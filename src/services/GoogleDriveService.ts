@@ -10,7 +10,7 @@ const debug = Debug('PL:GoogleDriveService');
 /**
  * This function will Create Root Folder If Not Exits
  */
-export const createRootFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const createRootFolderIfNotExits: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   if (_.isEmpty(req.userStore)) {
     return next();
   } else if (_.isEmpty(req.userStore.access_token)) {

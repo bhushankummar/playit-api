@@ -143,8 +143,18 @@ export const UPLOAD_AUDIO_SCHEDULE = {
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
   ACTION: process.env.SYNC_TO_YOUTUBE_SCHEDULE_ACTION || true,
   Seconds: '0',
-  Minutes: '*/1',
+  Minutes: '*/4',
   Hours: '*',
+  DayOfMonth: '*',
+  Months: '*',
+  DayOfWeek: '*'
+};
+
+export const SYNC_GOOGLE_DRIVE_FOLDER_SCHEDULE = {
+  ACTION: process.env.SYNC_GOOGLE_DRIVE_FOLDER_SCHEDULE || true,
+  Seconds: '0',
+  Minutes: '0',
+  Hours: '*/1',
   DayOfMonth: '*',
   Months: '*',
   DayOfWeek: '*'
