@@ -15,7 +15,11 @@
         "posttest": "npm run lint",
         "version": "echo 'youtube-dl' ; ./node_modules/youtube-dl/bin/youtube-dl --version"
     },
-    "cacheDirectories": ["media","app/dist/media"],
+    "cacheDirectories": [
+        "media",
+        "app/dist/media",
+        "dist/media"
+    ],
     "engines": {
         "node": "10.16.3",
         "npm": "6.9.0"
