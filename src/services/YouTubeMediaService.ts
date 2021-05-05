@@ -46,7 +46,7 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
       if (_.isEmpty(updatedItem.playlistUrlId)) {
         debug('CRITICAL : Skipping Audio Media Item which has not playlistUrlId.');
         return;
-      } else if (updatedItem.title === 'Deleted video') {
+      } else if (updatedItem.title.indexOf('Deleted') > -1) {
         debug('CRITICAL : Skipping Media having Deleted Title.');
         return;
       }
