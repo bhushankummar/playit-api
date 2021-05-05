@@ -143,16 +143,25 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     });
     // debug('value ', value);
     const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
-
+    const mediaNewItem = _.find(mediaItemsNewList, {
+      urlId: value.id
+    });
     // Media is not in database and also Media is not in Google Drive
-    if (_.isEmpty(mediaItem) === true && _.isEmpty(itemGoogleDrive) === true) {
+    // Add into list only if already not added
+    if (_.isEmpty(mediaItem) === true &&
+      _.isEmpty(itemGoogleDrive) === true &&
+      _.isEmpty(mediaNewItem) === true
+    ) {
       data.isUploaded = false;
       data.isDownloaded = false;
       mediaItemsNewList.push(data);
     }
 
     // Media is not in database and also Media is AVAILABLE in Google Drive
-    if (_.isEmpty(mediaItem) === true && _.isEmpty(itemGoogleDrive) === false) {
+    // Add into list only if already not added
+    if (_.isEmpty(mediaItem) === true &&
+      _.isEmpty(itemGoogleDrive) === false &&
+      _.isEmpty(mediaNewItem) === true) {
       data.isUploaded = true;
       data.isDownloaded = true;
       data.fileId = itemGoogleDrive.id;
@@ -180,13 +189,15 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     });
 
     // Media is not in Google Drive BUT Media isUploaded = true
-    if (_.isEmpty(itemGoogleDrive) === true && mediaItem.isUploaded === true) {
+    if (_.isEmpty(itemGoogleDrive) === true
+      && mediaItem.isUploaded === true) {
       mediaItem.isUploaded = false;
       mediaItem.isDownloaded = false;
       mediaItemsUpdate.push(mediaItem);
     }
     // Media available in Google Drive BUT Media isUploaded = false
-    if (_.isEmpty(itemGoogleDrive) === false && mediaItem.isUploaded === false) {
+    if (_.isEmpty(itemGoogleDrive) === false
+      && mediaItem.isUploaded === false) {
       mediaItem.isUploaded = true;
       mediaItem.isDownloaded = true;
       mediaItem.fileId = itemGoogleDrive.id;
