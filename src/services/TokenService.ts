@@ -75,13 +75,12 @@ export const deleteTokenById: express.RequestHandler = async (req: IRequest, res
   }
   try {
     const tokenModel = getRepository(TokenEntity);
-
     const whereCondition = {
       id: tokenStore.id
     };
     await tokenModel.delete(whereCondition);
+    return next();
   } catch (error) {
     return next(error);
   }
-  return next();
 };

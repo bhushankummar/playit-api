@@ -22,6 +22,7 @@ export const generatesAuthUrlForRegister: express.RequestHandler = (req: IReques
     scope: GOOGLE_AUTH.SCOPES
   });
   req.googleStore = { url };
+  req.data = { url };
   return next();
 };
 
@@ -65,19 +66,6 @@ export const retrieveGoogleProfileFromOAuth2: express.RequestHandler = async (re
     debug('retrieveGoogleProfileFromOAuth2 error ', error);
     return next(error);
   }
-};
-
-/**
- * Generates oAuth URL
- */
-export const generatesAuthUrlForLogin: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  const oauth2Client = GoogleUtils.getOAuth2ClientInstance();
-  const url = oauth2Client.generateAuthUrl({
-    access_type: 'offline',
-    scope: GOOGLE_AUTH.SCOPES
-  });
-  req.data = { url };
-  return next();
 };
 
 /**
