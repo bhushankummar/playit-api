@@ -44,10 +44,12 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
     }
     try {
       if (_.isEmpty(updatedItem.playlistUrlId)) {
-        debug('CRITICAL : Skipping Audio Media Item which has not playlistUrlId.');
+        debug('CRITICAL : Skipping Audio Media Item which has not playlistUrlId. ', updatedItem);
+        tempMediaItems.push(updatedItem);
         return;
       } else if (updatedItem.title.indexOf('Deleted') > -1) {
-        debug('CRITICAL : Skipping Media having Deleted Title.');
+        debug('CRITICAL : Skipping Media having Deleted Title. ', updatedItem);
+        tempMediaItems.push(updatedItem);
         return;
       }
       if (_.isEmpty(updatedItem.errors) === false) {
@@ -67,7 +69,6 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
             downloadOptionKey = 1;
           }
         }
-
       }
       const response: any = await MediaDownload.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
       updatedItem.localFilePath = response.filePath;

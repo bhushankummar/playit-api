@@ -227,10 +227,10 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     mediaItemsUpdateCount: mediaItemsUpdate.length,
     mediaItemsUpdate: mediaItemsUpdate
   };
-  debug(`${req.playlistStore.title} mediaItemsNewCount ${mediaItemsNewList.length}`);
-  debug(`${req.playlistStore.title} mediaItemsRemoveCount ${mediaItemsRemove.length}`);
-  debug(`${req.playlistStore.title} mediaItemsUpdateCount ${mediaItemsUpdate.length}`);
-  debug(`${req.playlistStore.title} googleDriveItemsRemoveCount ${googleDriveItemsRemove.length}`);
+  debug(`${req.playlistStore.title} - mediaItemsNewCount ${mediaItemsNewList.length}`);
+  debug(`${req.playlistStore.title} - mediaItemsRemoveCount ${mediaItemsRemove.length}`);
+  debug(`${req.playlistStore.title} - mediaItemsUpdateCount ${mediaItemsUpdate.length}`);
+  debug(`${req.playlistStore.title} - googleDriveItemsRemoveCount ${googleDriveItemsRemove.length}`);
   return next();
 };
 
@@ -378,7 +378,6 @@ export const updateDownloadMedia: express.RequestHandler = async (req: IRequest,
       const mediaItemModel = getRepository(MediaItemEntity);
       const whereCondition: Partial<MediaItemEntity> = {
         id: value.id
-        // 'id': value.id
       };
       // debug('whereCondition %o ', whereCondition);
       // debug('value %o ', value);
