@@ -2,7 +2,6 @@ import * as express from 'express';
 import * as GoogleDriveService from '../services/GoogleDriveService';
 import * as GoogleController from '../controllers/GoogleController';
 import * as UserService from '../services/UserService';
-import * as GoogleService from '../services/GoogleService';
 import * as MediaItemService from '../services/MediaItemService';
 
 const googleDriveRoute: express.Router = express.Router();
@@ -12,22 +11,11 @@ const googleDriveRoute: express.Router = express.Router();
  * This API is call from the Cron Job
  */
 googleDriveRoute.post('/crone/upload/:type', [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
-    GoogleDriveService.prepareAudioFilesForTheUpload,
-    GoogleDriveService.uploadToDrive,
-    GoogleController.googleDriveDetail
+  MediaItemService.searchOneByIsDownloaded,
+  UserService.searchOneByMediaItemUser,
+  GoogleDriveService.uploadToDriveUsingPath,
+  MediaItemService.updateUploadMedia,
+  GoogleController.googleDriveDetail
 ]);
 
-/**
- * Clear Trash Google Drive
- * This API is call from the Cron Job
- */
-googleDriveRoute.post('/crone/empty/trash', [
-    UserService.searchOneByEmail,
-    GoogleService.setCredentials,
-    GoogleDriveService.cleanTrash,
-    GoogleController.googleDriveDetail
-]);
-
-export {googleDriveRoute};
+export { googleDriveRoute };

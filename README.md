@@ -23,14 +23,15 @@ export SANDBOX='false'
 export PORT=3007
 export CRONE_JOB_ACTION='EXECUTE'
 export API_URL=http://localhost:3007
-export FFPROBE_PATH=./node_modules/ffmpeg-binaries/bin/ffmpeg
+export FRONT_END_URL=http://localhost:4200
+export FFPROBE_PATH=./node_modules/ffmpeg-static/ffmpeg
 export DOWNLOAD_AUDIO_CONCURRENCY=1;
 export DOWNLOAD_VIDEO_CONCURRENCY=1;
+export DOWNLOAD_ATTEMPT=5;
 export LC_ALL=en_US.UTF-8
-export ALLOWED_EMAILS=your_email@gmail.com
-export GOOGLE_CLIENT_ID=YourClientId
+export GOOGLE_CLIENTid=YourClientId
 export GOOGLE_CLIENT_SECRET=YourClientSecret
-export MONGO_URL=mongodb://yourmongo/playit-dev
+export DATABASE_URL=postgres://yourmongo/playit-dev
 ```
 
 ### Run the Application (Development Purpose Only)
@@ -54,6 +55,13 @@ node dist/src/server.js
 ./node_modules/youtube-dl/bin/youtube-dl --version
 ```
 
+### Stop Specific Cron Jobs
+```
+export DOWNLOAD_AUDIO_SCHEDULE_ACTION='false'
+export UPLOAD_AUDIO_SCHEDULE_ACTION='false'
+export SYNC_TO_YOUTUBE_SCHEDULE_ACTION='false'
+```
+
 ### References
 ```
 https://askubuntu.com/a/807918
@@ -72,7 +80,7 @@ https://askubuntu.com/a/807918
 ### Enable Below API Services in Your Google Developer Console
 * Google Drive API
 * People API
-* YouTube Data API v3	
+* YouTube Data API v3
 
 ### Other Important APIs
 * Add User (Login as Google) `{{url}}/api/v1/user/register`

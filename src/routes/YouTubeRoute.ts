@@ -1,9 +1,7 @@
 import * as express from 'express';
 import * as YouTubeMediaService from '../services/YouTubeMediaService';
-import * as UserService from '../services/UserService';
 import * as YouTubeController from '../controllers/YouTubeController';
 import * as MediaItemService from '../services/MediaItemService';
-import * as PlaylistService from '../services/PlaylistService';
 
 const youtubeRoute: express.Router = express.Router();
 
@@ -14,14 +12,10 @@ const youtubeRoute: express.Router = express.Router();
  * type : 0 = Audio ; 1 = Video
  */
 youtubeRoute.post('/crone/download', [
-    PlaylistService.searchOneByLastUploadTimeStamp,
-    PlaylistService.updateLastUploadTimeStamp,
-    UserService.searchOneByPlaylistUser,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderIdAndNotUpload,
-    YouTubeMediaService.downloadAudioHQUsingMediaItem,
-    YouTubeMediaService.downloadVideoHQUsingMediaItem,
-    MediaItemService.updateDownloadTimeStamp,
-    YouTubeController.youtubeData
+  MediaItemService.searchAllNotDownloaded,
+  YouTubeMediaService.downloadMediaHQUsingMediaItem,
+  MediaItemService.updateDownloadMedia,
+  YouTubeController.youtubeData
 ]);
 
 export { youtubeRoute };

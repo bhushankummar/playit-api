@@ -9,31 +9,40 @@ const debug = Debug('PL:GoogleController');
  * Get token details
  */
 export const googleDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    debug('req.googleStore ', req.googleStore);
-    req.data = req.googleStore;
-    return next();
+  // debug('req.googleStore ', req.googleStore);
+  req.data = req.googleStore;
+  return next();
 };
 
 /**
  * Get token details
  */
-export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const token = `token=${req.tokenStore.token}`;
-    const frontEndUrl = APP.FRONT_END_URL;
-    return res.redirect(`${frontEndUrl}?${token}`);
+export const redirectToOAuth: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+  // debug('req.googleStore ', req.googleStore);
+  return next();
+};
+
+/**
+ * Get token details
+ */
+export const redirectToHome: express.RequestHandler = (req: IRequest, res: express.Response) => {
+  debug('Completed req.tokenStore.token ', req.tokenStore.token);
+  const token = `token=${req.tokenStore.token}`;
+  const frontEndUrl = APP.FRONT_END_URL;
+  return res.redirect(`${frontEndUrl}/login?${token}`);
 };
 
 /**
  * Google Drive Details
  */
 export const googleDriveDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.googleDriveStore || [];
-    return next();
+  req.data = req.googleDriveStore || [];
+  return next();
 };
 /**
  * Google Profile Details
  */
 export const googleProfileDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    req.data = req.googleProfileStore || [];
-    return next();
+  req.data = req.googleProfileStore || [];
+  return next();
 };

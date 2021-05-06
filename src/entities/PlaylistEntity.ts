@@ -1,51 +1,36 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Timestamp } from 'typeorm';
+import { Column, Entity, Index } from 'typeorm';
 import moment = require('moment');
-
-class User {
-    @ObjectIdColumn()
-    _id: ObjectID;
-
-    @Column()
-    email?: string;
-}
+import { BaseEntity } from './BaseEntity';
 
 @Entity('playlists')
-export class PlaylistEntity {
+@Index(['userId', 'urlId', 'type'], { unique: true })
+export class PlaylistEntity extends BaseEntity {
 
-    @ObjectIdColumn()
-    _id: ObjectID;
+  @Column('uuid')
+  public userId: string;
 
-    @Column(type => User)
-    user: User;
+  @Column()
+  public url: string;
 
-    @Column()
-    url: string;
+  @Column()
+  public title: string;
 
-    @Column()
-    title: string;
+  @Column()
+  public urlId: string;
 
-    @Column()
-    urlId: string;
+  @Column()
+  public type: string;
 
-    @Column()
-    type: string;
+  @Column()
+  public driveFolderId: string;
 
-    @Column()
-    driveFolderId: string;
+  @Column({
+    default: moment().toISOString()
+  })
+  public lastSyncTimeStamp: Date;
 
-    @Column({
-        default: moment().toISOString()
-    })
-    lastSyncTimeStamp: Date;
-
-    @Column({
-        default: moment().toISOString()
-    })
-    lastUploadTimeStamp: Date;
-
-    @CreateDateColumn()
-    createdDate: string;
-
-    @UpdateDateColumn()
-    updatedDate: string;
+  @Column({
+    default: moment().toISOString()
+  })
+  public lastUploadTimeStamp: Date;
 }

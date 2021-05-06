@@ -2,7 +2,7 @@ import * as bodyParser from 'body-parser';
 import * as passport from 'passport';
 import * as Debug from 'debug';
 import * as cors from 'cors';
-import * as config from './config';
+import * as config from './config/AppConfig';
 import * as passportConfig from './config/passport';
 import { router } from './routes';
 import * as database from './config/db';
@@ -12,7 +12,8 @@ import * as CroneJobs from './job';
 const app = express();
 const debug = Debug('PL:App');
 
-app.use(cors({ origin: '*' }));
+const whitelist = ['http://localhost:3007', 'http://localhost:4200', 'https://playit-app.herokuapp.com'];
+app.use(cors({ origin: whitelist }));
 
 app.use(bodyParser.json());
 
@@ -23,21 +24,21 @@ app.use(passport.initialize());
 passport.use(passportConfig.passport);
 
 passport.serializeUser((user, callback) => {
-    return callback(undefined, user);
+  return callback(undefined, user);
 });
 
 passport.deserializeUser((user, callback) => {
-    return callback(undefined, user);
+  return callback(undefined, user);
 });
 
 app.use(config.trimParams);
 
 app.get('/', (req, res) => {
-    return res.json({ message: 'API is running!' });
+  return res.json({ message: 'API is running!' });
 });
 
 app.get('/favicon.ico', (req, res) => {
-    return res.json({ message: 'API is running!' });
+  return res.json({ message: 'API is running!' });
 });
 
 /**
@@ -64,19 +65,16 @@ app.use(config.handle404);
  *  Server process
  */
 app.set('PORT', process.env.PORT || 3007);
-app.listen(app.get('PORT'), async (err: any) => {
-    if (err) {
-        return console.log(err);
-    }
-    await database.init();
-    CroneJobs.initAllJobs();
-    debug(' Server has been started on PORT: %o', app.get('PORT'));
-    return console.log(`***************************** Server has been started on PORT ${app.get('PORT')}`);
+app.listen(app.get('PORT'), async () => {
+  await database.init();
+  CroneJobs.initAllJobs();
+  debug(' Server has been started on PORT: %o', app.get('PORT'));
+  return debug(`***************************** Server has been started on PORT ${app.get('PORT')}`);
 });
 
 process.on('uncaughtException', (err) => {
-    console.log('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
-    console.log(err);
+  debug('CRITICAL ERROR : Inside uncaughtException, it prevents server to get crashed.');
+  debug(err);
 });
 
 export { app };

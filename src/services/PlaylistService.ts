@@ -3,10 +3,9 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import * as mongodb from 'mongodb';
-import * as YtplUtils from '../utils/YtplUtils';
-import { getMongoRepository, FindOneOptions } from 'typeorm';
+import { getRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
+import * as utils from '../utils';
 import moment = require('moment');
 
 const debug = Debug('PL:PlaylistService');
@@ -15,17 +14,15 @@ const debug = Debug('PL:PlaylistService');
  * Validate new playlist parameter
  */
 export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.params, req.body);
-    if (_.isEmpty(params.playlistId)) {
-        return next(Boom.notFound('Please enter playlistId.'));
-    } else if (_.isEmpty(params.driveFolderId)) {
-        return next(Boom.notFound('Please enter Drive FolderId.'));
-    } else if (_.isEmpty(params.type)) {
-        return next(Boom.notFound('Please enter type of the media playlist.'));
-    } else if ([ '0', '1' ].indexOf(params.type) === -1) {
-        return next(Boom.notFound('Please enter valid type of the media playlist.'));
-    }
-    return next();
+  const params = _.merge(req.params, req.body);
+  if (_.isEmpty(params.playlistUrl)) {
+    return next(Boom.notFound('Please enter playlistUrl.'));
+  } else if (_.isEmpty(params.type)) {
+    return next(Boom.notFound('Please enter type of the media playlist.'));
+  } else if (['0', '1'].indexOf(params.type) === -1) {
+    return next(Boom.notFound('Please enter valid type of the media playlist.'));
+  }
+  return next();
 };
 
 /**
@@ -35,250 +32,230 @@ export const validateNewPlaylist: express.RequestHandler = (req: IRequest, res: 
  * @param: url
  */
 export const addPlaylist: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.notFound('Invalid User'));
-    } else if (!_.isEmpty(req.playlistStore)) {
-        return next(Boom.notFound('This playlist has been already added.'));
+  // debug('Inside addPlaylist');
+  const params = _.merge(req.body, req.params);
+  if (_.isEmpty(req.userStore)) {
+    return next(Boom.notFound('Invalid User'));
+  } else if (_.isEmpty(req.playlistStore) === false) {
+    return next(Boom.notFound('This playlist has been already added.'));
+  }
+
+  try {
+    if (_.isEmpty(req.youTubePlaylistStore)) {
+      return next(Boom.notFound('This is not a valid playlist, Please try again.'));
     }
-    const userProfile = {
-        _id: req.userStore._id,
-        email: req.userStore.email
-    };
-    try {
-        const playlistMetadata: any = await YtplUtils.findPlaylistItems(params.playlistId);
-        const playlist: PlaylistEntity = new PlaylistEntity();
-        playlist.user = userProfile;
-        playlist.type = params.type;
-        playlist.driveFolderId = params.driveFolderId;
-        playlist.url = playlistMetadata.url;
-        playlist.title = playlistMetadata.title;
-        playlist.urlId = playlistMetadata.id;
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        await playlistModel.save(playlist);
-        req.playlistStore = playlist;
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
+
+    const playlist: PlaylistEntity = new PlaylistEntity();
+    playlist.url = req.youTubePlaylistStore.url;
+    playlist.title = req.youTubePlaylistStore.title;
+    playlist.urlId = req.youTubePlaylistStore.id;
+
+    playlist.userId = req.userStore.id;
+    playlist.type = params.type;
+    playlist.driveFolderId = params.driveFolderId;
+    if (_.isEmpty(params.driveFolderId)) {
+      playlist.driveFolderId = req.googleDriveFileStore.id;
+    } else {
+      debug('driveFolderId : This will not create new folder.');
     }
+    const playlistModel = getRepository(PlaylistEntity);
+    await playlistModel.save(playlist);
+    req.playlistStore = playlist;
     return next();
+  } catch (error) {
+    debug('addPlaylist error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Search All Playlist Of Logged In User
  */
 export const searchAllPlaylist: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.notFound('Invalid User'));
-    }
-    const userProfile = {
-        _id: req.userStore._id,
-        email: req.userStore.email
+  if (_.isEmpty(req.userStore)) {
+    return next(Boom.notFound('Invalid User'));
+  }
+  // debug('userProfile ', userProfile);
+  try {
+    const whereCondition: Partial<PlaylistEntity> = {
+      userId: req.userStore.id
     };
-    try {
-        const whereCondition = {
-            user: userProfile
-        };
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        req.playlistItemStore = await playlistModel.find(whereCondition);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+    const options: FindManyOptions<PlaylistEntity> = {
+      where: whereCondition,
+      order: {
+        title: 'ASC'
+      }
+    };
+    const playlistModel = getRepository(PlaylistEntity);
+    req.playlistItemStore = await playlistModel.find(options);
     return next();
+  } catch (error) {
+    debug('searchAllPlaylist error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Search Playlist using UserId & Playlist UrlId
  */
 export const searchOneByPlaylistUrlIdAndUserId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.notFound('Invalid User'));
-    }
-    const playlistModel = getMongoRepository(PlaylistEntity);
-    const userProfile = {
-        _id: req.userStore._id,
-        email: req.userStore.email
+  const params = _.merge(req.body, req.params);
+  if (_.isEmpty(req.userStore)) {
+    return next(Boom.notFound('Invalid User'));
+  }
+  const playlistModel = getRepository(PlaylistEntity);
+  try {
+    const whereCondition: Partial<PlaylistEntity> = {
+      userId: req.userStore.id,
+      urlId: params.playlistUrl
     };
-    try {
-        const whereCondition = {
-            user: userProfile,
-            urlId: params.playlistId
-        };
-        // debug('whereCondition ', whereCondition);
-        req.playlistStore = await playlistModel.findOne(whereCondition);
-        // debug('req.playlistStore ', req.playlistStore);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+    // debug('whereCondition ', whereCondition);
+    req.playlistStore = await playlistModel.findOne(whereCondition);
+    // debug('req.playlistStore ', req.playlistStore);
     return next();
+  } catch (error) {
+    debug('searchOneByPlaylistUrlIdAndUserId error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Search Playlist using UserId & PlaylistId
  */
 export const searchOneByPlaylistIdAndUserId: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    const params = _.merge(req.body, req.params);
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.notFound('Invalid User'));
-    }
-    const playlistModel = getMongoRepository(PlaylistEntity);
-    const userProfile = {
-        _id: req.userStore._id,
-        email: req.userStore.email
+  const params = _.merge(req.body, req.params);
+  if (_.isEmpty(req.userStore)) {
+    return next(Boom.notFound('Invalid User'));
+  }
+  try {
+    const playlistModel = getRepository(PlaylistEntity);
+    const playlistIdObjectId = utils.toObjectId(params.playlistId);
+    const whereCondition: Partial<PlaylistEntity> = {
+      userId: req.userStore.id,
+      id: playlistIdObjectId
     };
-    const playlistIdObjectId = new mongodb.ObjectID(params.playlistId);
-    try {
-        const whereCondition: any = {
-            user: userProfile,
-            _id: playlistIdObjectId
-        };
-        // debug('whereCondition ', whereCondition);
-        req.playlistStore = await playlistModel.findOne(whereCondition);
-        // debug('req.playlistStore ', req.playlistStore);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+    // debug('whereCondition ', whereCondition);
+    req.playlistStore = await playlistModel.findOne(whereCondition);
+    // debug('req.playlistStore ', req.playlistStore);
     return next();
+  } catch (error) {
+    debug('searchOneByPlaylistIdAndUserId error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Remove Playlist
  */
 export const removePlaylist: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.userStore)) {
-        return next(Boom.notFound('Invalid User'));
-    } else if (_.isEmpty(req.playlistStore)) {
-        return next(Boom.notFound('This playlist does not exits.'));
-    }
-    const playlistModel = getMongoRepository(PlaylistEntity);
-    try {
-        const whereCondition = {
-            _id: req.playlistStore._id
-        };
-        const response = await playlistModel.deleteOne(whereCondition);
-        // debug('response ', response);
-        // debug('req.playlistStore ', req.playlistStore);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+  if (_.isEmpty(req.userStore)) {
+    return next(Boom.notFound('Invalid User'));
+  } else if (_.isEmpty(req.playlistStore)) {
+    return next(Boom.notFound('This playlist does not exits.'));
+  }
+  try {
+    const playlistModel = getRepository(PlaylistEntity);
+    const whereCondition: Partial<PlaylistEntity> = {
+      id: req.playlistStore.id
+    };
+    await playlistModel.delete(whereCondition);
+    // debug('response ', response);
+    // debug('req.playlistStore ', req.playlistStore);
     return next();
+  } catch (error) {
+    debug('removePlaylist error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Search One Playlist Last Sync
  */
 export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    try {
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        const whereCondition = {
-            $or: [
-                {
-                    lastSyncTimeStamp: {
-                        '$lt': moment().subtract(5, 'minutes').toISOString()
-                        // '$lt': moment().subtract(1, 'seconds').toISOString()
-                    }
-                },
-                {
-                    lastSyncTimeStamp: undefined
-                }
-            ]
-        };
-        const options: FindOneOptions<PlaylistEntity> = {
-            where: whereCondition,
-            order: {
-                lastSyncTimeStamp: 'ASC'
-            }
-        };
-        req.playlistStore = await playlistModel.findOne(options);
-        // debug('req.playlistStore ', req.playlistStore);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+  try {
+    const playlistModel = getRepository(PlaylistEntity);
+    // const whereCondition = {
+    //   $or: [
+    //     {
+    //       lastSyncTimeStamp: {
+    //         $lt: moment().subtract(2, 'minutes').toISOString()
+    //       }
+    //     },
+    //     {
+    //       lastSyncTimeStamp: undefined
+    //     }
+    //   ]
+    // };
+    const options: FindOneOptions<PlaylistEntity> = {
+      // where: whereCondition,
+      order: {
+        lastSyncTimeStamp: 'ASC'
+      }
+    };
+    req.playlistStore = await playlistModel.findOne(options);
+    // debug('req.playlistStore ', req.playlistStore);
     return next();
-};
-
-/**
- * Search One Playlist Last Sync
- */
-export const searchOneByLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    try {
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        const whereCondition = {
-            $or: [
-                {
-                    lastUploadTimeStamp: {
-                        '$lt': moment().subtract(5, 'minutes').toISOString()
-                        // '$lt': moment().subtract(1, 'seconds').toISOString()
-                    }
-                },
-                {
-                    lastUploadTimeStamp: undefined
-                }
-            ]
-        };
-        const options: FindOneOptions<PlaylistEntity> = {
-            where: whereCondition,
-            order: {
-                lastUploadTimeStamp: 'ASC'
-            }
-        };
-        req.playlistStore = await playlistModel.findOne(options);
-        // debug('req.playlistStore ', req.playlistStore);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
-    return next();
+  } catch (error) {
+    debug('searchOneByLastSyncTimeStamp error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
  * Search One Playlist Last Sync
  */
 export const updateLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.playlistStore)) {
-        return next();
-    }
-    try {
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        const whereCondition = {
-            _id: req.playlistStore._id
-        };
-        const updateData = {
-            lastSyncTimeStamp: moment().toISOString()
-        };
-        await playlistModel.update(whereCondition, updateData);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+  if (_.isEmpty(req.playlistStore)) {
     return next();
+  }
+  try {
+    const playlistModel = getRepository(PlaylistEntity);
+    const whereCondition: Partial<PlaylistEntity> = {
+      id: req.playlistStore.id
+    };
+    const updateData: Partial<PlaylistEntity> = {
+      lastSyncTimeStamp: moment().toDate()
+    };
+    await playlistModel.update(whereCondition, updateData);
+    return next();
+  } catch (error) {
+    debug('updateLastSyncTimeStamp error ', error);
+    return next(Boom.notFound(error));
+  }
 };
 
 /**
- * Search One Playlist Last Sync
+ * Update Playlist
+ * @param: userId
+ * @param: type
+ * @param: url
  */
-export const updateLastUploadTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-    if (_.isEmpty(req.playlistStore)) {
-        return next();
-    }
-    try {
-        const playlistModel = getMongoRepository(PlaylistEntity);
-        const whereCondition = {
-            _id: req.playlistStore._id
-        };
-        const updateData = {
-            lastUploadTimeStamp: moment().toISOString()
-        };
-        await playlistModel.update(whereCondition, updateData);
-    } catch (error) {
-        debug('error ', error);
-        return next(Boom.notFound(error));
-    }
+export const updatePlaylistDriveFolder: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+  if (_.isEmpty(req.userStore)) {
     return next();
+  } else if (_.isEmpty(req.playlistStore)) {
+    return next();
+  } else if (_.isEmpty(req.googleDriveFileStore)) {
+    return next();
+  } else if (_.isEmpty(req.youTubePlaylistStore)) {
+    return next(Boom.notFound('This is not a valid playlist, Please try again.'));
+  }
+  try {
+    const playlistModel = getRepository(PlaylistEntity);
+    const whereCondition: Partial<PlaylistEntity> = {
+      id: req.playlistStore.id
+    };
+
+    const updateData: Partial<PlaylistEntity> = {
+      url: req.youTubePlaylistStore.url,
+      title: req.youTubePlaylistStore.title,
+      urlId: req.youTubePlaylistStore.id,
+      driveFolderId: req.googleDriveFileStore.id
+    };
+    await playlistModel.update(whereCondition, updateData);
+    return next();
+  } catch (error) {
+    debug('updatePlaylistDriveFolder error ', error);
+    return next(Boom.notFound(error));
+  }
 };

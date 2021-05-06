@@ -1,72 +1,70 @@
 import { YOUTUBE } from '../constants';
-import * as ytpl from 'ytpl';
 import * as _ from 'lodash';
-import { IYtplPlaylist } from '../interface/IYtplPlaylist';
+// import * as Debug from 'debug';
 
-const youtubedl = require('youtube-dl');
+// const debug = Debug('PL:YtplUtils');
 
-/**
- * Get the File Metadata
- */
-export const findPlaylistItems = (playlistId: string): Promise<IYtplPlaylist> => {
-    return new Promise((resolve: any, reject: any) => {
-        const options: any = { limit: 10000 };
-        ytpl(playlistId, options, (error: any, documents: IYtplPlaylist) => {
-            if (error) {
-                reject(error);
-            }
-            resolve(documents);
-        });
-    });
-};
-
-/**
- * Get the File Metadata
- */
-export const findMetadata = (url: string, options: any) => {
-    return new Promise((resolve: any, reject: any) => {
-        youtubedl.getInfo(url, options, (error: any, info: any) => {
-            if (error) {
-                reject(error);
-            }
-            resolve(info);
-        });
-    });
-};
-
-export const prepareFileName = (item: any, extension: string) => {
-    let fileName = this.cleanFileName(item.title);
-    let youtubeId = item.urlId;
-    if (_.isEmpty(youtubeId)) {
-        youtubeId = item.id;
-    }
+export const prepareFileName = (item: any, extension: string, isAddExtension = false) => {
+  let fileName = cleanFileName(item.title);
+  let youtubeId = item.urlId;
+  if (_.isEmpty(youtubeId)) {
+    youtubeId = item.id;
+  }
+  if (isAddExtension === true) {
     fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId, '.', extension);
-    return fileName;
+  }
+  return fileName;
 };
 
 export const cleanFileName = (fileName: string) => {
-    const cleanWords = [
-        '/r',
-        '/',
-        '\\',
-        '"',
-        '_',
-        '-',
-        'lyrical:',
-        'Lyrical :',
-        'Lyrical:',
-        'Full Song:',
-        'Full Audio:',
-        'Lyrical Video:',
-        'Official:',
-        'Full Video:'
-    ];
-    fileName = fileName.split(/'/g).join(' ');
-    cleanWords.forEach((word: string) => {
-        fileName = fileName.split(word).join(' ');
-        fileName = fileName.split(word.toLowerCase()).join(' ');
-        fileName = fileName.split(word.toUpperCase()).join(' ');
-        fileName = fileName.trim();
-    });
-    return fileName;
+  const cleanWords = [
+    'HD',
+    'lyrical:',
+    'Lyrical :',
+    'Lyrical:',
+    'Lyrical Video:',
+    'Best Lyric Video',
+    'Best Video',
+    'Official:',
+    '(Full Song)',
+    '[Full Song]',
+    'Full Song',
+    'Full Song:',
+    'Full Audio:',
+    'Full Video HD',
+    'Full Video',
+    'Full Video:',
+    'Full Video Song',
+    'Full HD Song',
+    'Full Video HD',
+    'Full Video',
+    '[Official Video]',
+    '(Official Song)',
+    '(Official Video)',
+    '(Video Song)',
+    'Video',
+    '/r',
+    '/',
+    '\\',
+    '"',
+    '_',
+    '#',
+    '()',
+    '[]'
+  ];
+  // fileName = fileName.split(/'/g).join(' ');
+  cleanWords.forEach((word: string) => {
+    fileName = fileName.split(word).join(' ');
+    fileName = fileName.split(word.toLowerCase()).join(' '); // Lowercase
+    fileName = fileName.split(word.toUpperCase()).join(' '); // Uppercase
+    fileName = fileName.trim();
+  });
+  fileName = fileName.replace(/\|/g, ' - ');
+  fileName = fileName.replace(/:/g, ' - ');
+  fileName = fileName.replace(/- -/g, '');
+  fileName = fileName.toString().replace(/"/g, '\\"');
+  fileName = fileName.replace(/\/\//g, '');
+  fileName = fileName.replace(/\s\s+/g, ' ');
+  fileName = fileName.replace(/ +(?= )/g, '');
+  return fileName;
 };

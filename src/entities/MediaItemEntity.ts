@@ -1,60 +1,66 @@
-import { Column, CreateDateColumn, Entity, ObjectID, ObjectIdColumn, UpdateDateColumn, Unique, Index } from 'typeorm';
-import moment = require('moment');
+import { Column, Entity, Index } from 'typeorm';
+import { BaseEntity } from './BaseEntity';
 
-class User {
-
-    @ObjectIdColumn()
-    _id: ObjectID;
+export class MediaError {
+    @Column({ nullable: false })
+    public downloadOptions: number;
 
     @Column({ nullable: false })
-    email: string;
+    public message: string;
 }
 
 @Entity('mediaItems')
-@Index([ 'user._id', 'playlistId', 'urlId' ], { unique: true })
-export class MediaItemEntity {
-
-    @ObjectIdColumn()
-    _id: ObjectID;
-
-    @Column(type => User)
-    user: User;
+@Index(['userId', 'playlistUrlId', 'driveFolderId', 'urlId'], { unique: true })
+export class MediaItemEntity extends BaseEntity {
 
     @Column({ nullable: false })
-    url: string;
+    public url: string;
 
     @Column({ nullable: false })
-    @Column()
-    title: string;
+    public title: string;
 
     @Column({ nullable: false })
-    @Column()
-    urlId: string;
+    public urlId: string;
 
     @Column({ nullable: false })
-    playlistId: string;
+    public playlistUrlId: string;
+
+    @Column('uuid')
+    public playlistId: string;
+
+    @Column('uuid')
+    public userId: string;
 
     @Column({ nullable: false })
-    driveFolderId: string;
+    public type: string;
 
-    @Column()
-    fileId: string;
+    @Column({ nullable: false })
+    public driveFolderId: string;
+
+    @Column({ nullable: true })
+    public fileId: string;
 
     @Column({ default: false })
-    isUploaded: boolean;
+    public isUploaded: boolean;
 
     @Column({ default: false })
-    isDownloaded: boolean;
+    public isDownloaded: boolean;
 
     @Column({ default: 0 })
-    downloadAttemptCount: number;
+    public downloadAttemptCount: number;
 
-    @Column()
-    lastDownloadTimeStamp: Date;
+    @Column({ default: 0 })
+    public googleDriveUploadAttemptCount: number;
 
-    @CreateDateColumn({ type: 'timestamp' })
-    createdDate: Date;
+    @Column({ nullable: true })
+    public lastDownloadTimeStamp: Date;
 
-    @UpdateDateColumn({ type: 'timestamp' })
-    updatedDate: Date;
+    @Column({ nullable: true })
+    public lastUploadTimeStamp: Date;
+
+    @Column({ type: 'json', nullable: true })
+    public errors: MediaError[];
+
+    @Column({ nullable: true })
+    public localFilePath: string;
 }

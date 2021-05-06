@@ -14,18 +14,8 @@ const mediaItemRoute: express.Router = express.Router();
  * This API will return all the Medias of User
  */
 mediaItemRoute.post('/', passport.authenticate('bearer'), [
-    MediaItemService.searchByLoggedInUser,
-    MediaItemController.mediaItemData
-]);
-
-/**
- * Search All Playlist's Media
- * This API will return all the Playlist of the User
- */
-mediaItemRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
-    PlaylistService.searchOneByPlaylistIdAndUserId,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
-    MediaItemController.mediaItemData
+  MediaItemService.searchAllByLoggedInUser,
+  MediaItemController.mediaItemData
 ]);
 
 /**
@@ -36,15 +26,15 @@ mediaItemRoute.post('/search/:playlistId', passport.authenticate('bearer'), [
  * This API called from the Cron Job
  */
 mediaItemRoute.post('/sync/crone/youtube', [
-    PlaylistService.searchOneByLastSyncTimeStamp,
-    PlaylistService.updateLastSyncTimeStamp,
-    UserService.searchOneByPlaylistUser,
-    MediaItemService.searchByLoggedInUserPlaylistAndDriveFolderId,
-    GoogleDriveService.searchAllFiles,
-    YouTubeService.listPlaylistItems,
-    MediaItemService.identifySyncItemsForYouTube,
-    MediaItemService.syncWithYouTube,
-    MediaItemController.mediaItemSync
+  PlaylistService.searchOneByLastSyncTimeStamp,
+  PlaylistService.updateLastSyncTimeStamp,
+  UserService.searchOneByPlaylistUser,
+  YouTubeService.listPlaylistItems,
+  MediaItemService.searchAllByLoggedInUserPlaylistAndDriveFolderId,
+  GoogleDriveService.searchAllFiles,
+  MediaItemService.identifySyncItemsForYouTube,
+  MediaItemService.syncWithYouTube,
+  MediaItemController.mediaItemSync
 ]);
 
 export { mediaItemRoute };
