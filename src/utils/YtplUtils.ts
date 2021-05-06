@@ -50,7 +50,8 @@ export const cleanFileName = (fileName: string) => {
     '_',
     '#',
     '()',
-    '[]'
+    '[]',
+    '( )'
   ];
   // fileName = fileName.split(/'/g).join(' ');
   cleanWords.forEach((word: string) => {
