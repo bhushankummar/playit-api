@@ -19,7 +19,7 @@ export const init = async () => {
       UserEntity,
       TokenEntity
     ]
-  }
+  };
   try {
     const connection: Connection = await createConnection(options);
     return connection;

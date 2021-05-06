@@ -9,4 +9,4 @@ export const url = (req: IRequest) => {
 
 export const toObjectId = (value: string): string => {
   return value;
-}
+};

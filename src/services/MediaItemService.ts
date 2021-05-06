@@ -262,7 +262,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       await mediaItemModel.insert(req.data.mediaItemsNew);
     } catch (error) {
       debug('error insertMany ', error);
-      debug('error insertMany ', req.data.mediaItemsNew)
+      debug('error insertMany ', req.data.mediaItemsNew);
     }
   }
 
