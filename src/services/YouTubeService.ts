@@ -38,6 +38,7 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
     const playListItemsData = {
       part: ['snippet'],
       playlistId: req.playlistStore.urlId,
+      maxResults: 50,
       pageToken: ''
     };
     let nextPageToken = '';
@@ -48,11 +49,14 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
       nextPageToken = '';
       try {
         const response: any = await youtubeClient.playlistItems.list(playListItemsData);
+        // debug('snippet.resourceId.videoId ', _.map(response.data.items, 'snippet.resourceId.videoId'));
         youtubePlaylistStoreData = response.data;
         // debug('youtubePlaylistStore ', JSON.stringify(response.data, undefined, 2));
         youtubePlaylistStoreItems = youtubePlaylistStoreItems.concat(response.data.items);
+        // youtubePlaylistStoreItems = _.merge(youtubePlaylistStoreItems, response.data.items);
         if (response.data.nextPageToken) {
           nextPageToken = _.clone(response.data.nextPageToken);
+          // debug('nextPageToken ', nextPageToken);
         }
       } catch (error) {
         nextPageToken = '';
@@ -68,8 +72,13 @@ export const listPlaylistItems: express.RequestHandler = async (req: IRequest, r
         }
       }
     } while (nextPageToken !== '');
+    // debug('youtubePlaylistStoreData ', youtubePlaylistStoreData);
     youtubePlaylistStoreData.items = youtubePlaylistStoreItems || [];
+    // debug('ytplPlaylistStore ', youtubePlaylistStoreData.items);
+    // debug('youtubePlaylistStoreData.items.length ---- ', youtubePlaylistStoreData.items.length);
+    // debug('ytplPlaylistStore ', _.map(youtubePlaylistStoreData.items, 'snippet.resourceId.videoId'));
     const ytplPlaylistStore = YouTubeUtils.mapYouTubeResponse(youtubePlaylistStoreData);
+    // debug('ytplPlaylistStore ', _.map(ytplPlaylistStore.items, 'id'));
     ytplPlaylistStore.id = req.playlistStore.urlId;
     debug(`Total songs in YouTube - ${req.playlistStore.title} - ${ytplPlaylistStore.items.length}`);
     req.youTubePlaylistStore = ytplPlaylistStore;

@@ -174,20 +174,21 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
     const playlistModel = getRepository(PlaylistEntity);
-    // const whereCondition = {
-    //   $or: [
-    //     {
-    //       lastSyncTimeStamp: {
-    //         $lt: moment().subtract(2, 'minutes').toISOString()
-    //       }
-    //     },
-    //     {
-    //       lastSyncTimeStamp: undefined
-    //     }
-    //   ]
-    // };
+    const whereCondition = {
+      // id: ''
+      // $or: [
+      //   {
+      //     lastSyncTimeStamp: {
+      //       $lt: moment().subtract(2, 'minutes').toISOString()
+      //     }
+      //   },
+      //   {
+      //     lastSyncTimeStamp: undefined
+      //   }
+      // ]
+    };
     const options: FindOneOptions<PlaylistEntity> = {
-      // where: whereCondition,
+      where: whereCondition,
       order: {
         lastSyncTimeStamp: 'ASC'
       }

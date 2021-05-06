@@ -110,13 +110,16 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   const mediaItemsUpdate: any = [];
   const mediaItemsRemove: any = [];
   const googleDriveItemsRemove: any = [];
-
+  // debug('req.mediaItemsStore ', req.mediaItemsStore);
+  // debug('req.mediaItemsStore ', _.map(req.mediaItemsStore, 'urlId'));
+  // debug('req.youTubePlaylistStore.items ', req.youTubePlaylistStore.items);
+  // debug('req.youTubePlaylistStore.items ', _.map(req.youTubePlaylistStore.items, 'id'));
   /**
-     * Identify the files those :
-     * Not available in database :
-     * A - Available in google drive
-     * B - Not Available in google drive
-     */
+   * Identify the files those :
+   * Not available in database :
+   * A - Available in google drive
+   * B - Not Available in google drive
+   */
   _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
     if (_.isEmpty(value.id)) {
       debug('CRITICAL : value.id is empty.');
@@ -141,7 +144,9 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const mediaItem: MediaItemEntity = _.find(req.mediaItemsStore, {
       urlId: value.id
     });
-    // debug('value ', value);
+    // debug('value.id ', value.id);
+    // debug('value.url ', value.url);
+
     const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
     const mediaNewItem = _.find(mediaItemsNewList, {
       urlId: value.id
@@ -152,6 +157,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       _.isEmpty(itemGoogleDrive) === true &&
       _.isEmpty(mediaNewItem) === true
     ) {
+      // debug('Inside new Media');
       data.isUploaded = false;
       data.isDownloaded = false;
       mediaItemsNewList.push(data);
@@ -291,7 +297,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
   await bluebird.map(req.data.mediaItemsRemove, async (value: MediaItemEntity) => {
     try {
       if (_.isEmpty(value.fileId)) {
-        debug('CRITICAL: mediaItemsRemove : File Id is empty. ', value);
+        // debug('CRITICAL: mediaItemsRemove : File Id is empty. ', value);
         return;
       }
       await GoogleDrive.removeFile(req.userStore, value.fileId);
@@ -310,8 +316,8 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     try {
       const mediaItemModel = getRepository(MediaItemEntity);
       // debug('mediaRemoveItem ', value);
-      const response = await mediaItemModel.remove(req.data.mediaItemsRemove);
-      debug('mediaItemsRemove response ', response);
+      await mediaItemModel.remove(req.data.mediaItemsRemove);
+      // debug('mediaItemsRemove response ', response);
     } catch (error) {
       debug('mediaItemModel.remove error ', error);
       debug('mediaItemModel.remove error in  ', req.data.mediaItemsRemove);
