@@ -158,6 +158,9 @@
     "@typescript-eslint/no-unused-vars": [
       "error"
     ],
+    "semi": [
+      "error"
+    ],
     "promise/always-return": "error",
     "promise/no-return-wrap": "error",
     "promise/param-names": "error",

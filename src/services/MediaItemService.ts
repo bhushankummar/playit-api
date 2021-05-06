@@ -220,13 +220,17 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     userStore: req.userStore,
     mediaItemsNewCount: mediaItemsNewList.length,
     mediaItemsRemoveCount: mediaItemsRemove.length,
-    googleDriveItemsRemoveCount: googleDriveItemsRemove.length,
     mediaItemsNew: mediaItemsNewList,
     mediaItemsRemove: mediaItemsRemove,
     googleDriveItemsRemove: googleDriveItemsRemove,
+    googleDriveItemsRemoveCount: googleDriveItemsRemove.length,
     mediaItemsUpdateCount: mediaItemsUpdate.length,
     mediaItemsUpdate: mediaItemsUpdate
   };
+  debug(`${req.playlistStore.title} mediaItemsNewCount ${mediaItemsNewList.length}`);
+  debug(`${req.playlistStore.title} mediaItemsRemoveCount ${mediaItemsRemove.length}`);
+  debug(`${req.playlistStore.title} mediaItemsUpdateCount ${mediaItemsUpdate.length}`);
+  debug(`${req.playlistStore.title} googleDriveItemsRemoveCount ${googleDriveItemsRemove.length}`);
   return next();
 };
 
