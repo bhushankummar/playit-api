@@ -43,29 +43,41 @@ export const cleanFileName = (fileName: string) => {
     '(Official Video)',
     '(Video Song)',
     'Video',
+    'VIDEO',
     '/r',
     '/',
     '\\',
+    '//',
     '"',
     '_',
     '#',
-    '()',
     '[]',
-    '( )'
+    '()',
+    '*',
+    '?',
+    '<',
+    '>',
+    '( )', //Should be last
   ];
   // fileName = fileName.split(/'/g).join(' ');
   cleanWords.forEach((word: string) => {
-    fileName = fileName.split(word).join(' ');
-    fileName = fileName.split(word.toLowerCase()).join(' '); // Lowercase
-    fileName = fileName.split(word.toUpperCase()).join(' '); // Uppercase
+    fileName = fileName.split(word).join('');
+    fileName = fileName.split(word.toLowerCase()).join(''); // Lowercase
+    fileName = fileName.split(word.toUpperCase()).join(''); // Uppercase
     fileName = fileName.trim();
   });
-  fileName = fileName.replace(/\|/g, ' - ');
-  fileName = fileName.replace(/:/g, ' - ');
+  fileName = fileName.replace(/\|/g, '-'); // Replace |
+  fileName = fileName.replace(/:/g, '-'); // Replace :
   fileName = fileName.replace(/- -/g, '');
   fileName = fileName.toString().replace(/"/g, '\\"');
   fileName = fileName.replace(/\/\//g, '');
   fileName = fileName.replace(/\s\s+/g, ' ');
   fileName = fileName.replace(/ +(?= )/g, '');
+  cleanWords.forEach((word: string) => {
+    fileName = fileName.split(word).join('');
+    fileName = fileName.split(word.toLowerCase()).join(''); // Lowercase
+    fileName = fileName.split(word.toUpperCase()).join(''); // Uppercase
+    fileName = fileName.trim();
+  });
   return fileName;
 };
