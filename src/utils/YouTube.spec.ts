@@ -11,6 +11,7 @@ chai.should();
 describe('YouTube', () => {
 
   it('File name should not have special characters.', (done) => {
+    // debug('Inside File name should not have special characters.');
     const items = _.sortBy(playlistItems, 'title');
     let cleanFileNames = [];
     items.forEach((value) => {

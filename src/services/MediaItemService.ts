@@ -125,11 +125,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       debug('CRITICAL : value.id is empty.');
       return;
     }
-    let extension = 'mp4';
-    if (req.playlistStore.type === '0') {
-      extension = 'mp3';
-    }
-    const mediaTitle = YtplUtils.prepareFileName(value, extension);
+    const mediaTitle = YtplUtils.prepareFileName(value);
     const data: Partial<MediaItemEntity> = {
       userId: req.userStore.id,
       title: mediaTitle,
@@ -277,6 +273,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     try {
       const mediaItemModel = getRepository(MediaItemEntity);
       const updateData: Partial<MediaItemEntity> = {
+        title: value.title,
         isUploaded: value.isUploaded,
         isDownloaded: value.isDownloaded
       };

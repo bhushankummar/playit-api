@@ -4,6 +4,7 @@ import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
+import * as YtplUtils from '../utils/YtplUtils';
 import * as Boom from 'boom';
 const debug = Debug('PL:GoogleDriveService');
 
@@ -141,7 +142,8 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
   }
   // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
   try {
-    const query = `name = "${req.youTubePlaylistStore.title}"`;
+    const cleanFolderName = YtplUtils.prepareFileName(req.youTubePlaylistStore.title);
+    const query = `name = "${cleanFolderName}"`;
     const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore, query);
     if (folderResponse && folderResponse.data) {
       // debug('folderResponse.data ', folderResponse);
@@ -160,7 +162,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
       req.userStore.googleDriveParentId,
-      req.youTubePlaylistStore.title,
+      cleanFolderName,
       req.userStore
     );
     if (responseNewGoogleFolder && responseNewGoogleFolder.data) {
