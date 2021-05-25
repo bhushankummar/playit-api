@@ -142,7 +142,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
   }
   // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
   try {
-    const cleanFolderName = YtplUtils.prepareFileName(req.youTubePlaylistStore.title);
+    const cleanFolderName = YtplUtils.prepareFolderName(req.youTubePlaylistStore.title);
     const query = `name = "${cleanFolderName}"`;
     const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore, query);
     if (folderResponse && folderResponse.data) {

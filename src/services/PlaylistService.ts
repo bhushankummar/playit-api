@@ -190,7 +190,7 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
     const options: FindOneOptions<PlaylistEntity> = {
       where: whereCondition,
       order: {
-        lastSyncTimeStamp: 'ASC'
+        updateDateTime: 'ASC'
       }
     };
     req.playlistStore = await playlistModel.findOne(options);
