@@ -41,7 +41,7 @@
         "googleapis": "^67.1.1",
         "googleapis-common": "^5.0.1",
         "lodash": "^4.17.21",
-        "moment": "^2.29.1",
+        "moment": "^2.29.2",
         "mongodb": "^3.6.5",
         "node-pre-gyp": "^0.14.0",
         "nodemon": "^2.0.7",
