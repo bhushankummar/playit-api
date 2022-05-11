@@ -1,5 +1,3 @@
-import { YOUTUBE } from '../constants';
-import * as _ from 'lodash';
 import { IYtplItem } from '../interface/IYtplItem';
 // import * as Debug from 'debug';
 
