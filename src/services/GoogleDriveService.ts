@@ -110,7 +110,7 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
   try {
     const folderId = req.playlistStore.driveFolderId;
     let nextPageToken = '';
-    let files: IGoogleDriveFileStore[] = [];
+    let files: Partial<IGoogleDriveFileStore>[] = [];
     do {
       const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore, folderId, nextPageToken);
       if (response && response.data) {
@@ -118,11 +118,14 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
         nextPageToken = response.data.nextPageToken || '';
       }
       files = files.concat(response.data.files);
+      // files = _.merge(files, response.data.files);
       // debug('files ', files.length);
     } while (nextPageToken !== '');
-    debug(`Total files in GoogleDrive - ${req.playlistStore.title} - ${files.length}`);
-    // debug('GoogleDrive files ', JSON.stringify(files, null, 2));
-    req.googleDriveFileItemsStore = files;
+    const filteredFiles: any = _.filter(files, {
+      trashed: false
+    });
+    debug(`Total files in GoogleDrive - ${req.playlistStore.title} - ${filteredFiles.length}`);
+    req.googleDriveFileItemsStore = filteredFiles;
     return next();
   } catch (error) {
     debug('searchAllFiles error ', error);
