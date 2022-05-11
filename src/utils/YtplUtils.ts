@@ -1,18 +1,19 @@
 import { YOUTUBE } from '../constants';
 import * as _ from 'lodash';
+import { IYtplItem } from '../interface/IYtplItem';
 // import * as Debug from 'debug';
 
 // const debug = Debug('PL:YtplUtils');
 
-export const prepareFileName = (item: any, extension = '', isAddExtension = false) => {
+export const prepareFileName = (item: Partial<IYtplItem>, extension = '', isAddExtension = false) => {
   let fileName = cleanFileName(item.title);
-  let youtubeId = item.urlId;
-  if (_.isEmpty(youtubeId)) {
-    youtubeId = item.id;
-  }
-  if (youtubeId) {
-    fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
-  }
+  // let youtubeId = item.id;
+  // if (_.isEmpty(youtubeId)) {
+  //   youtubeId = item.id;
+  // }
+  // if (youtubeId) {
+  //   fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
+  // }
   if (isAddExtension === true) {
     fileName = fileName.concat('.', extension);
   }

@@ -136,7 +136,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   // });
   // debug('req.youTubePlaylistStore.items ', req.youTubePlaylistStore.items.length);
   // debug('req.mediaItemsStore ', req.mediaItemsStore.length);
-  _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
+  _.each(req.youTubePlaylistStore.items, (value: Partial<IYtplItem>) => {
     if (_.isEmpty(value.id)) {
       debug('CRITICAL : value.id is empty.');
       return;
