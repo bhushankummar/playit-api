@@ -1,5 +1,5 @@
 {
-  "ext": "ts,yaml,js,json",
+  "ext": "ts,yaml",
   "ignore": [
     "dist/*",
     "test/*",

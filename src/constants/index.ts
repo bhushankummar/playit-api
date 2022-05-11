@@ -122,7 +122,7 @@ export const CRONE_JOB = {
 
 export const DOWNLOAD_AUDIO_SCHEDULE = {
   ACTION: process.env.DOWNLOAD_AUDIO_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',
@@ -132,7 +132,7 @@ export const DOWNLOAD_AUDIO_SCHEDULE = {
 
 export const UPLOAD_AUDIO_SCHEDULE = {
   ACTION: process.env.UPLOAD_AUDIO_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',
@@ -142,7 +142,7 @@ export const UPLOAD_AUDIO_SCHEDULE = {
 
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
   ACTION: process.env.SYNC_TO_YOUTUBE_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/4',
   Hours: '*',
   DayOfMonth: '*',
@@ -161,7 +161,7 @@ export const SYNC_GOOGLE_DRIVE_FOLDER_SCHEDULE = {
 };
 
 export const UPLOAD_VIDEO_SCHEDULE = {
-  Seconds: '0',
+  Seconds: '*',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',

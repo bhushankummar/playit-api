@@ -7,14 +7,9 @@ const CronJob = cron.CronJob;
 const debug = Debug('PL:JOB-UploadVideoToGoogleDrive');
 
 export const init: any = () => {
-  const croneTime = `${UPLOAD_VIDEO_SCHEDULE.Seconds  } ${ 
-    UPLOAD_VIDEO_SCHEDULE.Minutes  } ${ 
-    UPLOAD_VIDEO_SCHEDULE.Hours  } ${ 
-    UPLOAD_VIDEO_SCHEDULE.DayOfMonth  } ${ 
-    UPLOAD_VIDEO_SCHEDULE.Months  } ${ 
-    UPLOAD_VIDEO_SCHEDULE.DayOfWeek}`;
+  const croneTime = `${UPLOAD_VIDEO_SCHEDULE.Seconds} ${UPLOAD_VIDEO_SCHEDULE.Minutes} ${UPLOAD_VIDEO_SCHEDULE.Hours} ${UPLOAD_VIDEO_SCHEDULE.DayOfMonth} ${UPLOAD_VIDEO_SCHEDULE.Months} ${UPLOAD_VIDEO_SCHEDULE.DayOfWeek}`;
   const job = new CronJob(croneTime, start, undefined, false, CRONE_JOB.TIMEZONE);
-  debug('.............. UploadVideoToGoogleDrive Job Initiated Successfully, still you have to execute start() ........');
+  debug(`.............. UploadVideoToGoogleDrive Job Initiated Successfully, still you have to execute start() ........ -${croneTime}-`);
   return job;
 };
 
