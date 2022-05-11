@@ -3,7 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import { getRepository, FindOneOptions, FindManyOptions } from 'typeorm';
+import { getRepository, FindOneOptions, FindManyOptions, WhereExpression } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import * as utils from '../utils';
 import moment = require('moment');
@@ -151,7 +151,9 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
   if (_.isEmpty(req.userStore)) {
     return next(Boom.notFound('Invalid User'));
   } else if (_.isEmpty(req.playlistStore)) {
-    return next(Boom.notFound('This playlist does not exits.'));
+    debug('This playlist does not exits.');
+    return next();
+    // return next(Boom.notFound('This playlist does not exits.'));
   }
   try {
     const playlistModel = getRepository(PlaylistEntity);
@@ -174,7 +176,8 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
     const playlistModel = getRepository(PlaylistEntity);
-    const whereCondition = {
+    const whereCondition : Partial<PlaylistEntity> = {
+      // urlId : ''
       // id: ''
       // $or: [
       //   {

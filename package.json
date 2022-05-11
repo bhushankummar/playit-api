@@ -5,6 +5,7 @@
     "main": "dist",
     "scripts": {
         "start": "npm run version && export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
+        "start:local": "export DEBUG=PL:* && nodemon -x 'ts-node src/server.ts;'",
         "lint": "eslint \"{src,apps,libs,test}/**/*.ts\"",
         "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "prebuild": "npm run lint && rm -rf ./dist/src/* && rm -rf ./dist/test/*",

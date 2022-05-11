@@ -6,6 +6,7 @@ import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as Boom from 'boom';
+import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
 const debug = Debug('PL:GoogleDriveService');
 
 /**
@@ -109,7 +110,7 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
   try {
     const folderId = req.playlistStore.driveFolderId;
     let nextPageToken = '';
-    let files: any[] = [];
+    let files: IGoogleDriveFileStore[] = [];
     do {
       const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore, folderId, nextPageToken);
       if (response && response.data) {
@@ -120,7 +121,8 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
       // debug('files ', files.length);
     } while (nextPageToken !== '');
     debug(`Total files in GoogleDrive - ${req.playlistStore.title} - ${files.length}`);
-    req.googleDriveStore = files;
+    // debug('GoogleDrive files ', JSON.stringify(files, null, 2));
+    req.googleDriveFileItemsStore = files;
     return next();
   } catch (error) {
     debug('searchAllFiles error ', error);

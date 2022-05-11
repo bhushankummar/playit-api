@@ -4,4 +4,5 @@ export interface IGoogleDriveFileStore {
     mimeType: string;
     parents: string[];
     modifiedTime: Date;
+    urlId?: string // It is not added by Google Drive. We are using it internally.
 }

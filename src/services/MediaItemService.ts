@@ -4,13 +4,15 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getRepository, FindManyOptions, LessThan } from 'typeorm';
+import { getRepository, FindManyOptions, LessThan, Not, In } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
 import * as Boom from 'boom';
 import moment = require('moment');
 import { IYtplItem } from '../interface/IYtplItem';
+import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
+import { FindOneOptions } from 'mongodb';
 
 const debug = Debug('PL:MediaItemService');
 
@@ -77,9 +79,15 @@ export const searchAllByLoggedInUserPlaylistAndDriveFolderId: express.RequestHan
       playlistId: req.playlistStore.id,
       driveFolderId: req.playlistStore.driveFolderId
     };
+    const options: FindManyOptions<MediaItemEntity> = {
+      where: whereCondition,
+      order: {
+        urlId: 'ASC'
+      }
+    };
     // debug('whereCondition ', whereCondition);
     const mediaItemModel = getRepository(MediaItemEntity);
-    req.mediaItemsStore = await mediaItemModel.find(whereCondition);
+    req.mediaItemsStore = await mediaItemModel.find(options);
     // debug('req.mediaItemsStore : database ', req.mediaItemsStore);
     debug(`Total records In database - ${req.playlistStore.title} - ${req.mediaItemsStore.length}`);
     return next();
@@ -98,9 +106,9 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     return next();
   }
   const googleItems: any = [];
-  _.each(req.googleDriveStore, (value) => {
-    let youTubeId = value.name.split(YOUTUBE.ID_SEPARATOR);
-    youTubeId = _.last(youTubeId);
+  _.each(req.googleDriveFileItemsStore, (value: Partial<IGoogleDriveFileStore>) => {
+    const youTubeIds = value.name.split(YOUTUBE.ID_SEPARATOR);
+    const youTubeId: string = _.last(youTubeIds);
     value.urlId = youTubeId.split('.')[0];
     googleItems.push(value);
   });
@@ -120,6 +128,15 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
    * A - Available in google drive
    * B - Not Available in google drive
    */
+  // _.each(req.mediaItemsStore, (value: MediaItemEntity) => {
+  //   if (_.isEmpty(value.urlId)) {
+  //     debug('CRITICAL : value.id is empty.');
+  //     return;
+  //   }
+  //   debug('media.urlId ', value.urlId);
+  // });
+  // debug('req.youTubePlaylistStore.items ', req.youTubePlaylistStore.items.length);
+  // debug('req.mediaItemsStore ', req.mediaItemsStore.length);
   _.each(req.youTubePlaylistStore.items, (value: IYtplItem) => {
     if (_.isEmpty(value.id)) {
       debug('CRITICAL : value.id is empty.');
@@ -140,6 +157,16 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const mediaItem: MediaItemEntity = _.find(req.mediaItemsStore, {
       urlId: value.id
     });
+    // debug('youtube.id %o media.urlId %o database id %o ', value.id, mediaItem.urlId, mediaItem.id);
+    // if (_.isEmpty(mediaItem) === true) {
+    //   debug('This song is not found in the Database ', mediaItem);
+    // }
+    // if (_.isUndefined(mediaItem) === true) {
+    //   debug('This song is not found in the Database ', mediaItem);
+    // }
+    // if (_.isNull(mediaItem) === true) {
+    //   debug('This song is not found in the Database ', mediaItem);
+    // }
     // debug('value.id ', value.id);
     // debug('value.url ', value.url);
 
@@ -147,27 +174,26 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const mediaNewItem = _.find(mediaItemsNewList, {
       urlId: value.id
     });
-    // Media is not in database and also Media is not in Google Drive
-    // Add into list only if already not added
+
     if (_.isEmpty(mediaItem) === true &&
       _.isEmpty(itemGoogleDrive) === true &&
       _.isEmpty(mediaNewItem) === true
     ) {
+      // Media is not in database and also Media is not in Google Drive
       // debug('Inside new Media');
       data.isUploaded = false;
       data.isDownloaded = false;
       mediaItemsNewList.push(data);
-    }
-
-    // Media is not in database and also Media is AVAILABLE in Google Drive
-    // Add into list only if already not added
-    if (_.isEmpty(mediaItem) === true &&
+    } else if (_.isEmpty(mediaItem) === true &&
       _.isEmpty(itemGoogleDrive) === false &&
       _.isEmpty(mediaNewItem) === true) {
+      // Media is not in database and Media is AVAILABLE in Google Drive
       data.isUploaded = true;
       data.isDownloaded = true;
       data.fileId = itemGoogleDrive.id;
       mediaItemsNewList.push(data);
+    } else {
+      // debug('It does not match any condition ', JSON.stringify(mediaItem));
     }
   });
 
@@ -189,10 +215,11 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const itemGoogleDrive = _.find(googleItems, {
       urlId: mediaItem.urlId
     });
-
+    // if (_.isEmpty(itemGoogleDrive) === true) {
+    //   debug('This song is not found in the Google Drive ', mediaItem);
+    // }
     // Media is not in Google Drive BUT Media isUploaded = true
-    if (_.isEmpty(itemGoogleDrive) === true
-      && mediaItem.isUploaded === true) {
+    if (_.isEmpty(itemGoogleDrive) === true) {
       mediaItem.isUploaded = false;
       mediaItem.isDownloaded = false;
       mediaItemsUpdate.push(mediaItem);
@@ -206,6 +233,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       mediaItemsUpdate.push(mediaItem);
     }
   });
+
   _.each(googleItems, (value) => {
     const item = _.find(req.youTubePlaylistStore.items, {
       id: value.urlId
@@ -283,8 +311,8 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       const whereCondition: Partial<MediaItemEntity> = {
         id: value.id
       };
-      const response = await mediaItemModel.update(whereCondition, updateData);
-      debug('mediaItemsUpdate response ', response);
+      await mediaItemModel.update(whereCondition, updateData);
+      // debug('mediaItemsUpdate response ', response);
     } catch (error) {
       debug('mediaItemsUpdate error ', error);
       debug('mediaItemsUpdate error item ', value);
@@ -485,7 +513,9 @@ export const removeMediaItems: express.RequestHandler = async (req: IRequest, re
   if (_.isEmpty(req.userStore)) {
     return next(Boom.notFound('Invalid User'));
   } else if (_.isEmpty(req.playlistStore)) {
-    return next(Boom.notFound('This playlist does not exits.'));
+    debug('This playlist does not exits.');
+    return next();
+    // return next(Boom.notFound('This playlist does not exits.'));
   }
   const mediaItemModel = getRepository(MediaItemEntity);
   try {
