@@ -1,0 +1,17 @@
+name: Heroku Deploy
+
+on:
+  push:
+    branches:
+      - development
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - uses: akhileshns/heroku-deploy@v3.12.12 # This is the action
+        with:
+          heroku_api_key: 31726e30-5fca-4e3e-9602-93f09828bda5
+          heroku_app_name: "playit-api" #Must be unique in Heroku
+          heroku_email: "jot.robert77@gmail.com"
