@@ -4,7 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
-import { getRepository, FindManyOptions, LessThan, Not, In } from 'typeorm';
+import { getRepository, FindManyOptions, LessThan } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
 import { YOUTUBE } from '../constants';
@@ -12,7 +12,6 @@ import * as Boom from 'boom';
 import moment = require('moment');
 import { IYtplItem } from '../interface/IYtplItem';
 import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
-import { FindOneOptions } from 'mongodb';
 
 const debug = Debug('PL:MediaItemService');
 

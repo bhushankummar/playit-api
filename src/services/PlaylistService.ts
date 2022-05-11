@@ -3,7 +3,7 @@ import { IRequest } from '../interface/IRequest';
 import * as Debug from 'debug';
 import * as Boom from 'boom';
 import * as _ from 'lodash';
-import { getRepository, FindOneOptions, FindManyOptions, WhereExpression } from 'typeorm';
+import { getRepository, FindOneOptions, FindManyOptions } from 'typeorm';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import * as utils from '../utils';
 import moment = require('moment');
