@@ -30,6 +30,7 @@ export const cleanFileName = (fileName: string) => {
     'Lyrical :',
     'Lyrical:',
     'Lyrical Video:',
+    'Lyrical',
     'Best Lyric Video',
     'Best Video',
     'Official:',
