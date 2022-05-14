@@ -219,8 +219,10 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     // }
     // Media is not in Google Drive BUT Media isUploaded = true
     if (_.isEmpty(itemGoogleDrive) === true) {
-      mediaItem.isUploaded = false;
       mediaItem.isDownloaded = false;
+      mediaItem.isUploaded = false;
+      mediaItem.googleDriveUploadAttemptCount = 0;
+      mediaItem.downloadAttemptCount = 0;
       mediaItemsUpdate.push(mediaItem);
     }
     // Media available in Google Drive BUT Media isUploaded = false
@@ -303,7 +305,9 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
       const updateData: Partial<MediaItemEntity> = {
         title: value.title,
         isUploaded: value.isUploaded,
-        isDownloaded: value.isDownloaded
+        isDownloaded: value.isDownloaded,
+        downloadAttemptCount: value.downloadAttemptCount,
+        googleDriveUploadAttemptCount: value.googleDriveUploadAttemptCount
       };
       if (value.fileId) {
         updateData.fileId = value.fileId;
