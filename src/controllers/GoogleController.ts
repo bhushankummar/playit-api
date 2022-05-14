@@ -35,8 +35,11 @@ export const redirectToHome: express.RequestHandler = (req: IRequest, res: expre
 /**
  * Google Drive Details
  */
-export const googleDriveDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  req.data = req.googleDriveStore || [];
+export const googleDriveUploadDetail: express.RequestHandler = (req: IRequest, res: express.Response, next: express.NextFunction) => {
+  req.data = {
+    googleDriveStore: req.googleDriveStore,
+    mediaStore: req.mediaStore
+  };
   return next();
 };
 /**
