@@ -465,9 +465,11 @@ export const searchOneByIsDownloaded: express.RequestHandler = async (req: IRequ
     const mediaItemModel = getRepository(MediaItemEntity);
     req.mediaStore = await mediaItemModel.findOne(whereCondition, orderBy);
     // debug('req.mediaStore Pending to Upload Media ', req.mediaStore);
-    // if (_.isEmpty(req.mediaStore) === false) {
-    //   debug('Found One Pending to Upload Media');
-    // }
+    if (_.isEmpty(req.mediaStore) === false) {
+      debug('Found One Pending to Upload Media');
+    } else {
+      debug('No Pending to Upload Media');
+    }
     return next();
   } catch (error) {
     debug('searchOneByIsDownloaded error ', error);
