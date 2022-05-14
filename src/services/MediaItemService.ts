@@ -217,12 +217,12 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     // if (_.isEmpty(itemGoogleDrive) === true) {
     //   debug('This song is not found in the Google Drive ', mediaItem);
     // }
-    // Media is not in Google Drive BUT Media isUploaded = true
+    // Media is not in Google Drive But it is available in Youtube
     if (_.isEmpty(itemGoogleDrive) === true) {
       mediaItem.isDownloaded = false;
       mediaItem.isUploaded = false;
       mediaItem.googleDriveUploadAttemptCount = 0;
-      mediaItem.downloadAttemptCount = 0;
+      // mediaItem.downloadAttemptCount = 0;
       mediaItemsUpdate.push(mediaItem);
     }
     // Media available in Google Drive BUT Media isUploaded = false
@@ -306,7 +306,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
         title: value.title,
         isUploaded: value.isUploaded,
         isDownloaded: value.isDownloaded,
-        downloadAttemptCount: value.downloadAttemptCount,
+        // downloadAttemptCount: value.downloadAttemptCount,
         googleDriveUploadAttemptCount: value.googleDriveUploadAttemptCount
       };
       if (value.fileId) {

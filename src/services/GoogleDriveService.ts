@@ -72,7 +72,7 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
       req.mediaStore.localFilePath = '';
       return next();
     }
-    debug('Start uploading %o ', req.mediaStore.title);
+    debug('## Start uploading %o ', req.mediaStore.title);
     const response: any = await GoogleDrive.uploadFile(req.mediaStore.driveFolderId, req.mediaStore.localFilePath, req.userStore);
     if (response && response.data) {
       req.googleDriveFileStore = response.data;
@@ -83,10 +83,10 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
       // }
     }
     // debug('Files has been uploaded ', req.googleDriveFileStore);
-    debug('Upload complete %o ', req.mediaStore.title);
+    debug('## Upload complete %o ', req.mediaStore.title);
     return next();
   } catch (error) {
-    debug('Upload failed %o ', req.mediaStore.title);
+    debug('## Upload failed %o ', req.mediaStore.title);
     debug('uploadToDrive error ', error);
     debug('uploadToDrive error %o ', req.userStore);
     return next();
