@@ -104,7 +104,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     // debug('Return from Empty req.youTubePlaylistStore.items');
     return next();
   }
-  const googleItems: any = [];
+  const googleItems: Partial<IGoogleDriveFileStore>[] = [];
   _.each(req.googleDriveFileItemsStore, (value: Partial<IGoogleDriveFileStore>) => {
     const youTubeIds = value.name.split(YOUTUBE.ID_SEPARATOR);
     const youTubeId: string = _.last(youTubeIds);
@@ -114,8 +114,8 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   // debug('googleItems ', JSON.stringify(googleItems, null, 2));
   // debug('req.mediaItemsStore ', req.mediaItemsStore);
   const mediaItemsNewList: Partial<MediaItemEntity>[] = [];
-  const mediaItemsUpdate: any = [];
-  const mediaItemsRemove: any = [];
+  const mediaItemsUpdate: Partial<MediaItemEntity>[] = [];
+  const mediaItemsRemove: Partial<MediaItemEntity>[] = [];
   const googleDriveItemsRemove: any = [];
   // debug('req.mediaItemsStore ', req.mediaItemsStore);
   // debug('req.mediaItemsStore ', _.map(req.mediaItemsStore, 'urlId'));
@@ -207,7 +207,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
      * Identify the files those are in the database but not available in the YouTube
      */
     if (_.isEmpty(youTubeItem) === true) {
-      // debug('Identify for the Remove. %o ', mediaItem);
+      debug('Identify for the Remove. %o  is not available in YouTube Now.', mediaItem.title);
       mediaItemsRemove.push(mediaItem);
     }
 
@@ -235,6 +235,9 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     }
   });
 
+  /*
+   * Identify which Media will be remove from Google Drive
+   **/
   _.each(googleItems, (value) => {
     const item = _.find(req.youTubePlaylistStore.items, {
       id: value.urlId
@@ -246,6 +249,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       googleDriveItemsRemove.push(value);
     }
   });
+
   req.data = {
     playlistStore: req.playlistStore,
     userStore: req.userStore,
@@ -374,74 +378,6 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     }
   }, { concurrency: CONCURRENCY });
   return next();
-};
-
-/**
- * Search Media which has been not uploaded and also not downloaded yet
- */
-export const searchAllNotDownloaded: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  try {
-    const whereCondition = {
-      downloadAttemptCount: LessThan(5),
-      isUploaded: false,
-      isDownloaded: false
-    };
-    const options: FindManyOptions = {
-      where: whereCondition,
-      order: {
-        downloadAttemptCount: 'ASC'
-      },
-      take: 1
-    };
-    const mediaItemModel = getRepository(MediaItemEntity);
-    req.mediaItemsStore = await mediaItemModel.find(options);
-    debug('req.mediaItemsStore : Total records pending for the download ', req.mediaItemsStore.length);
-    return next();
-  } catch (error) {
-    debug('searchAllNotDownloaded error ', error);
-    return next(error);
-  }
-};
-
-/**
- * Update lastDownloadTimeStamp, downloadAttemptCount, isDownloaded....
- */
-export const updateDownloadMedia: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
-  // debug('Inside updateDownloadAttempt');
-  if (_.isEmpty(req.mediaItemsStore)) {
-    return next();
-  }
-  const CONCURRENCY = 1;
-  await bluebird.map(req.mediaItemsStore, async (value: MediaItemEntity) => {
-    try {
-      const mediaItemModel = getRepository(MediaItemEntity);
-      const whereCondition: Partial<MediaItemEntity> = {
-        id: value.id
-      };
-      // debug('whereCondition %o ', whereCondition);
-      // debug('value %o ', value);
-      // debug('value.errors %o ', value.errors);
-      let downloadAttemptCount = value.downloadAttemptCount;
-      if (downloadAttemptCount === undefined) {
-        downloadAttemptCount = 0;
-      }
-      downloadAttemptCount += 1;
-      const updateData: Partial<MediaItemEntity> = {
-        lastDownloadTimeStamp: moment().toDate(),
-        downloadAttemptCount: downloadAttemptCount,
-        isDownloaded: value.isDownloaded,
-        localFilePath: value.localFilePath,
-        errors: value.errors
-      };
-      // debug('updateData ', updateData);
-      await mediaItemModel.update(whereCondition, updateData);
-      // debug('updateDownloadMedia update ', response);
-      return next();
-    } catch (error) {
-      debug('updateDownloadMedia error ', error);
-      debug('updateDownloadMedia error in  ', value);
-    }
-  }, { concurrency: CONCURRENCY });
 };
 
 /**

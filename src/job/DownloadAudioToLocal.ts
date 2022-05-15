@@ -1,7 +1,6 @@
 import * as Debug from 'debug';
 import * as cron from 'cron';
 import { CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE } from '../constants';
-import * as request from 'request-promise';
 import * as MediaItemUtils from '../utils/MediaItemUtils';
 import * as YouTubeMediaUtils from '../utils/YouTubeMediaUtils';
 
@@ -18,7 +17,7 @@ export const init: any = () => {
 let taskRunning = false;
 const start: any = async () => {
   if (taskRunning) {
-    debug('.............. SKIP ........');
+    debug('.............. Previous Job is still in progress so SKIP new execution ........');
     return;
   }
   taskRunning = true;
