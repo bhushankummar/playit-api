@@ -223,7 +223,11 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     // }
 
     // Media is not in Google Drive But it is available in Youtube
-    if (_.isEmpty(itemGoogleDrive) === true) {
+    if (
+      _.isEmpty(itemGoogleDrive) === true
+      && mediaItem.isDownloaded === true
+    ) {
+      debug('Media is not in Google Drive But it is available in Youtube');
       mediaItem.isDownloaded = false;
       mediaItem.isUploaded = false;
       mediaItem.googleDriveUploadAttemptCount = 0;
@@ -234,6 +238,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       _.isEmpty(itemGoogleDrive) === false
       && mediaItem.isUploaded === false
     ) {
+      debug('Media available in Google Drive BUT Media isUploaded = false');
       // Media available in Google Drive BUT Media isUploaded = false
       mediaItem.isUploaded = true;
       mediaItem.isDownloaded = true;
