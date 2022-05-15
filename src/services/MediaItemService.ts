@@ -105,11 +105,15 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     return next();
   }
   const googleItems: Partial<IGoogleDriveFileStore>[] = [];
-  _.each(req.googleDriveFileItemsStore, (value: Partial<IGoogleDriveFileStore>) => {
-    const youTubeIds = value.name.split(YOUTUBE.ID_SEPARATOR);
+  _.each(req.googleDriveFileItemsStore, (googleItem: Partial<IGoogleDriveFileStore>) => {
+    const youTubeIds = googleItem.name.split(YOUTUBE.ID_SEPARATOR);
     const youTubeId: string = _.last(youTubeIds);
-    value.urlId = youTubeId.split('.')[0];
-    googleItems.push(value);
+    googleItem.urlId = youTubeId.split('.')[0];
+    if (_.isEmpty(googleItem.urlId) === false) {
+      googleItems.push(googleItem);
+    } else {
+      debug('CRITICAL: googleItem.urlId is empty.');
+    }
   });
   // debug('googleItems ', JSON.stringify(googleItems, null, 2));
   // debug('req.mediaItemsStore ', req.mediaItemsStore);
@@ -169,7 +173,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     // debug('value.id ', value.id);
     // debug('value.url ', value.url);
 
-    const itemGoogleDrive = _.find(googleItems, { urlId: value.id });
+    const itemGoogleDrive: Partial<IGoogleDriveFileStore> = _.find(googleItems, { urlId: value.id });
     const mediaNewItem = _.find(mediaItemsNewList, {
       urlId: value.id
     });
@@ -211,12 +215,13 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       mediaItemsRemove.push(mediaItem);
     }
 
-    const itemGoogleDrive = _.find(googleItems, {
+    const itemGoogleDrive: Partial<IGoogleDriveFileStore> = _.find(googleItems, {
       urlId: mediaItem.urlId
     });
     // if (_.isEmpty(itemGoogleDrive) === true) {
     //   debug('This song is not found in the Google Drive ', mediaItem);
     // }
+
     // Media is not in Google Drive But it is available in Youtube
     if (_.isEmpty(itemGoogleDrive) === true) {
       mediaItem.isDownloaded = false;
@@ -225,9 +230,11 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       // mediaItem.downloadAttemptCount = 0;
       mediaItemsUpdate.push(mediaItem);
     }
-    // Media available in Google Drive BUT Media isUploaded = false
-    if (_.isEmpty(itemGoogleDrive) === false
-      && mediaItem.isUploaded === false) {
+    else if (
+      _.isEmpty(itemGoogleDrive) === false
+      && mediaItem.isUploaded === false
+    ) {
+      // Media available in Google Drive BUT Media isUploaded = false
       mediaItem.isUploaded = true;
       mediaItem.isDownloaded = true;
       mediaItem.fileId = itemGoogleDrive.id;
@@ -238,15 +245,19 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   /*
    * Identify which Media will be remove from Google Drive
    **/
-  _.each(googleItems, (value) => {
+  _.each(googleItems, (googleItem: Partial<IGoogleDriveFileStore>) => {
+    if (_.isEmpty(googleItem.urlId)) {
+      debug('CRITICAL: Empty googleItem.urlId');
+      return;
+    }
     const item = _.find(req.youTubePlaylistStore.items, {
-      id: value.urlId
+      id: googleItem.urlId
     });
     const removePendingItem = _.find(mediaItemsRemove, {
-      urlId: value.urlId
+      urlId: googleItem.urlId
     });
     if (_.isEmpty(item) === true && _.isEmpty(removePendingItem) === true) {
-      googleDriveItemsRemove.push(value);
+      googleDriveItemsRemove.push(googleItem);
     }
   });
 
