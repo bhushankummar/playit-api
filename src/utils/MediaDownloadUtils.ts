@@ -20,7 +20,12 @@ export const downloadMedia = (options: any[], extension: string,
       fileName: ''
     };
     media.on('info', () => {
-      const newFileName = YtplUtils.prepareFileName(item, extension, true);
+      const newFileName = YtplUtils.prepareFileName(item,
+        {
+          extension: extension,
+          isAddExtension: true,
+          isAddUrlId: true
+        });
       const filePath = path.join(driveDirectory, newFileName);
       mediaResponse.filePath = filePath;
       mediaResponse.fileName = newFileName;

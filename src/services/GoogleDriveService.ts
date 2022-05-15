@@ -68,7 +68,7 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
   }
   try {
     if (fs.existsSync(req.mediaStore.localFilePath) === false) {
-      debug('CRITICAL: This file does not exits %o ', req.mediaStore);
+      debug('CRITICAL: This file does not exits for Upload %o ', req.mediaStore);
       req.mediaStore.localFilePath = '';
       return next();
     }

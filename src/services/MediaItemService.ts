@@ -146,7 +146,13 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
       debug('CRITICAL : value.id is empty.');
       return;
     }
-    const mediaTitle = YtplUtils.prepareFileName(value);
+    const mediaTitle = YtplUtils.prepareFileName(value,
+      {
+        extension: '',
+        isAddExtension: false,
+        isAddUrlId: false
+      }
+    );
     const data: Partial<MediaItemEntity> = {
       userId: req.userStore.id,
       title: mediaTitle,

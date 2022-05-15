@@ -6,17 +6,28 @@ import { MediaItemEntity } from '../entities/MediaItemEntity';
 
 // const debug = Debug('PL:YtplUtils');
 
-export const prepareFileName = (item: Partial<MediaItemEntity>, extension = '', isAddExtension = false) => {
+export const prepareFileName = (item: Partial<MediaItemEntity>,
+  options = {
+    extension: '',
+    isAddExtension: false,
+    isAddUrlId: false,
+  }
+  // extension = '',
+  // isAddExtension = false,
+  // isAddUrlId = false
+) => {
   let fileName = cleanFileName(item.title);
   let youtubeId = item.urlId;
   if (_.isEmpty(youtubeId)) {
     youtubeId = item.urlId;
   }
-  if (youtubeId) {
-    fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
+  if (options.isAddUrlId === true) {
+    if (youtubeId) {
+      fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
+    }
   }
-  if (isAddExtension === true) {
-    fileName = fileName.concat('.', extension);
+  if (options.isAddExtension === true) {
+    fileName = fileName.concat('.', options.extension);
   }
   return fileName;
 };

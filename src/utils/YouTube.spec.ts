@@ -17,8 +17,18 @@ describe('YouTube', () => {
     let cleanFileNames = [];
     const cleanFileNamesWithoutFlag = [];
     items.forEach((value: Partial<IYtplItem>) => {
-      const fileName = YtplUtils.prepareFileName(value, 'mp3', true);
-      const fileNameWithoutFlag = YtplUtils.prepareFileName(value, 'mp3', false);
+      const fileName = YtplUtils.prepareFileName(value,
+        {
+          extension: 'mp3',
+          isAddExtension: false,
+          isAddUrlId: true
+        });
+      const fileNameWithoutFlag = YtplUtils.prepareFileName(value,
+        {
+          extension: 'mp3',
+          isAddExtension: true,
+          isAddUrlId: true
+        });
       // debug('fileName  ', fileName);
       cleanFileNames.push(fileName);
       cleanFileNamesWithoutFlag.push(fileNameWithoutFlag);
