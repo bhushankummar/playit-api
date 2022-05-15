@@ -1,7 +1,9 @@
 import * as Debug from 'debug';
 import * as cron from 'cron';
-import { CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE, ENDPOINT } from '../constants';
+import { CRONE_JOB, DOWNLOAD_AUDIO_SCHEDULE } from '../constants';
 import * as request from 'request-promise';
+import * as MediaItemUtils from '../utils/MediaItemUtils';
+import * as YouTubeMediaUtils from '../utils/YouTubeMediaUtils';
 
 const CronJob = cron.CronJob;
 const debug = Debug('PL:JOB-DownloadAudioToLocal');
@@ -22,13 +24,10 @@ const start: any = async () => {
   taskRunning = true;
   // debug('.............. Start ........');
   try {
-    const options = {
-      method: 'POST',
-      uri: `${ENDPOINT.DOWNLOAD}`,
-      body: {},
-      json: true
-    };
-    await request(options);
+    let req = {};
+    req = await MediaItemUtils.searchAllNotDownloaded(req);
+    req = await YouTubeMediaUtils.downloadMediaHQUsingMediaItem(req);
+    req = await MediaItemUtils.updateDownloadMedia(req);
   } catch (error) {
     // debug('error ', error);
   }
