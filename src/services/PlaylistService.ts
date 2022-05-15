@@ -178,7 +178,7 @@ export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: 
     const playlistModel = getRepository(PlaylistEntity);
     const whereCondition : Partial<PlaylistEntity> = {
       // urlId : ''
-      id: 'c5b1f304-607d-4e6d-8191-cac2920ef48f'
+      // id: ''
       // $or: [
       //   {
       //     lastSyncTimeStamp: {
