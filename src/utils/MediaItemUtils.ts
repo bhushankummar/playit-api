@@ -5,6 +5,7 @@ import moment = require('moment');
 import { FindManyOptions, getRepository, LessThan } from 'typeorm';
 import { APP } from '../constants';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
+import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
 const debug = Debug('PL:MediaItemUtils');
 
 export const searchAllNotDownloaded = async (req) => {
@@ -30,7 +31,6 @@ export const searchAllNotDownloaded = async (req) => {
     throw error;
   }
 };
-
 
 /**
  * Update lastDownloadTimeStamp, downloadAttemptCount, isDownloaded....
@@ -71,4 +71,33 @@ export const updateDownloadMedia = async (req) => {
     }
   }, { concurrency: CONCURRENCY });
   return req;
+};
+
+export const updateUploadMedia = async (
+  mediaStore: Partial<MediaItemEntity>,
+  googleDriveFileStore: Partial<IGoogleDriveFileStore>
+) => {
+  const mediaItemModel = getRepository(MediaItemEntity);
+  const whereCondition: Partial<MediaItemEntity> = {
+    id: mediaStore.id
+  };
+  const count = (mediaStore.googleDriveUploadAttemptCount || 0) + 1;
+  const updateData: Partial<MediaItemEntity> = {
+    lastUploadTimeStamp: moment().toDate(),
+    googleDriveUploadAttemptCount: count
+  };
+  if (googleDriveFileStore && googleDriveFileStore.id) {
+    updateData.fileId = googleDriveFileStore.id;
+    updateData.isUploaded = true;
+  }
+  if (_.isEmpty(mediaStore.localFilePath)) {
+    updateData.localFilePath = '';
+    updateData.googleDriveUploadAttemptCount = 0;
+    updateData.downloadAttemptCount = 0;
+    updateData.isUploaded = false;
+    updateData.isDownloaded = false;
+  }
+  // debug('updateData ', updateData);
+  const response = await mediaItemModel.update(whereCondition, updateData);
+  return response;
 };

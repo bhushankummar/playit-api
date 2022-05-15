@@ -4,6 +4,7 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as YtplUtils from '../utils/YtplUtils';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
+import * as MediaItemUtils from '../utils/MediaItemUtils';
 import { getRepository, FindManyOptions, LessThan } from 'typeorm';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import * as bluebird from 'bluebird';
@@ -453,28 +454,7 @@ export const updateUploadMedia: express.RequestHandler = async (req: IRequest, r
     return next();
   }
   try {
-    const mediaItemModel = getRepository(MediaItemEntity);
-    const whereCondition: Partial<MediaItemEntity> = {
-      id: req.mediaStore.id
-    };
-    const count = (req.mediaStore.googleDriveUploadAttemptCount || 0) + 1;
-    const updateData: Partial<MediaItemEntity> = {
-      lastUploadTimeStamp: moment().toDate(),
-      googleDriveUploadAttemptCount: count
-    };
-    if (req.googleDriveFileStore && req.googleDriveFileStore.id) {
-      updateData.fileId = req.googleDriveFileStore.id;
-      updateData.isUploaded = true;
-    }
-    if (_.isEmpty(req.mediaStore.localFilePath)) {
-      updateData.localFilePath = '';
-      updateData.googleDriveUploadAttemptCount = 0;
-      updateData.downloadAttemptCount = 0;
-      updateData.isUploaded = false;
-      updateData.isDownloaded = false;
-    }
-    // debug('updateData ', updateData);
-    await mediaItemModel.update(whereCondition, updateData);
+    await MediaItemUtils.updateUploadMedia(req.mediaStore, req.googleDriveFileStore);
     return next();
   } catch (error) {
     debug('updateUploadMedia error ', error);

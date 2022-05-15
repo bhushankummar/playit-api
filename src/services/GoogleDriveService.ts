@@ -5,6 +5,7 @@ import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
 import * as YtplUtils from '../utils/YtplUtils';
+import * as MediaItemUtils from '../utils/MediaItemUtils';
 import * as Boom from 'boom';
 import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
 const debug = Debug('PL:GoogleDriveService');
@@ -70,6 +71,12 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
     if (fs.existsSync(req.mediaStore.localFilePath) === false) {
       debug('CRITICAL: This file does not exits for Upload %o ', req.mediaStore);
       req.mediaStore.localFilePath = '';
+      try {
+        await MediaItemUtils.updateUploadMedia(req.mediaStore, req.googleDriveFileStore);
+      } catch (error) {
+        debug('updateUploadMedia error ', error);
+        debug('updateUploadMedia error in  ', req.mediaStore);
+      }
       return next();
     }
     debug('## Start uploading %o ', req.mediaStore.title);
@@ -84,7 +91,15 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
     }
     // debug('Files has been uploaded ', req.googleDriveFileStore);
     debug('## Upload complete %o ', req.mediaStore.title);
+
+    try {
+      await MediaItemUtils.updateUploadMedia(req.mediaStore, req.googleDriveFileStore);
+    } catch (error) {
+      debug('updateUploadMedia error ', error);
+      debug('updateUploadMedia error in  ', req.mediaStore);
+    }
     return next();
+
   } catch (error) {
     debug('## Upload failed %o ', req.mediaStore.title);
     debug('uploadToDrive error ', error);
