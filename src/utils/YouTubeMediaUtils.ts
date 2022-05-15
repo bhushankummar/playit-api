@@ -1,26 +1,19 @@
-import * as express from 'express';
-import { IRequest } from '../interface/IRequest';
+import Bluebird = require('bluebird');
 import * as Debug from 'debug';
 import * as fs from 'fs';
-import * as path from 'path';
-import * as _ from 'lodash';
-import * as bluebird from 'bluebird';
-import * as MediaDownload from '../utils/MediaDownloadUtils';
-
+import _ = require('lodash');
+import path = require('path');
 import { APP, AUDIO_DOWNLOAD_OPTIONS, MEDIA_DIRECTORY, MEDIA_TYPE, VIDEO_DOWNLOAD_OPTIONS } from '../constants';
-import { MediaItemEntity, MediaErrorEntity } from '../entities/MediaItemEntity';
+import { MediaErrorEntity, MediaItemEntity } from '../entities/MediaItemEntity';
+import * as MediaDownloadUtils from '../utils/MediaDownloadUtils';
+const debug = Debug('PL:YouTubeMediaUtils');
 
-const debug = Debug('PL:YouTubeMediaService');
-
-/**
- * Download HQ Audio/Video using URL
- */
-export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
+export const downloadMediaHQUsingMediaItem = async (req) => {
   if (_.isEmpty(req.mediaItemsStore)) {
-    return next();
+    return req;
   }
-  const tempMediaItems: MediaItemEntity[] = [];
-  await bluebird.map(req.mediaItemsStore, async (updatedItem: MediaItemEntity) => {
+  const tempMediaItems: Partial<MediaItemEntity>[] = [];
+  await Bluebird.map(req.mediaItemsStore, async (updatedItem: Partial<MediaItemEntity>) => {
     // debug('item %o ', item);
     let rootDirector = MEDIA_DIRECTORY.VIDEO;
     let mediaType = 'mp4';
@@ -70,20 +63,20 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
           }
         }
       }
-      const response: any = await MediaDownload.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
+      const response: any = await MediaDownloadUtils.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
       updatedItem.localFilePath = response.filePath;
       updatedItem.isDownloaded = true;
       // debug('Media download complete ', response);
-    } catch (error) {
+    } catch (error: any) {
       updatedItem.isDownloaded = false;
       debug('downloadMediaHQUsingMediaItem error ', error);
       debug('downloadMediaHQUsingMediaItem error error.stderr ', error.stderr);
-      const mediaError: MediaErrorEntity = {
+      const mediaErrorItem: MediaErrorEntity = {
         message: error.stderr,
         downloadOptions: downloadOptionKey
       };
       // debug('item ', item);
-      updatedItem.errors.push(mediaError);
+      updatedItem.errors.push(mediaErrorItem);
       debug('downloadMediaHQUsingMediaItem error ', updatedItem);
       // debug('item %o ', item);
     }
@@ -91,5 +84,5 @@ export const downloadMediaHQUsingMediaItem: express.RequestHandler = async (req:
   }, { concurrency: APP.DOWNLOAD_AUDIO_CONCURRENCY });
   req.mediaItemsStore = tempMediaItems;
   req.youTubeStore = { message: true };
-  return next();
+  return req;
 };

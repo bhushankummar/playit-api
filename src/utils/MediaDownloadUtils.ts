@@ -9,7 +9,7 @@ const youtubedl = require('youtube-dl');
 // const youtubedl = require('youtube-dl-exec');
 const debug = Debug('PL:MediaDownload');
 
-export const downloadMedia = (options: any[], extension: string, item: MediaItemEntity, driveDirectory: string) => {
+export const downloadMedia = (options: any[], extension: string, item: Partial<MediaItemEntity>, driveDirectory: string) => {
   return new Promise((resolve: any, reject: any) => {
     const mediaUrl = item.url;
     const media = youtubedl(mediaUrl, options);

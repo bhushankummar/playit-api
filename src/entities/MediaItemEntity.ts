@@ -1,7 +1,7 @@
 import { Column, Entity, Index } from 'typeorm';
 import { BaseEntity } from './BaseEntity';
 
-export class MediaError {
+export class MediaErrorEntity {
     @Column({ nullable: false })
     public downloadOptions: number;
 
@@ -59,7 +59,7 @@ export class MediaItemEntity extends BaseEntity {
     public lastUploadTimeStamp: Date;
 
     @Column({ type: 'json', nullable: true })
-    public errors: MediaError[];
+    public errors: MediaErrorEntity[];
 
     @Column({ nullable: true })
     public localFilePath: string;
