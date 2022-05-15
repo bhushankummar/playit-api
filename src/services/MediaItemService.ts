@@ -120,7 +120,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   const mediaItemsNewList: Partial<MediaItemEntity>[] = [];
   const mediaItemsUpdate: Partial<MediaItemEntity>[] = [];
   const mediaItemsRemove: Partial<MediaItemEntity>[] = [];
-  const googleDriveItemsRemove: any = [];
+  // const googleDriveItemsRemove: Partial<IGoogleDriveFileStore>[] = [];
   // debug('req.mediaItemsStore ', req.mediaItemsStore);
   // debug('req.mediaItemsStore ', _.map(req.mediaItemsStore, 'urlId'));
   // debug('req.youTubePlaylistStore.items ', req.youTubePlaylistStore.items);
@@ -201,17 +201,21 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
   });
 
   // TODO : Handle if the req.mediaItemsStore has the duplicate items.
+  /**
+   * Available in Database but not available in the Google Drive
+   */
   _.each(req.mediaItemsStore, (mediaItem: MediaItemEntity) => {
     // debug('value.urlId ', value.urlId);
     const youTubeItem = _.find(req.youTubePlaylistStore.items, {
       id: mediaItem.urlId
     });
     // debug('item %o ', item.length);
+
     /**
      * Identify the files those are in the database but not available in the YouTube
      */
     if (_.isEmpty(youTubeItem) === true) {
-      debug('Identify for the Remove. %o  is not available in YouTube Now.', mediaItem.title);
+      debug('-- Identify for the Remove. %o  is not available in YouTube Now.', mediaItem.title);
       mediaItemsRemove.push(mediaItem);
     }
 
@@ -247,24 +251,26 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     }
   });
 
-  /*
+  /**
    * Identify which Media will be remove from Google Drive
    **/
-  _.each(googleItems, (googleItem: Partial<IGoogleDriveFileStore>) => {
-    if (_.isEmpty(googleItem.urlId)) {
-      debug('CRITICAL: Empty googleItem.urlId');
-      return;
-    }
-    const item = _.find(req.youTubePlaylistStore.items, {
-      id: googleItem.urlId
-    });
-    const removePendingItem = _.find(mediaItemsRemove, {
-      urlId: googleItem.urlId
-    });
-    if (_.isEmpty(item) === true && _.isEmpty(removePendingItem) === true) {
-      googleDriveItemsRemove.push(googleItem);
-    }
-  });
+  // _.each(googleItems, (googleItem: Partial<IGoogleDriveFileStore>) => {
+  //   if (_.isEmpty(googleItem.urlId)) {
+  //     debug('CRITICAL: Empty googleItem.urlId');
+  //     return;
+  //   }
+  //   // Find Item which is not available in the YouTube Playlist
+  //   const item = _.find(req.youTubePlaylistStore.items, {
+  //     id: googleItem.urlId
+  //   });
+  //   // const removePendingItem = _.find(mediaItemsRemove, {
+  //   //   urlId: googleItem.urlId
+  //   // });
+  //   //  && _.isEmpty(removePendingItem) === true
+  //   if (_.isEmpty(item) === true) {
+  //     googleDriveItemsRemove.push(googleItem);
+  //   }
+  // });
 
   req.data = {
     playlistStore: req.playlistStore,
@@ -273,15 +279,15 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     mediaItemsRemoveCount: mediaItemsRemove.length,
     mediaItemsNew: mediaItemsNewList,
     mediaItemsRemove: mediaItemsRemove,
-    googleDriveItemsRemove: googleDriveItemsRemove,
-    googleDriveItemsRemoveCount: googleDriveItemsRemove.length,
+    // googleDriveItemsRemove: googleDriveItemsRemove,
+    // googleDriveItemsRemoveCount: googleDriveItemsRemove.length,
     mediaItemsUpdateCount: mediaItemsUpdate.length,
     mediaItemsUpdate: mediaItemsUpdate
   };
   debug(`${req.playlistStore.title} - mediaItemsNewCount ${mediaItemsNewList.length}`);
   debug(`${req.playlistStore.title} - mediaItemsRemoveCount ${mediaItemsRemove.length}`);
   debug(`${req.playlistStore.title} - mediaItemsUpdateCount ${mediaItemsUpdate.length}`);
-  debug(`${req.playlistStore.title} - googleDriveItemsRemoveCount ${googleDriveItemsRemove.length}`);
+  // debug(`${req.playlistStore.title} - googleDriveItemsRemoveCount ${googleDriveItemsRemove.length}`);
   return next();
 };
 
@@ -300,7 +306,7 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
   } else if (
     _.isEmpty(req.data.mediaItemsNew) &&
     _.isEmpty(req.data.mediaItemsRemove) &&
-    _.isEmpty(req.data.googleDriveItemsRemove) &&
+    // _.isEmpty(req.data.googleDriveItemsRemove) &&
     _.isEmpty(req.data.mediaItemsUpdate)
   ) {
     return next();
@@ -376,23 +382,24 @@ export const syncWithYouTube: express.RequestHandler = async (req: IRequest, res
     }
   }
 
-  await bluebird.map(req.data.googleDriveItemsRemove, async (value: any) => {
-    try {
-      // debug('Remove media from Google Drive ', value);
-      if (_.isEmpty(value.id)) {
-        debug('CRITICAL: googleDriveItemsRemove File Id is empty.', value);
-        return;
-      }
-      await GoogleDrive.removeFile(req.userStore, value.id);
-    } catch (error) {
-      if (error && error.errors) {
-        debug('googleDriveItemsRemove error ', error.errors);
-      } else {
-        debug('googleDriveItemsRemove error ', error);
-      }
-      debug('googleDriveItemsRemove from google drive value ', value);
-    }
-  }, { concurrency: CONCURRENCY });
+  // await bluebird.map(req.data.googleDriveItemsRemove, async (value: Partial<IGoogleDriveFileStore>) => {
+  //   try {
+  //     // debug('Remove media from Google Drive ', value);
+  //     if (_.isEmpty(value.id)) {
+  //       debug('CRITICAL: googleDriveItemsRemove File Id is empty.', value);
+  //       return;
+  //     }
+  //     await GoogleDrive.removeFile(req.userStore, value.id);
+  //   } catch (error) {
+  //     if (error && error.errors) {
+  //       debug('googleDriveItemsRemove error ', error.errors);
+  //     } else {
+  //       debug('googleDriveItemsRemove error ', error);
+  //     }
+  //     debug('googleDriveItemsRemove from google drive value ', value);
+  //   }
+  // }, { concurrency: CONCURRENCY });
+
   return next();
 };
 

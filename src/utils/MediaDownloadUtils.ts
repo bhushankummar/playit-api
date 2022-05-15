@@ -9,7 +9,8 @@ const youtubedl = require('youtube-dl');
 // const youtubedl = require('youtube-dl-exec');
 const debug = Debug('PL:MediaDownload');
 
-export const downloadMedia = (options: any[], extension: string, item: Partial<MediaItemEntity>, driveDirectory: string) => {
+export const downloadMedia = (options: any[], extension: string,
+  item: Partial<MediaItemEntity>, driveDirectory: string) => {
   return new Promise((resolve: any, reject: any) => {
     const mediaUrl = item.url;
     const media = youtubedl(mediaUrl, options);
@@ -23,7 +24,7 @@ export const downloadMedia = (options: any[], extension: string, item: Partial<M
       const filePath = path.join(driveDirectory, newFileName);
       mediaResponse.filePath = filePath;
       mediaResponse.fileName = newFileName;
-      debug('Download started %o ', mediaResponse.fileName);
+      debug('** Download started %o ', mediaResponse.fileName);
       media.pipe(fs.createWriteStream(filePath));
     });
 
