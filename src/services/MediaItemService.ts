@@ -109,6 +109,7 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const youTubeIds = googleItem.name.split(YOUTUBE.ID_SEPARATOR);
     const youTubeId: string = _.last(youTubeIds);
     googleItem.urlId = youTubeId.split('.')[0];
+    debug('googleItem.urlId ', googleItem.urlId);
     if (_.isEmpty(googleItem.urlId) === false) {
       googleItems.push(googleItem);
     } else {

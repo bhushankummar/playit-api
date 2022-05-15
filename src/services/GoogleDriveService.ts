@@ -112,7 +112,9 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
     let nextPageToken = '';
     let files: Partial<IGoogleDriveFileStore>[] = [];
     do {
-      const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore, folderId, nextPageToken);
+      const response: any = await GoogleDrive.searchIntoFolderRecursive(
+        req.userStore, folderId, nextPageToken
+      );
       if (response && response.data) {
         // debug('response.data.nextPageToken ', response.data.nextPageToken);
         nextPageToken = response.data.nextPageToken || '';

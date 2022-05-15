@@ -63,7 +63,9 @@ export const downloadMediaHQUsingMediaItem = async (req) => {
           }
         }
       }
-      const response: any = await MediaDownloadUtils.downloadMedia(downloadOption, mediaType, updatedItem, driveDirectory);
+      const response: any = await MediaDownloadUtils.downloadMedia(
+        downloadOption, mediaType,
+        updatedItem, driveDirectory);
       updatedItem.localFilePath = response.filePath;
       updatedItem.isDownloaded = true;
       // debug('Media download complete ', response);

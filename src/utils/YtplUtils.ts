@@ -1,3 +1,5 @@
+import _ = require('lodash');
+import { YOUTUBE } from '../constants';
 import { IYtplItem } from '../interface/IYtplItem';
 // import * as Debug from 'debug';
 
@@ -5,13 +7,13 @@ import { IYtplItem } from '../interface/IYtplItem';
 
 export const prepareFileName = (item: Partial<IYtplItem>, extension = '', isAddExtension = false) => {
   let fileName = cleanFileName(item.title);
-  // let youtubeId = item.id;
-  // if (_.isEmpty(youtubeId)) {
-  //   youtubeId = item.id;
-  // }
-  // if (youtubeId) {
-  //   fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
-  // }
+  let youtubeId = item.id;
+  if (_.isEmpty(youtubeId)) {
+    youtubeId = item.id;
+  }
+  if (youtubeId) {
+    fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
+  }
   if (isAddExtension === true) {
     fileName = fileName.concat('.', extension);
   }

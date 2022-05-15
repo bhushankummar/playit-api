@@ -16,8 +16,17 @@ export const APP = {
   IS_SANDBOX: false,
   DOWNLOAD_AUDIO_CONCURRENCY: 3,
   DOWNLOAD_VIDEO_CONCURRENCY: 3,
-  DOWNLOAD_ATTEMPT: 2
+  DOWNLOAD_ATTEMPT: 2,
+  DOWNLOAD_TAKE: 1
 };
+
+if (!_.isEmpty(process.env.DOWNLOAD_TAKE)) {
+  try {
+    APP.DOWNLOAD_TAKE = parseInt(process.env.DOWNLOAD_TAKE, 10);
+  } catch (exception) {
+    debug('exception ', exception);
+  }
+}
 
 if (!_.isEmpty(process.env.DOWNLOAD_AUDIO_CONCURRENCY)) {
   try {

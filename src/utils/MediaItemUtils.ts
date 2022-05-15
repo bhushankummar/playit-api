@@ -3,6 +3,7 @@ import * as Debug from 'debug';
 import _ = require('lodash');
 import moment = require('moment');
 import { FindManyOptions, getRepository, LessThan } from 'typeorm';
+import { APP } from '../constants';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 const debug = Debug('PL:MediaItemUtils');
 
@@ -18,7 +19,7 @@ export const searchAllNotDownloaded = async (req) => {
       order: {
         downloadAttemptCount: 'ASC'
       },
-      take: 1
+      take: APP.DOWNLOAD_TAKE
     };
     const mediaItemModel = getRepository(MediaItemEntity);
     req.mediaItemsStore = await mediaItemModel.find(options);
