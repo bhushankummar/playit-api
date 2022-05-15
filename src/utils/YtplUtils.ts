@@ -1,15 +1,16 @@
 import _ = require('lodash');
 import { YOUTUBE } from '../constants';
-import { IYtplItem } from '../interface/IYtplItem';
+import { MediaItemEntity } from '../entities/MediaItemEntity';
+// import { IYtplItem } from '../interface/IYtplItem';
 // import * as Debug from 'debug';
 
 // const debug = Debug('PL:YtplUtils');
 
-export const prepareFileName = (item: Partial<IYtplItem>, extension = '', isAddExtension = false) => {
+export const prepareFileName = (item: Partial<MediaItemEntity>, extension = '', isAddExtension = false) => {
   let fileName = cleanFileName(item.title);
-  let youtubeId = item.id;
+  let youtubeId = item.urlId;
   if (_.isEmpty(youtubeId)) {
-    youtubeId = item.id;
+    youtubeId = item.urlId;
   }
   if (youtubeId) {
     fileName = fileName.concat(YOUTUBE.ID_SEPARATOR, youtubeId);
@@ -85,6 +86,8 @@ export const cleanFileName = (fileName: string) => {
   fileName = fileName.replace(/\/\//g, '');
   fileName = fileName.replace(/\s\s+/g, ' ');
   fileName = fileName.replace(/ +(?= )/g, '');
+  fileName = fileName.replace('-', '');
+
   cleanWords.forEach((word: string) => {
     fileName = fileName.split(word).join('');
     fileName = fileName.split(word.toLowerCase()).join(''); // Lowercase
