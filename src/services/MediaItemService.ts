@@ -110,11 +110,14 @@ export const identifySyncItemsForYouTube: express.RequestHandler = async (req: I
     const youTubeIds = googleItem.name.split(YOUTUBE.ID_SEPARATOR);
     const youTubeId: string = _.last(youTubeIds);
     googleItem.urlId = youTubeId.split('.')[0];
-    debug('googleItem.urlId ', googleItem.urlId);
+    // debug('googleItem.urlId ', googleItem.urlId);
     if (_.isEmpty(googleItem.urlId) === false) {
       googleItems.push(googleItem);
     } else {
       debug('CRITICAL: googleItem.urlId is empty.');
+    }
+    if (_.isEmpty(googleItem.urlId) === false && googleItem.urlId.length !== 11) {
+      debug('CRITICAL: googleItem.urlId %o length is invalid.', youTubeId);
     }
   });
   // debug('googleItems ', JSON.stringify(googleItems, null, 2));

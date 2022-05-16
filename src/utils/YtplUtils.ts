@@ -33,11 +33,11 @@ export const prepareFileName = (item: Partial<MediaItemEntity>,
 };
 
 export const prepareFolderName = (folderName: string) => {
-  const cleanFolderName = cleanFileName(folderName);
+  const cleanFolderName = cleanFileName(folderName, false);
   return cleanFolderName;
 };
 
-export const cleanFileName = (fileName: string) => {
+export const cleanFileName = (fileName: string, isFile = true) => {
   const cleanWords = [
     'HD',
     'lyrical:',
@@ -97,8 +97,9 @@ export const cleanFileName = (fileName: string) => {
   fileName = fileName.replace(/\/\//g, '');
   fileName = fileName.replace(/\s\s+/g, ' ');
   fileName = fileName.replace(/ +(?= )/g, '');
-  fileName = fileName.replace('-', '');
-
+  if (isFile === true) {
+    fileName = fileName.replace('-', '');
+  }
   cleanWords.forEach((word: string) => {
     fileName = fileName.split(word).join('');
     fileName = fileName.split(word.toLowerCase()).join(''); // Lowercase
