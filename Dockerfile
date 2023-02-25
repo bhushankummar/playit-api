@@ -14,7 +14,7 @@ COPY . .
 # RUN npm install
 RUN npm ci --only=production
 # RUN ls -la
-RUN build:direct
+RUN npm run build:direct
 RUN ls -la
 # Bundle app source
 # COPY . .
