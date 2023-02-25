@@ -23,7 +23,7 @@ jobs:
       - name: Login to Server And Setup the Directory
         run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir ${{ secrets.WORK_DIR }} -p && exit"
-          scp -rp ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
+          scp -rp ./.* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && ls -la && sh deploy.sh && exit"
       - name: Execute the Deployment Script
         run: |
