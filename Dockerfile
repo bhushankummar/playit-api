@@ -11,7 +11,7 @@ COPY package*.json ./
 # If you are building your code for production
 RUN npm install
 # RUN npm ci --only=production
-
+RUN ls -la
 RUN npm run build
 
 # Bundle app source
