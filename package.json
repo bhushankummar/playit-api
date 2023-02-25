@@ -10,6 +10,7 @@
         "lint:fix": "eslint \"{src,apps,libs,test}/**/*.ts\" --fix",
         "prebuild": "npm run lint && rm -rf ./dist/src/* && rm -rf ./dist/test/*",
         "build": "npm run build-ts",
+        "build:direct": "npm run build-ts",
         "build-ts": "tsc",
         "serve-build": "npm run version && node dist/src/server.js",
         "unit": "mocha -r ts-node/register --config test/.mocharc.json",
