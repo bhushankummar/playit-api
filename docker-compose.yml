@@ -4,4 +4,4 @@ services:
     build: .
     command: npm run start
     ports:
-      - "49160:8000"
+      - "27465:8000"
