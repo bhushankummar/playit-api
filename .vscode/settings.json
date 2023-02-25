@@ -62,5 +62,7 @@
     "eslint.validate": [
         "javascript",
         "typescript",
-    ]
+    ],
+    "editor.wrappingColumn": 0,
+    "editor.wordWrap": "on"
 }

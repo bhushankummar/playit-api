@@ -3,7 +3,7 @@ name: Heroku Deploy
 on:
   push:
     branches:
-      - development
+      - skip_for_all
 env:
   PL_HEROKU_API_KEY: ${{ secrets.PL_HEROKU_API_KEY }}
 

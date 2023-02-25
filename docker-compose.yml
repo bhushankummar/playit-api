@@ -1,0 +1,7 @@
+version: "3.3"
+services:
+  play-it-api:
+    build: .
+    command: npm run start
+    ports:
+      - "49160:8000"
