@@ -28,9 +28,6 @@ jobs:
           scp -rp ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
       - name: Login to Server And Start Deployment Script
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && ls -la && sh deploy.sh && exit"
-      - name: Execute the Deployment Script
-        run: |
           ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "cd ${{ secrets.WORK_DIR }} && sh deploy.sh && exit"
       - name: Cleanup Files From GitHub
         run: rm -rf ~/.ssh
