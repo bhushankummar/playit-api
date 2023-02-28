@@ -15,9 +15,10 @@ RUN npm install -g typescript@3.9.10
 RUN npm install
 # RUN npm ci --only=production
 # RUN ls -la
-RUN npm run build:direct
+# RUN npm run build:direct
 RUN ls -la
 # Bundle app source
 # COPY . .
 
-CMD [ "npm","run","serve-build" ]
+CMD [ "npm","run","start" ]
+#CMD [ "npm","run","serve-build" ]
