@@ -11,7 +11,7 @@ COPY . .
 # COPY .eslintignore .
 
 # If you are building your code for production
-RUN npm install -g typescript
+RUN npm install -g typescript@3.9.10
 RUN npm install
 # RUN npm ci --only=production
 # RUN ls -la
