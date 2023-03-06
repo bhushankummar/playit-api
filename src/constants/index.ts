@@ -2,6 +2,18 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+
+console.log('NODE_ENV ', process.env.NODE_ENV);
+
+dotenv.config(
+  {
+    override: true,
+    // isGlobal: true,
+    path: `env.${process.env.NODE_ENV}.env`,
+    // debug: true
+  }
+);
 
 const debug = Debug('PL:Constant');
 
@@ -190,6 +202,7 @@ export const VIDEO_DOWNLOAD_OPTIONS = {
   2: ['--format=136']
 };
 
+console.log('DB.DATABASE_URL ',DB.DATABASE_URL);
 if (_.isEmpty(DB.DATABASE_URL)) {
   debug('----------------------------------------------------------------------------------- ');
   debug('ERROR :  Please export DatabaseUrl : DATABASE_URL ,If exported, Ignore');

@@ -110,3 +110,4 @@ README.sample.md
 #Media Files
 *.mp3
 *.mp4
+*.env

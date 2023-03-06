@@ -3,5 +3,7 @@ services:
   play-it-api:
     build: .
     command: npm run start
+    environment:
+      NODE_ENV: development
     ports:
       - "27465:3007"
