@@ -10,5 +10,5 @@ RUN npm install
 RUN npm run build:direct
 RUN ls -la
 
-#CMD [ "npm","run","start" ]
-CMD [ "npm","run","serve-build" ]
+CMD [ "npm","run","start" ]
+#CMD [ "npm","run","serve-build" ]
