@@ -4,18 +4,17 @@ import * as path from 'path';
 import * as fs from 'fs';
 import * as dotenv from 'dotenv';
 
-console.log('NODE_ENV ', process.env.NODE_ENV);
-
 dotenv.config(
   {
     override: true,
-    // isGlobal: true,
     path: `env.${process.env.NODE_ENV}.env`,
     // debug: true
   }
 );
 
 const debug = Debug('PL:Constant');
+
+debug('NODE_ENV ', process.env.NODE_ENV);
 
 export const DB = {
   DATABASE_URL: process.env.DATABASE_URL
