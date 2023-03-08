@@ -7,7 +7,6 @@ COPY . .
 # If you are building your code for production
 RUN npm install -g typescript@3.9.10
 RUN npm install
-COPY --from=builder /qs/*.env /qs/
 RUN ls -la
 
 CMD [ "npm","run","start" ]
