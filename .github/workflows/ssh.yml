@@ -22,7 +22,7 @@ jobs:
           ssh-keyscan -H ${{ secrets.SSH_HOST }} > ~/.ssh/known_hosts
       - name: Login to Server And Setup the Directory
         run: |
-          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir ${{ secrets.WORK_DIR }} -p && rm-rf ${{ secrets.WORK_DIR }} && exit"
+          ssh ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }} "mkdir ${{ secrets.WORK_DIR }} -p && rm- rf ${{ secrets.WORK_DIR }} && exit"
       - name: Login to Server And Copy Latest Directory
         run: |
           scp -rp ./* ${{ secrets.SSH_USER }}@${{ secrets.SSH_HOST }}:${{ secrets.WORK_DIR }}
