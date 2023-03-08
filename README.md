@@ -1,91 +1,73 @@
-### Version
-```
-Node 10.16.3
-NPM 6.9.0
+<p align="center">
+  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="200" alt="Nest Logo" /></a>
+</p>
+
+[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
+[circleci-url]: https://circleci.com/gh/nestjs/nest
+
+  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
+    <p align="center">
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
+<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
+<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
+<a href="https://coveralls.io/github/nestjs/nest?branch=master" target="_blank"><img src="https://coveralls.io/repos/github/nestjs/nest/badge.svg?branch=master#9" alt="Coverage" /></a>
+<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
+<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
+<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
+  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg"/></a>
+    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
+  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow"></a>
+</p>
+  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
+  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+
+## Description
+
+[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+
+## Installation
+
+```bash
+$ npm install
 ```
 
-### Installation
-```
-npm install
-npm install nodemon -g
-npm install ts-node -g
+## Running the app
+
+```bash
+# development
+$ npm run start
+
+# watch mode
+$ npm run start:dev
+
+# production mode
+$ npm run start:prod
 ```
 
-### Debugging
-```
-export DEBUG=PL:*
+## Test
+
+```bash
+# unit tests
+$ npm run test
+
+# e2e tests
+$ npm run test:e2e
+
+# test coverage
+$ npm run test:cov
 ```
 
-### Export variables
-```
-export DEBUG=PL:*
-export SANDBOX='false'
-export PORT=3007
-export CRONE_JOB_ACTION='EXECUTE'
-export API_URL=http://localhost:3007
-export FRONT_END_URL=http://localhost:4200
-export FFPROBE_PATH=./node_modules/ffmpeg-static/ffmpeg
-export DOWNLOAD_AUDIO_CONCURRENCY=1;
-export DOWNLOAD_VIDEO_CONCURRENCY=1;
-export DOWNLOAD_ATTEMPT=5;
-export LC_ALL=en_US.UTF-8
-export GOOGLE_CLIENTid=YourClientId
-export GOOGLE_CLIENT_SECRET=YourClientSecret
-export DATABASE_URL=postgres://yourmongo/playit-dev
-```
+## Support
 
-### Run the Application (Development Purpose Only)
-```
-npm start
-```
+Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
 
-### Prepare build
-```
-npm run build
-```
+## Stay in touch
 
-### Run the Application (Production Purpose Only)
-```
-npm run build
-node dist/src/server.js
-```
+- Author - [Kamil Myśliwiec](https://kamilmysliwiec.com)
+- Website - [https://nestjs.com](https://nestjs.com/)
+- Twitter - [@nestframework](https://twitter.com/nestframework)
 
-### Verify Version
-```
-./node_modules/youtube-dl/bin/youtube-dl --version
-```
+## License
 
-### Stop Specific Cron Jobs
-```
-export DOWNLOAD_AUDIO_SCHEDULE_ACTION='false'
-export UPLOAD_AUDIO_SCHEDULE_ACTION='false'
-export SYNC_TO_YOUTUBE_SCHEDULE_ACTION='false'
-```
-
-### References
-```
-https://askubuntu.com/a/807918
-```
-
-### Required Setup
-* MongoDB
-* Google OAuth App
-* Heroku Account to Deploy your App
-
-### User setup
-* Google Developer Console Access
-* Create New App and Get The Client Id, Client Secret
-* Set Redirect URL `${APP.API_URL}/api/v1/user/register/oauth/callback`
-
-### Enable Below API Services in Your Google Developer Console
-* Google Drive API
-* People API
-* YouTube Data API v3
-
-### Other Important APIs
-* Add User (Login as Google) `{{url}}/api/v1/user/register`
-* Add the Audio/Video Playlist `{{url}}/api/v1/playlist`
-* Remove Audio/Video Playlist `{{url}}/api/v1/playlist`
-
-### Postman Collection to Quick Start Using APIs
-`https://www.getpostman.com/collections/de711239ba8581682a33`
+Nest is [MIT licensed](LICENSE).
