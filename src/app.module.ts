@@ -8,6 +8,7 @@ import { PlaylistModule } from './playlist/playlist.module';
 import { YoutubeModule } from './youtube/youtube.module';
 import { GoogleDriveModule } from './google-drive/google-drive.module';
 import { ConfigModule } from '@nestjs/config';
+import { TypeOrmModule } from '@nestjs/typeorm';
 
 @Module({
     imports: [
@@ -15,6 +16,12 @@ import { ConfigModule } from '@nestjs/config';
             isGlobal: true,
             envFilePath: [`env.${process.env.NODE_ENV}.env`],
             expandVariables: true,
+        }),
+        TypeOrmModule.forRoot({
+            type: 'postgres',
+            url: process.env.DATABASE_URL,
+            entities: [],
+            synchronize: false,
         }),
         UserModule,
         TokenModule,
