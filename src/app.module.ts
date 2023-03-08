@@ -9,6 +9,7 @@ import { YoutubeModule } from './youtube/youtube.module';
 import { GoogleDriveModule } from './google-drive/google-drive.module';
 import { ConfigModule } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { GoogleModule } from './google/google.module';
 
 @Module({
     imports: [
@@ -29,6 +30,7 @@ import { TypeOrmModule } from '@nestjs/typeorm';
         PlaylistModule,
         YoutubeModule,
         GoogleDriveModule,
+        GoogleModule,
     ],
     controllers: [AppController],
     providers: [AppService],
