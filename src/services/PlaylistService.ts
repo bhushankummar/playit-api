@@ -151,7 +151,9 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
   if (_.isEmpty(req.userStore)) {
     return next(Boom.notFound('Invalid User'));
   } else if (_.isEmpty(req.playlistStore)) {
-    return next(Boom.notFound('This playlist does not exits.'));
+    debug('This playlist does not exits.');
+    return next();
+    // return next(Boom.notFound('This playlist does not exits.'));
   }
   try {
     const playlistModel = getRepository(PlaylistEntity);
@@ -174,22 +176,24 @@ export const removePlaylist: express.RequestHandler = async (req: IRequest, res:
 export const searchOneByLastSyncTimeStamp: express.RequestHandler = async (req: IRequest, res: express.Response, next: express.NextFunction) => {
   try {
     const playlistModel = getRepository(PlaylistEntity);
-    // const whereCondition = {
-    //   $or: [
-    //     {
-    //       lastSyncTimeStamp: {
-    //         $lt: moment().subtract(2, 'minutes').toISOString()
-    //       }
-    //     },
-    //     {
-    //       lastSyncTimeStamp: undefined
-    //     }
-    //   ]
-    // };
+    const whereCondition : Partial<PlaylistEntity> = {
+      // urlId : ''
+      // id: ''
+      // $or: [
+      //   {
+      //     lastSyncTimeStamp: {
+      //       $lt: moment().subtract(2, 'minutes').toISOString()
+      //     }
+      //   },
+      //   {
+      //     lastSyncTimeStamp: undefined
+      //   }
+      // ]
+    };
     const options: FindOneOptions<PlaylistEntity> = {
-      // where: whereCondition,
+      where: whereCondition,
       order: {
-        lastSyncTimeStamp: 'ASC'
+        updateDateTime: 'ASC'
       }
     };
     req.playlistStore = await playlistModel.findOne(options);

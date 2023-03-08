@@ -12,7 +12,11 @@ import * as CroneJobs from './job';
 const app = express();
 const debug = Debug('PL:App');
 
-const whitelist = ['http://localhost:3007', 'http://localhost:4200', 'https://playit-app.herokuapp.com'];
+const whitelist = [
+  'http://localhost:3007',
+  'http://localhost:4200'
+];
+
 app.use(cors({ origin: whitelist }));
 
 app.use(bodyParser.json());

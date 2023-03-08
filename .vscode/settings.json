@@ -56,4 +56,14 @@
     ],
     "editor.wordWrapColumn": 120,
     "editor.wrappingStrategy": "advanced",
+    "editor.codeActionsOnSave": {
+        "source.fixAll.eslint": true
+    },
+    "eslint.validate": [
+        "javascript",
+        "typescript",
+    ],
+    "editor.wrappingColumn": 0,
+    "editor.wordWrap": "on",
+    "eslint.enable": true
 }

@@ -4,7 +4,10 @@ import * as Debug from 'debug';
 import * as fs from 'fs';
 import * as _ from 'lodash';
 import * as GoogleDrive from '../utils/GoogleDriveUtils';
+import * as YtplUtils from '../utils/YtplUtils';
+import * as MediaItemUtils from '../utils/MediaItemUtils';
 import * as Boom from 'boom';
+import { IGoogleDriveFileStore } from '../interface/IGoogleDriveFileStore';
 const debug = Debug('PL:GoogleDriveService');
 
 /**
@@ -66,11 +69,17 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
   }
   try {
     if (fs.existsSync(req.mediaStore.localFilePath) === false) {
-      debug('CRITICAL: This file does not exits %o ', req.mediaStore);
+      debug('CRITICAL: This file does not exits for Upload %o ', req.mediaStore);
       req.mediaStore.localFilePath = '';
+      try {
+        await MediaItemUtils.updateUploadMedia(req.mediaStore, req.googleDriveFileStore);
+      } catch (error) {
+        debug('updateUploadMedia error ', error);
+        debug('updateUploadMedia error in  ', req.mediaStore);
+      }
       return next();
     }
-    debug('Start uploading %o ', req.mediaStore.title);
+    debug('## Start uploading %o ', req.mediaStore.title);
     const response: any = await GoogleDrive.uploadFile(req.mediaStore.driveFolderId, req.mediaStore.localFilePath, req.userStore);
     if (response && response.data) {
       req.googleDriveFileStore = response.data;
@@ -81,10 +90,18 @@ export const uploadToDriveUsingPath: express.RequestHandler = async (req: IReque
       // }
     }
     // debug('Files has been uploaded ', req.googleDriveFileStore);
-    debug('Upload complete %o ', req.mediaStore.title);
+    debug('## Upload complete %o ', req.mediaStore.title);
+
+    try {
+      await MediaItemUtils.updateUploadMedia(req.mediaStore, req.googleDriveFileStore);
+    } catch (error) {
+      debug('updateUploadMedia error ', error);
+      debug('updateUploadMedia error in  ', req.mediaStore);
+    }
     return next();
+
   } catch (error) {
-    debug('Upload failed %o ', req.mediaStore.title);
+    debug('## Upload failed %o ', req.mediaStore.title);
     debug('uploadToDrive error ', error);
     debug('uploadToDrive error %o ', req.userStore);
     return next();
@@ -108,18 +125,24 @@ export const searchAllFiles: express.RequestHandler = async (req: IRequest, res:
   try {
     const folderId = req.playlistStore.driveFolderId;
     let nextPageToken = '';
-    let files: any[] = [];
+    let files: Partial<IGoogleDriveFileStore>[] = [];
     do {
-      const response: any = await GoogleDrive.searchIntoFolderRecursive(req.userStore, folderId, nextPageToken);
+      const response: any = await GoogleDrive.searchIntoFolderRecursive(
+        req.userStore, folderId, nextPageToken
+      );
       if (response && response.data) {
         // debug('response.data.nextPageToken ', response.data.nextPageToken);
         nextPageToken = response.data.nextPageToken || '';
       }
       files = files.concat(response.data.files);
+      // files = _.merge(files, response.data.files);
       // debug('files ', files.length);
     } while (nextPageToken !== '');
-    debug(`Total files in GoogleDrive - ${req.playlistStore.title} - ${files.length}`);
-    req.googleDriveStore = files;
+    const filteredFiles: any = _.filter(files, {
+      trashed: false
+    });
+    debug(`Total files in GoogleDrive - ${req.playlistStore.title} - ${filteredFiles.length}`);
+    req.googleDriveFileItemsStore = filteredFiles;
     return next();
   } catch (error) {
     debug('searchAllFiles error ', error);
@@ -141,7 +164,8 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
   }
   // debug('req.youTubePlaylistStore ', req.youTubePlaylistStore);
   try {
-    const query = `name = "${req.youTubePlaylistStore.title}"`;
+    const cleanFolderName = YtplUtils.prepareFolderName(req.youTubePlaylistStore.title);
+    const query = `name = "${cleanFolderName}"`;
     const folderResponse: any = await GoogleDrive.searchFolderByName(req.userStore, query);
     if (folderResponse && folderResponse.data) {
       // debug('folderResponse.data ', folderResponse);
@@ -160,7 +184,7 @@ export const createPlaylistFolder: express.RequestHandler = async (req: IRequest
     }
     const responseNewGoogleFolder: any = await GoogleDrive.createFolder(
       req.userStore.googleDriveParentId,
-      req.youTubePlaylistStore.title,
+      cleanFolderName,
       req.userStore
     );
     if (responseNewGoogleFolder && responseNewGoogleFolder.data) {

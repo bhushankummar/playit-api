@@ -154,9 +154,8 @@
         "ignoreRestArgs": false
       }
     ],
-    "no-unused-vars": "off",
     "@typescript-eslint/no-unused-vars": [
-      "error"
+      "off"
     ],
     "semi": [
       "error"

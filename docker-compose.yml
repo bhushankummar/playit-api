@@ -1,0 +1,17 @@
+version: "3.3"
+services:
+  play-it-api:
+    build: .
+    environment:
+      NODE_ENV: development
+    ports:
+      - "27465:3007"
+    deploy:
+      resources:
+        limits:
+          cpus: "0.01"
+          memory: "300M"
+    logging:
+      driver: "json-file"
+      options:
+        max-size: "50m"

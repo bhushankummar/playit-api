@@ -4,6 +4,7 @@ import { TokenEntity } from '../entities/TokenEntity';
 import { PlaylistEntity } from '../entities/PlaylistEntity';
 import { MediaItemEntity } from '../entities/MediaItemEntity';
 import { IGoogleDriveFileStore } from './IGoogleDriveFileStore';
+import { IYtplPlaylist } from './IYtplPlaylist';
 
 export interface IRequest extends Request {
     data: any;
@@ -13,7 +14,7 @@ export interface IRequest extends Request {
     playlistStore: PlaylistEntity;
     playlistItemStore: PlaylistEntity[];
     youTubeStore: any;
-    youTubePlaylistStore: any;
+    youTubePlaylistStore: Partial<IYtplPlaylist>;
     googleStore: any;
     mediaStore: MediaItemEntity;
     mediaItemsStore: MediaItemEntity[];

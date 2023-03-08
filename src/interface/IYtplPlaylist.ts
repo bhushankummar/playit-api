@@ -1,7 +1,7 @@
 import { IYtplItem } from './IYtplItem';
 
 export interface IYtplPlaylist {
-    id: string;
+    id?: string;
     url: string;
     title: string;
     visibility: string;

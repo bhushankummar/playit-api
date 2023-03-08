@@ -29,7 +29,8 @@ export const mapYouTubeResponse = (youtubeItemStore: Partial<IYoutubePlaylist>):
     }
     items.push(ytplItem);
   });
-  ytplPlaylistStore.items = items;
+  ytplPlaylistStore.items = _.unionBy(items, 'id');
+  ytplPlaylistStore.items = _.orderBy(ytplPlaylistStore.items, 'id');
   return ytplPlaylistStore;
 };
 

@@ -2,8 +2,19 @@ import * as Debug from 'debug';
 import * as _ from 'lodash';
 import * as path from 'path';
 import * as fs from 'fs';
+import * as dotenv from 'dotenv';
+
+dotenv.config(
+  {
+    override: true,
+    path: `env.${process.env.NODE_ENV}.env`,
+    // debug: true
+  }
+);
 
 const debug = Debug('PL:Constant');
+
+debug('NODE_ENV ', process.env.NODE_ENV);
 
 export const DB = {
   DATABASE_URL: process.env.DATABASE_URL
@@ -16,8 +27,17 @@ export const APP = {
   IS_SANDBOX: false,
   DOWNLOAD_AUDIO_CONCURRENCY: 3,
   DOWNLOAD_VIDEO_CONCURRENCY: 3,
-  DOWNLOAD_ATTEMPT: 2
+  DOWNLOAD_ATTEMPT: 2,
+  DOWNLOAD_TAKE: 1
 };
+
+if (!_.isEmpty(process.env.DOWNLOAD_TAKE)) {
+  try {
+    APP.DOWNLOAD_TAKE = parseInt(process.env.DOWNLOAD_TAKE, 10);
+  } catch (exception) {
+    debug('exception ', exception);
+  }
+}
 
 if (!_.isEmpty(process.env.DOWNLOAD_AUDIO_CONCURRENCY)) {
   try {
@@ -122,7 +142,7 @@ export const CRONE_JOB = {
 
 export const DOWNLOAD_AUDIO_SCHEDULE = {
   ACTION: process.env.DOWNLOAD_AUDIO_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',
@@ -132,7 +152,7 @@ export const DOWNLOAD_AUDIO_SCHEDULE = {
 
 export const UPLOAD_AUDIO_SCHEDULE = {
   ACTION: process.env.UPLOAD_AUDIO_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',
@@ -142,7 +162,7 @@ export const UPLOAD_AUDIO_SCHEDULE = {
 
 export const SYNC_TO_YOUTUBE_SCHEDULE = {
   ACTION: process.env.SYNC_TO_YOUTUBE_SCHEDULE_ACTION || true,
-  Seconds: '0',
+  Seconds: '',
   Minutes: '*/4',
   Hours: '*',
   DayOfMonth: '*',
@@ -153,15 +173,14 @@ export const SYNC_TO_YOUTUBE_SCHEDULE = {
 export const SYNC_GOOGLE_DRIVE_FOLDER_SCHEDULE = {
   ACTION: process.env.SYNC_GOOGLE_DRIVE_FOLDER_SCHEDULE || true,
   Seconds: '0',
-  Minutes: '0',
-  Hours: '*/1',
+  Minutes: '*/1',
+  Hours: '*',
   DayOfMonth: '*',
-  Months: '*',
-  DayOfWeek: '*'
+  Months: '*'
 };
 
 export const UPLOAD_VIDEO_SCHEDULE = {
-  Seconds: '0',
+  Seconds: '*',
   Minutes: '*/1',
   Hours: '*',
   DayOfMonth: '*',
@@ -182,6 +201,7 @@ export const VIDEO_DOWNLOAD_OPTIONS = {
   2: ['--format=136']
 };
 
+console.log('DB.DATABASE_URL ',DB.DATABASE_URL);
 if (_.isEmpty(DB.DATABASE_URL)) {
   debug('----------------------------------------------------------------------------------- ');
   debug('ERROR :  Please export DatabaseUrl : DATABASE_URL ,If exported, Ignore');

@@ -99,7 +99,7 @@ export const searchIntoFolderRecursive = (googleCredentials: any, folderId: stri
     const params = {
       parents: [folderId],
       trashed: false,
-      fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime)',
+      fields: 'nextPageToken, files(id, name, parents, mimeType, modifiedTime, trashed)',
       q: q,
       pageToken: '',
       pageSize: 100

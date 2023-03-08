@@ -26,26 +26,12 @@ export class UserEntity extends BaseEntity {
     @Column()
     public id_token: string;
 
-    @Column({type: 'bigint'})
+    @Column({ type: 'bigint' })
     public expiry_date: number;
-}
 
-export class GoogleEntity {
-    @Column()
-    public access_token: string;
-
-    @Column()
-    public refresh_token: string;
-
-    @Column()
-    public scope: string;
-
-    @Column()
-    public token_type: string;
-
-    @Column()
-    public id_token: string;
-
-    @Column()
-    public expiry_date: number;
+    @Column({
+      type: 'boolean',
+      default: false
+    })
+    public isGoogleSyncRequire: boolean
 }

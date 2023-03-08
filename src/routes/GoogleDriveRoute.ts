@@ -14,8 +14,8 @@ googleDriveRoute.post('/crone/upload/:type', [
   MediaItemService.searchOneByIsDownloaded,
   UserService.searchOneByMediaItemUser,
   GoogleDriveService.uploadToDriveUsingPath,
-  MediaItemService.updateUploadMedia,
-  GoogleController.googleDriveDetail
+  // MediaItemService.updateUploadMedia,
+  GoogleController.googleDriveUploadDetail
 ]);
 
 export { googleDriveRoute };
